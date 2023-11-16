@@ -17,7 +17,7 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
     ```
 4. Add the remote repository
     ```
-    git remote add origin https://github.com/baza-trainee/art-school.git
+    git remote add origin https://github.com/baza-trainee/art-school_backend.git
     ```
 5. Sync with the remote repository
 
