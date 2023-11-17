@@ -1,29 +1,32 @@
 from typing import Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, Field, validator
+from fastapi import Form, UploadFile
+
+from src.config import BASE_URL
 
 
-class DepartmentBase(BaseModel):
+class DepartmentBaseSchema(BaseModel):
     id: Optional[int] = Field(..., ge=1)
     sub_department_name: Optional[str] = Field(..., max_length=300)
     description: Optional[str] = Field(..., max_length=2000)
     photo: Optional[str]
 
-
-class MusicDepartmentSchema(DepartmentBase):
-    pass
-
-
-class VocalChoirDepartmentSchema(DepartmentBase):
-    pass
+    @validator("photo", pre=True)
+    def add_base_url(cls, v):
+        return f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
 
 
-class ChoreographicDepartmentSchema(DepartmentBase):
-    pass
+class DepartmentCreateSchema(BaseModel):
+    photo: UploadFile = Form(...)
+    sub_department_name: str = Field(..., max_length=300)
+    description: str = Field(..., max_length=2000)
 
 
-class FineArtsDepartmentSchema(DepartmentBase):
-    pass
+class DepartmentUpdateSchema(BaseModel):
+    sub_department_name: Optional[str] = Form(None, max_length=300)
+    description: Optional[str] = Form(None, max_length=2000)
 
 
-class TheatricalDepartmentSchema(DepartmentBase):
-    pass
+class DeleteResponseSchema(BaseModel):
+    message: str = "Record with id 1 was successfully deleted."
