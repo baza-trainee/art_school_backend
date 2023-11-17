@@ -5,7 +5,13 @@ from sqladmin import Admin
 
 from admin import ContactsView
 from src.contacts.routers import router as router_contacts
-from src.department.routers import router as router_departments
+from src.department.routers import (
+    music_router,
+    fine_arts_router,
+    theatrical_router,
+    vocal_choir_router,
+    choreographic_router,
+)
 from src.contacts.utils import lifespan
 from src.database import engine
 
@@ -14,7 +20,11 @@ app = FastAPI(title="School", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router_contacts, prefix="/api/v1")
-app.include_router(router_departments, prefix="/api/v1")
+app.include_router(music_router, prefix="/api/v1")
+app.include_router(fine_arts_router, prefix="/api/v1")
+app.include_router(theatrical_router, prefix="/api/v1")
+app.include_router(vocal_choir_router, prefix="/api/v1")
+app.include_router(choreographic_router, prefix="/api/v1")
 
 admin = Admin(app=app, engine=engine, title="Художня Школа")
 admin.add_view(ContactsView)
