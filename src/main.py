@@ -5,19 +5,19 @@ from sqladmin import Admin
 
 from admin import ContactsView
 from src.contacts.routers import router as router_contacts
+from src.department.routers import router as router_departments
+from src.contacts.utils import lifespan
 from src.database import engine
 
 
-app = FastAPI(title="School")
+app = FastAPI(title="School", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router_contacts, prefix="/api/v1")
+app.include_router(router_departments, prefix="/api/v1")
 
-
-admin = Admin(app=app, engine=engine, title="Київська Школа")
-
+admin = Admin(app=app, engine=engine, title="Художня Школа")
 admin.add_view(ContactsView)
-
 
 origins = [
     "http://localhost:3000",

@@ -9,7 +9,7 @@ class Contacts(Base):
     id = Column(Integer, primary_key=True)
     map_url = Column(String)
     address = Column(String)
-    phone = Column(String(length=15))
+    phone = Column(String(length=50))
     email = Column(String(length=50))
     facebook_url = Column(String)
     youtube_url = Column(String)

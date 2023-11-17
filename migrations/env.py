@@ -7,7 +7,9 @@ from alembic import context
 
 from src.database import metadata, Base
 from src.contacts.models import *
+from src.department.models import *
 from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -74,9 +76,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
