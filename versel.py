@@ -97,6 +97,6 @@ html = (
 )
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
     return HTMLResponse(html)
