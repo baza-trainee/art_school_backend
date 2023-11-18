@@ -13,7 +13,9 @@ async def customlifespan():
             result = await s.execute(query)
             contacts = result.scalars().first()
             if not contacts:
-                contacts = Contacts(address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40")
+                contacts = Contacts(
+                    address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40"
+                )
                 s.add(contacts)
                 await s.commit()
     print("lifespan end")
