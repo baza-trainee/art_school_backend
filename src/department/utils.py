@@ -108,4 +108,3 @@ async def delete_department(id: int, model: Type[Base], session: AsyncSession):
     await session.execute(query)
     await session.commit()
     return {"message": SUCCESS_DELETE % id}
-    
