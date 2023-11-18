@@ -2,13 +2,19 @@ import os
 from typing import Optional, Type
 
 import aiofiles
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, func, insert, select, update
 from fastapi import HTTPException, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
 from src.department.schemas import DepartmentCreateSchema, DepartmentUpdateSchema
-from src.exceptions import NO_DATA_FOUND, NO_RECORD, SERVER_ERROR
+from src.exceptions import (
+    DEPARTMENTS_EXISTS,
+    NO_DATA_FOUND,
+    NO_RECORD,
+    SERVER_ERROR,
+    SUCCESS_DELETE,
+)
 
 
 async def get_department(id: int, model: Type[Base], session: AsyncSession):
@@ -32,6 +38,16 @@ async def get_all_departments(model: Type[Base], session: AsyncSession):
 async def create_department(
     department: DepartmentCreateSchema, model: Type[Base], session: AsyncSession
 ):
+    query = select(model).where(
+        func.lower(model.sub_department_name) == department.sub_department_name.lower()
+    )
+    result = await session.execute(query)
+    instance = result.scalars().first()
+    if instance:
+        raise HTTPException(
+            status_code=400,
+            detail=DEPARTMENTS_EXISTS % department.sub_department_name,
+        )
     photo = department.photo
     folder_path = f"static/{model.__name__}"
     os.makedirs(folder_path, exist_ok=True)
@@ -43,7 +59,7 @@ async def create_department(
     result = await session.execute(query)
     department = result.scalars().first()
     await session.commit()
-    return department
+    return {"message": SUCCESS_DELETE % id}
 
 
 async def update_department(

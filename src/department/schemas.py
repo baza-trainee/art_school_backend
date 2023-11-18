@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, Field, validator
-from fastapi import Form, UploadFile
+from fastapi import UploadFile
 
 from src.config import BASE_URL
 
@@ -14,18 +14,20 @@ class DepartmentBaseSchema(BaseModel):
 
     @validator("photo", pre=True)
     def add_base_url(cls, v):
-        return f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
+        return (
+            f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
+        )
 
 
 class DepartmentCreateSchema(BaseModel):
-    photo: UploadFile = Form(...)
+    photo: UploadFile = Field(...)
     sub_department_name: str = Field(..., max_length=300)
     description: str = Field(..., max_length=2000)
 
 
 class DepartmentUpdateSchema(BaseModel):
-    sub_department_name: Optional[str] = Form(None, max_length=300)
-    description: Optional[str] = Form(None, max_length=2000)
+    sub_department_name: Optional[str] = Field(None, max_length=300)
+    description: Optional[str] = Field(None, max_length=2000)
 
 
 class DeleteResponseSchema(BaseModel):

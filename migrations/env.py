@@ -5,9 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.database import metadata, Base
-from src.contacts.models import *
-from src.department.models import *
+from src.database import Base
 from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 
 # this is the Alembic Config object, which provides
@@ -30,7 +28,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = [metadata, Base.metadata]
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
