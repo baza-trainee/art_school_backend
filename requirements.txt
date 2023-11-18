@@ -7,3 +7,4 @@ python-dotenv
 sqlalchemy
 sqladmin[full]
 aiofiles
+cloudinary

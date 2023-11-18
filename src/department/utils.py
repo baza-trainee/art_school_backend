@@ -15,6 +15,7 @@ from src.exceptions import (
     SERVER_ERROR,
     SUCCESS_DELETE,
 )
+from cloudinary import uploader
 
 
 async def get_department(id: int, model: Type[Base], session: AsyncSession):
@@ -50,11 +51,13 @@ async def create_department(
         )
     photo = department.photo
     folder_path = f"static/{model.__name__}"
-    os.makedirs(folder_path, exist_ok=True)
-    file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    async with aiofiles.open(file_path, "wb") as buffer:
-        await buffer.write(await photo.read())
-    department.photo = file_path
+    # os.makedirs(folder_path, exist_ok=True)
+    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
+    # async with aiofiles.open(file_path, "wb") as buffer:
+    #     await buffer.write(await photo.read())
+    # department.photo = file_path
+    upload_result = uploader.upload(photo.file, folder=folder_path)
+    department.photo = upload_result["url"]
     query = insert(model).values(**department.model_dump()).returning(model)
     result = await session.execute(query)
     department = result.scalars().first()
@@ -77,11 +80,13 @@ async def update_department(
     update_data = department_data.model_dump(exclude_none=True)
     if photo:
         folder_path = f"static/{model.__name__}"
-        os.makedirs(folder_path, exist_ok=True)
-        file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        async with aiofiles.open(file_path, "wb") as buffer:
-            await buffer.write(await photo.read())
-        update_data["photo"] = file_path
+        # os.makedirs(folder_path, exist_ok=True)
+        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
+        # async with aiofiles.open(file_path, "wb") as buffer:
+        #     await buffer.write(await photo.read())
+        # update_data["photo"] = file_path
+        upload_result = uploader.upload(photo.file, folder=folder_path)
+        update_data["photo"] = upload_result["url"]
     if not update_data:
         return Response(status_code=204)
     try:
