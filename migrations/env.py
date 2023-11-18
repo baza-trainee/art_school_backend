@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.database import metadata, Base
+from src.database import Base
 from src.contacts.models import *
 from src.department.models import *
 from src.news.models import *

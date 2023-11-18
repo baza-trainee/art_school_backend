@@ -27,7 +27,8 @@ from .schemas import (
 
 
 music_router = APIRouter(
-    prefix="/departments/music_department", tags=["Music Department"]
+    prefix="/departments/music_department", 
+    tags=["Music Department"]
 )
 vocal_choir_router = APIRouter(
     prefix="/departments/vocal_choir_department", tags=["Vocal Choir Department"]

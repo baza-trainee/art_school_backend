@@ -37,7 +37,9 @@ async def get_all_departments(model: Type[Base], session: AsyncSession):
 
 
 async def create_department(
-    department: DepartmentCreateSchema, model: Type[Base], session: AsyncSession
+    department: DepartmentCreateSchema, 
+    model: Type[Base],
+    session: AsyncSession
 ):
     query = select(model).where(
         func.lower(model.sub_department_name) == department.sub_department_name.lower()

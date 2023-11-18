@@ -12,7 +12,7 @@ from src.department.routers import (
     vocal_choir_router,
     choreographic_router,
 )
-from src.news.routers import router as router_news
+from src.news.routers import news_router
 from src.contacts.utils import lifespan
 from src.database import engine
 
@@ -26,7 +26,7 @@ app.include_router(fine_arts_router, prefix="/api/v1")
 app.include_router(theatrical_router, prefix="/api/v1")
 app.include_router(vocal_choir_router, prefix="/api/v1")
 app.include_router(choreographic_router, prefix="/api/v1")
-app.include_router(router_news, prefix="/api/v1")
+app.include_router(news_router, prefix="/api/v1")
 
 admin = Admin(app=app, engine=engine, title="Художня Школа")
 admin.add_view(ContactsView)
