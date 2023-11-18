@@ -22,9 +22,9 @@ class NewsCreateSchema(BaseModel):
     text: str = Field(..., max_length=2000)
 
 
-# class NewsUpdateSchema(BaseModel):
-#     title: Optional[str] = Field(None, max_length=300)
-#     text: Optional[str] = Field(None, max_length=2000)
+class NewsUpdateSchema(BaseModel):
+    title: Optional[str] = Field(None, max_length=300)
+    text: Optional[str] = Field(None, max_length=2000)
 
 
 # class DeleteNewsResponseSchema(BaseModel):
