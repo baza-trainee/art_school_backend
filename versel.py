@@ -18,13 +18,15 @@ async def customlifespan():
                 await s.commit()
     print("lifespan end")
 
+
 from src.main import app
 
 from fastapi import __version__
 from fastapi.responses import HTMLResponse
 
 
-html = """
+html = (
+    """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,8 +35,6 @@ html = """
     <title>FastAPI on Vercel</title>
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <style>
-""" 
-+ """
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -43,20 +43,20 @@ html = """
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f3f4f6;
+            background-color: #f8f9fa; /* Light gray background */
         }
 
         .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
+            background-color: #ffffff; /* White container background */
+            padding: 40px; /* Increased padding for a larger container */
+            border-radius: 12px; /* Rounded corners */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         h1 {
-            color: #1a202c;
-            font-size: 24px;
+            color: #343a40; /* Dark gray text */
+            font-size: 32px; /* Increased font size */
         }
 
         ul {
@@ -65,19 +65,24 @@ html = """
         }
 
         li {
-            margin: 10px 0;
+            margin: 15px 0; /* Increased margin */
         }
 
         a {
-            color: #3182ce;
+            color: #007bff; /* Business blue link color */
             text-decoration: none;
         }
-    </style>""" 
-+ f"""
+
+        p {
+            color: #6c757d; /* Medium gray text */
+        }
+    </style>"""
+    + f"""
 </head>
 <body>
     <div class="container">
-        <h1>Hello from FastAPI@{__version__}</h1>
+        <h1>Hello from FastAPI@{__version__} app</h1>
+        <h3>get started?</h3>
         <ul>
             <li><h2><a href="/docs">/docs</a></h2></li>
             <li><h2><a href="/redoc">/redoc</a></h2></li>
@@ -87,6 +92,8 @@ html = """
 </body>
 </html>
 """
+)
+
 
 @app.get("/")
 async def root():

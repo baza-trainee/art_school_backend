@@ -2,13 +2,19 @@ import os
 from typing import Optional, Type
 
 import aiofiles
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, func, insert, select, update
 from fastapi import HTTPException, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
 from src.department.schemas import DepartmentCreateSchema, DepartmentUpdateSchema
-from src.exceptions import DEPARTMENTS_EXISTS, NO_DATA_FOUND, NO_RECORD, SERVER_ERROR, SUCCESS_DELETE
+from src.exceptions import (
+    DEPARTMENTS_EXISTS,
+    NO_DATA_FOUND,
+    NO_RECORD,
+    SERVER_ERROR,
+    SUCCESS_DELETE,
+)
 
 
 async def get_department(id: int, model: Type[Base], session: AsyncSession):
@@ -29,8 +35,12 @@ async def get_all_departments(model: Type[Base], session: AsyncSession):
     return response
 
 
-async def create_department(department: DepartmentCreateSchema, model: Type[Base], session: AsyncSession):
-    query = select(model).where(func.lower(model.sub_department_name) == department.sub_department_name.lower())
+async def create_department(
+    department: DepartmentCreateSchema, model: Type[Base], session: AsyncSession
+):
+    query = select(model).where(
+        func.lower(model.sub_department_name) == department.sub_department_name.lower()
+    )
     result = await session.execute(query)
     instance = result.scalars().first()
     if instance:
@@ -75,7 +85,9 @@ async def update_department(
     if not update_data:
         return Response(status_code=204)
     try:
-        query = update(model).where(model.id == id).values(**update_data).returning(model)
+        query = (
+            update(model).where(model.id == id).values(**update_data).returning(model)
+        )
         result = await session.execute(query)
         await session.commit()
         return result.scalars().first()
