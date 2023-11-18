@@ -31,6 +31,7 @@ admin.add_view(ContactsView)
 
 origins = [
     "http://localhost:3000",
+    "https://art-school-frontend.vercel.app",
 ]
 
 app.add_middleware(

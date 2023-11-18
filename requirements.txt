@@ -2,7 +2,7 @@ alembic
 asyncpg
 fastapi[all]
 fastapi-users[sqlalchemy]
-fastapi-cache2[redis]
+psycopg2-binary
 python-dotenv
 sqlalchemy
 sqladmin[full]
