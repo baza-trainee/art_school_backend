@@ -62,6 +62,7 @@ async def create_department(
     result = await session.execute(query)
     department = result.scalars().first()
     await session.commit()
+    return department
 
 
 async def update_department(

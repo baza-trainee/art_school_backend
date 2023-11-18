@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic_core import Url
 
 from src.database import get_async_session
 from src.exceptions import SERVER_ERROR, NO_DATA_FOUND
@@ -27,16 +28,20 @@ async def get_contacts(
 
 @router.patch("", response_model=ContactsSchema)
 async def update_contacts(
-    contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema.as_form_patch),
+    contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema),
     session: AsyncSession = Depends(get_async_session),
 ) -> ContactsSchema:
-    if not contacts_update.model_dump(exclude_none=True):
+    contacts_data = contacts_update.model_dump(exclude_none=True)
+    if not contacts_data:
         return Response(status_code=204)
+    for key, value in contacts_data.items():
+        if isinstance(value, Url):
+            contacts_data[key] = str(value)
     try:
         query = (
             update(Contacts)
             .where(Contacts.id == 1)
-            .values(**contacts_update.model_dump(exclude_none=True))
+            .values(**contacts_data)
             .returning(Contacts)
         )
         result = await session.execute(query)
