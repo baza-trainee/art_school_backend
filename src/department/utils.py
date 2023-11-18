@@ -62,7 +62,6 @@ async def create_department(
     result = await session.execute(query)
     department = result.scalars().first()
     await session.commit()
-    return {"message": SUCCESS_DELETE % id}
 
 
 async def update_department(
@@ -108,4 +107,5 @@ async def delete_department(id: int, model: Type[Base], session: AsyncSession):
     query = delete(model).where(model.id == id)
     await session.execute(query)
     await session.commit()
-    return {"message": f"Record with id {id} was successfully deleted."}
+    return {"message": SUCCESS_DELETE % id}
+    

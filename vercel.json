@@ -1,6 +1,13 @@
 {
   "builds": [
     {
+      "src": "build.sh",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "static"
+      }
+    },
+    {
       "src": "versel.py",
       "use": "@vercel/python"
     }

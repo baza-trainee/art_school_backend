@@ -7,4 +7,5 @@ python-dotenv
 sqlalchemy
 sqladmin[full]
 aiofiles
+urllib3==1.26.16
 cloudinary
