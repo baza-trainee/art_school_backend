@@ -4,7 +4,8 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: school_db
+
     ports:
       - "5432:5432"
     env_file:

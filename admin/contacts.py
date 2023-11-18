@@ -1,7 +1,7 @@
 from sqladmin import ModelView
 
-from src.contacts.models import Contacts
+from src.contacts.models import Contact
 
 
-class ContactsView(ModelView, model=Contacts):
-    column_list = [Contacts.id, Contacts.address, Contacts.email]
+class ContactsView(ModelView, model=Contact):
+    column_list = [Contact.id, Contact.address, Contact.email]

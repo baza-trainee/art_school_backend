@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String
 from src.database import Base
 
 
-class Contacts(Base):
+class Contact(Base):
     __tablename__ = "contacts"
 
     id = Column(Integer, primary_key=True)

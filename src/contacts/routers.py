@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_async_session
 from src.exceptions import SERVER_ERROR, NO_DATA_FOUND
 from .schemas import ContactsSchema, ContactsUpdateSchema
-from .models import Contacts
+from .models import Contact
 
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
@@ -16,7 +16,7 @@ async def get_contacts(
     session: AsyncSession = Depends(get_async_session),
 ) -> ContactsSchema:
     try:
-        query = select(Contacts)
+        query = select(Contact)
         contacts = await session.execute(query)
         if not contacts:
             raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
@@ -34,10 +34,10 @@ async def update_contacts(
         return Response(status_code=204)
     try:
         query = (
-            update(Contacts)
-            .where(Contacts.id == 1)
+            update(Contact)
+            .where(Contact.id == 1)
             .values(**contacts_update.model_dump(exclude_none=True))
-            .returning(Contacts)
+            .returning(Contact)
         )
         result = await session.execute(query)
         await session.commit()
