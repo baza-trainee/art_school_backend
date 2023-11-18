@@ -53,18 +53,13 @@ async def create_department(
         )
     photo = department.photo
     folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # department.photo = file_path
     upload_result = uploader.upload(photo.file, folder=folder_path)
     department.photo = upload_result["url"]
     query = insert(model).values(**department.model_dump()).returning(model)
     result = await session.execute(query)
     department = result.scalars().first()
     await session.commit()
-    return {"message": SUCCESS_DELETE % id}
+    return department
 
 
 async def update_department(
