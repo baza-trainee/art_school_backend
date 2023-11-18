@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, validator
 from fastapi import UploadFile
 
 from src.config import BASE_URL
+from src.exceptions import SUCCESS_DELETE
 
 
 class DepartmentBaseSchema(BaseModel):
@@ -12,11 +13,10 @@ class DepartmentBaseSchema(BaseModel):
     description: Optional[str] = Field(..., max_length=2000)
     photo: Optional[str]
 
-    @validator("photo", pre=True)
-    def add_base_url(cls, v):
-        return (
-            f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
-        )
+    # #To save files locally
+    # @validator("photo", pre=True)
+    # def add_base_url(cls, v):
+    #     return f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
 
 
 class DepartmentCreateSchema(BaseModel):
@@ -31,4 +31,4 @@ class DepartmentUpdateSchema(BaseModel):
 
 
 class DeleteResponseSchema(BaseModel):
-    message: str = "Record with id 1 was successfully deleted."
+    message: str = SUCCESS_DELETE
