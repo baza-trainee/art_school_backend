@@ -4,10 +4,10 @@ down:
 	docker compose down
 
 run: build upgrade
-	uvicorn src.main:app --reload
+	uvicorn vercel:app --reload
 
 start:
-	uvicorn src.main:app --reload
+	uvicorn vercel:app --reload
 
 build:
 	docker compose up -d
