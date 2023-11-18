@@ -8,14 +8,14 @@
       }
     },
     {
-      "src": "versel.py",
+      "src": "vercel.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "versel.py"
+      "dest": "vercel.py"
     }
   ]
 }

@@ -15,4 +15,4 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 alembic upgrade head
-python -c "from versel import customlifespan; import asyncio; asyncio.run(customlifespan())"
+python -c "from vercel import customlifespan; import asyncio; asyncio.run(customlifespan())"
