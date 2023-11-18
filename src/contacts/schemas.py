@@ -2,8 +2,6 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, constr, AnyHttpUrl
 
-from src.utils import as_form_patch
-
 
 class ContactsSchema(BaseModel):
     map_url: Optional[AnyHttpUrl]
@@ -20,7 +18,6 @@ class ContactsSchema(BaseModel):
         from_attributes = True
 
 
-@as_form_patch
 class ContactsUpdateSchema(BaseModel):
     map_url: Optional[AnyHttpUrl] = None
     address: Optional[str] = None
