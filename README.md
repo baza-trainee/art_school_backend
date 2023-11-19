@@ -12,14 +12,23 @@ The Art School API is designed to facilitate the administration and dynamic cont
 Built on the asynchronous FastAPI framework, the API utilizes a PostgreSQL database with the asynchronous adapter asyncpg and Pydantic v2 for data serialization. It features a robust authentication system, employing the JWTStrategy and CookieTransport for secure user authentication and management, powered by the FastAPI-Users and FastAPI-Mail libraries.
 
 <h3 align="center">TECHNOLOGY</h3>
-<div class="badge_container" style="display: flex; justify-content: center;">
-
-  [![FastAPI][FastAPI-badge]][FastAPI-url]
-  [![FastAPIUsers][FastAPIUsers-badge]][FastAPIUsers-url]
-  [![SQLAlchemy][SQLAlchemy-badge]][SQLAlchemy-url]
-  [![Pydantic][Pydantic-badge]][Pydantic-url]
-  [![FastAPI Mail][FastAPIMail-badge]][FastAPIMail-url]
-</div>
+<p align="center">
+  <a href="https://fastapi.tiangolo.com/" target="_blank">
+    <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="Swagger">
+  </a>
+  <a href="https://fastapi-users.github.io/fastapi-users" target="_blank">
+    <img src="https://img.shields.io/badge/FastAPI%20Users-ef5552?style=for-the-badge" alt="Swagger">
+  </a>
+  <a href="https://www.sqlalchemy.org/" target="_blank">
+    <img src="https://img.shields.io/badge/sqlalchemy-fbfbfb?style=for-the-badge" alt="Swagger">
+  </a>
+  <a href="https://pydantic-docs.helpmanual.io/" target="_blank">
+    <img src="https://img.shields.io/badge/Pydantic-14354C?style=for-the-badge&logo=Pydantic" alt="Swagger">
+  </a>
+  <a href="https://pypi.org/project/fastapi-mail/" target="_blank">
+    <img src="https://img.shields.io/badge/FastAPI%20Mail-0078D4?style=for-the-badge" alt="Swagger">
+  </a>
+</p>
 
 <h2 align="center" style="color: #B5E5E8;">INSTALLATION</h2>
 
@@ -113,68 +122,12 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
     make start
     ```
     Interactive documentation is available at `/docs` and `/redoc` for two different interfaces: [Swagger](https://swagger.io/) and [ReDoc](https://redoc.ly/). They allow you to view and test all the API endpoints, as well as get information about the parameters, data types, and response codes. You can learn more about Swagger and ReDoc on their official websites.
-<div class="badge_container" style="display: flex; justify-content: center;">
 
-[![Swagger][Swagger-badge]][Swagger-url]
-[![Redoc][Redoc-badge]][Redoc-url]
-</div>
-
-
-<style>
-  .custom-details summary {
-    list-style: none;
-    cursor: pointer;
-    color: #0366d6;
-  }
-
-  .custom-details[open] summary {
-    color: #1f6feb;
-  }
-
-  .custom-details > * {
-    margin-top: 5px;
-  }
-
-  .custom-details-description {
-    color: #6a737d;
-    font-style: italic;
-  }
-
-  .variable-name {
-    color: orange;
-  }
-
-  .variable-value {
-    color: #40AEE6;
-  }
-</style>
-
-
-
-[FastAPI-badge]: https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi
-
-[FastAPI-url]: https://fastapi.tiangolo.com/
-
-[FastAPIUsers-badge]: https://img.shields.io/badge/FastAPI%20Users-ef5552?style=for-the-badge
-
-[FastAPIUsers-url]: https://fastapi-users.github.io/fastapi-users
-
-[SQLAlchemy-badge]: https://img.shields.io/badge/sqlalchemy-fbfbfb?style=for-the-badge
-
-[SQLAlchemy-url]: https://www.sqlalchemy.org/
-
-[Pydantic-badge]: https://img.shields.io/badge/Pydantic-14354C?style=for-the-badge&logo=Pydantic
-
-[Pydantic-url]: https://pydantic-docs.helpmanual.io/
-
-[FastAPIMail-badge]: https://img.shields.io/badge/FastAPI%20Mail-0078D4?style=for-the-badge
-
-[FastAPIMail-url]: https://pypi.org/project/fastapi-mail/
-
-[Swagger-badge]: https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black
-
-[Swagger-url]: https://swagger.io/
-
-[Redoc-badge]: https://img.shields.io/badge/Redoc-8A2BE2?style=for-the-badge&logo=redoc&logoColor=white
-
-[Redoc-url]: https://redoc.ly/
+<p align="center">
+  <a href="https://swagger.io/" target="_blank">
+    <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger">
+  </a>
+  <a href="https://redoc.ly/" target="_blank">
+    <img src="https://img.shields.io/badge/Redoc-8A2BE2?style=for-the-badge&logo=redoc&logoColor=white" alt="Swagger">
+  </a>
+</p>
