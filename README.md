@@ -43,3 +43,17 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
     ```
     make run
     ```
+
+
+
+[FastAPI-badge]: https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi
+
+[FastAPI-url]: https://fastapi.tiangolo.com/
+
+[FastAPIUsers-badge]: https://img.shields.io/badge/FastAPI%20Users-ef5552?style=for-the-badge
+
+[FastAPIUsers-url]: https://fastapi-users.github.io/fastapi-users
+
+[SQLAlchemy-badge]: https://img.shields.io/badge/sqlalchemy-fbfbfb?style=for-the-badge
+
+[SQLAlchemy-url]: https://www.sqlalchemy.org/
