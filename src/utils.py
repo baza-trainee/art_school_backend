@@ -10,7 +10,7 @@ async def lifespan(app: FastAPI):
     print("lifespan start")
     async for s in get_async_session():
         async with s.begin():
-            await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+            # await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
             await create_contacts(
                 address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40"
             )
