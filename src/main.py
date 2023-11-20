@@ -17,6 +17,8 @@ from src.department.routers import (
 )
 
 from src.news.routers import news_router
+from src.posters.routers import posters_router
+
 
 
 app = FastAPI(title="School", lifespan=lifespan)
@@ -41,6 +43,8 @@ app.include_router(theatrical_router, prefix="/api/v1")
 app.include_router(vocal_choir_router, prefix="/api/v1")
 app.include_router(choreographic_router, prefix="/api/v1")
 app.include_router(news_router, prefix="/api/v1")
+app.include_router(posters_router, prefix="/api/v1")
+
 
 
 origins = [

@@ -1,0 +1,5 @@
+NEWS_EXISTS = "News with name: `%s` already exists."
+NO_DATA_FOUND = "News not found"
+NO_RECORD = "News not found in db"
+SERVER_ERROR = "Server error"
+SUCCESS_DELETE = "News with id `%s` was successfully deleted."

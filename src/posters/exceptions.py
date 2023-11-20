@@ -1,0 +1,6 @@
+POSTERS_EXISTS = "Poster with name: `%s` already exists."
+NO_DATA_LIST_FOUND = "Posters not found"
+NO_DATA_FOUND = "Poster not found"
+NO_RECORD = "Poster not found in db"
+SERVER_ERROR = "Server error"
+SUCCESS_DELETE = "Poster with id `%s` was successfully deleted."

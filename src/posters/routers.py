@@ -2,45 +2,45 @@ from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Respons
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
 from src.database import get_async_session
-from .models import News
-from .schemas import NewsSchema, NewsCreateSchema, NewsUpdateSchema
+from .models import Poster
+from .schemas import PosterSchema, PosterCreateSchema, PosterUpdateSchema
 from sqlalchemy import select, update, delete, func, insert
 from typing import Annotated, List
 from cloudinary import uploader
 from src.auth.auth_config import fastapi_users
 from .exceptions import (
-    NEWS_EXISTS,
+    POSTERS_EXISTS,
     NO_DATA_FOUND,
     SERVER_ERROR,
     NO_RECORD,
-    SUCCESS_DELETE,
+    NO_DATA_LIST_FOUND 
 )
 
 CURRENT_SUPERUSER = fastapi_users.current_user(
     active=True, verified=True, superuser=True
 )
 
-news_router = APIRouter(prefix="/news", tags=["News"])
+posters_router = APIRouter(prefix="/posters", tags=["Posters"])
 
 
-@news_router.get("", response_model=List[NewsSchema])
-async def get_news_list(
+@posters_router.get("", response_model=List[PosterSchema])
+async def get_posters_list(
     session: AsyncSession = Depends(get_async_session),
-) -> NewsSchema:
-    query = select(News)
-    news = await session.execute(query)
-    all_news = news.scalars().all()
-    if not all_news:
-        raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    return all_news
+) -> PosterSchema:
+    query = select(Poster)
+    posters = await session.execute(query)
+    all_posters = posters.scalars().all()
+    if not all_posters:
+        raise HTTPException(status_code=404, detail=NO_DATA_LIST_FOUND)
+    return all_posters
 
 
-@news_router.get("/{id}", response_model=NewsSchema)
-async def get_news_list(
+@posters_router.get("/{id}", response_model=PosterSchema)
+async def get_posters_list(
     id: int,
     session: AsyncSession = Depends(get_async_session),
-) -> NewsSchema:
-    query = select(News).where(News.id == id)
+) -> PosterSchema:
+    query = select(Poster).where(Poster.id == id)
     result = await session.execute(query)
     response = result.scalars().first()
     if not response:
@@ -48,23 +48,23 @@ async def get_news_list(
     return response
 
 
-@news_router.post("", response_model=NewsSchema)
-async def create_news(
-    news_data: NewsCreateSchema = Depends(NewsCreateSchema),
+@posters_router.post("", response_model=PosterSchema)
+async def create_posters(
+    poster_data: PosterCreateSchema = Depends(PosterCreateSchema),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    query = select(News).where(func.lower(News.title) == news_data.title.lower())
+    query = select(Poster).where(func.lower(Poster.title) == poster_data.title.lower())
     result = await session.execute(query)
     instance = result.scalars().first()
     if instance:
         raise HTTPException(
             status_code=400,
-            detail=NEWS_EXISTS % news_data.title,
+            detail=POSTERS_EXISTS % poster_data.title,
         )
 
-    photo = news_data.photo
-    folder_path = f"static/{News.__name__}"
+    photo = poster_data.photo
+    folder_path = f"static/{Poster.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
     # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
     # async with aiofiles.open(file_path, "wb") as buffer:
@@ -75,33 +75,33 @@ async def create_news(
     except Exception as e:
         raise HTTPException(status_code=500, detail="cloudinary error")
 
-    news_data.photo = upload_result["url"]
+    poster_data.photo = upload_result["url"]
     try:
-        query = insert(News).values(**news_data.model_dump()).returning(News)
+        query = insert(Poster).values(**poster_data.model_dump()).returning(Poster)
         result = await session.execute(query)
-        news_data = result.scalars().first()
+        poster_data = result.scalars().first()
         await session.commit()
-        return news_data
+        return poster_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-@news_router.patch("/{news_id}", response_model=NewsSchema)
-async def partial_update_news(
-    news_id: int,
+@posters_router.patch("/{poster_id}", response_model=PosterSchema)
+async def partial_update_posters(
+    poster_id: int,
     photo: Annotated[UploadFile, File()] = None,
-    news_data: NewsUpdateSchema = Depends(NewsUpdateSchema),
+    posters_data: PosterUpdateSchema = Depends(PosterUpdateSchema),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    query = select(News).where(News.id == news_id)
+    query = select(Poster).where(Poster.id == poster_id)
     result = await session.execute(query)
     record = result.scalars().first()
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    update_data = news_data.model_dump(exclude_none=True)
+    update_data = posters_data.model_dump(exclude_none=True)
     if photo:
-        folder_path = f"static/{News.__name__}"
+        folder_path = f"static/{Poster.__name__}"
         # os.makedirs(folder_path, exist_ok=True)
         # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
         # async with aiofiles.open(file_path, "wb") as buffer:
@@ -113,7 +113,10 @@ async def partial_update_news(
         return Response(status_code=204)
     try:
         query = (
-            update(News).where(News.id == news_id).values(**update_data).returning(News)
+            update(Poster)
+            .where(Poster.id == poster_id)
+            .values(**update_data)
+            .returning(Poster)
         )
         result = await session.execute(query)
         await session.commit()
@@ -122,22 +125,22 @@ async def partial_update_news(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-@news_router.delete("/{news_id}")
-async def delete_news(
-    news_id: int,
+@posters_router.delete("/{poster_id}")
+async def delete_posters(
+    poster_id: int,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    query = select(News).where(News.id == news_id)
+    query = select(Poster).where(Poster.id == poster_id)
     result = await session.execute(query)
     if not result.scalars().first():
         raise HTTPException(status_code=404, detail=NO_RECORD)
 
     try:
-        query = delete(News).where(News.id == news_id)
+        query = delete(Poster).where(Poster.id == poster_id)
         await session.execute(query)
         await session.commit()
-        return {"message": SUCCESS_DELETE % news_id}
+        return {"message": "Record with id `%s`was successfully deleted." % poster_id }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
