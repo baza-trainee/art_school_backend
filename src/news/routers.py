@@ -1,4 +1,3 @@
-import os
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_async_session
@@ -6,9 +5,7 @@ from .models import News
 from .schemas import NewsSchema, NewsCreateSchema, NewsUpdateSchema
 from sqlalchemy import select, update, delete, func, insert
 from typing import Annotated, List
-import aiofiles
 from cloudinary import uploader
-
 
 news_router = APIRouter(prefix="/news", tags=["news"])
 
@@ -30,28 +27,25 @@ async def get_news_list(
 
 @news_router.post("", response_model=NewsSchema)
 async def create_news(
-    news_data: NewsCreateSchema = Depends(NewsCreateSchema), 
+    news_data: NewsCreateSchema = Depends(NewsCreateSchema),
     session: AsyncSession = Depends(get_async_session),
-
 ):
-    query = select(News).where(
-        func.lower(News.title) == news_data.title.lower()
-    )
+    query = select(News).where(func.lower(News.title) == news_data.title.lower())
     result = await session.execute(query)
     instance = result.scalars().first()
     if instance:
         raise HTTPException(
             status_code=400,
-            detail="News with name: `%s` already exists."% news_data.title,
+            detail="News with name: `%s` already exists." % news_data.title,
         )
-        
+
     photo = news_data.photo
     folder_path = f"static/{News.__name__}"
     try:
         upload_result = uploader.upload(photo.file, folder=folder_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail="cloudinary error")
-     
+
     news_data.photo = upload_result["url"]
     try:
         query = insert(News).values(**news_data.model_dump()).returning(News)
@@ -67,10 +61,9 @@ async def create_news(
 async def partial_update_news(
     news_id: int,
     photo: Annotated[UploadFile, File()] = None,
-    news_data: NewsUpdateSchema = Depends(NewsUpdateSchema), 
+    news_data: NewsUpdateSchema = Depends(NewsUpdateSchema),
     session: AsyncSession = Depends(get_async_session),
 ):
-    
     query = select(News).where(News.id == news_id)
     result = await session.execute(query)
     record = result.scalars().first()
@@ -99,14 +92,19 @@ async def partial_update_news(
         raise HTTPException(status_code=500, detail="Server error")
 
 
-# @news_router.delete("/{news_id}", response_model=dict)
-# async def delete_news(
-#     news_id: int, session: AsyncSession = Depends(get_async_session)
-# ) -> dict:
-#     try:
-#         query = delete(News).where(News.id == news_id)
-#         await session.execute(query)
-#         await session.commit()
-#         return {"message": "News deleted successfully"}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail="Server error")
+@news_router.delete("/{news_id}")
+async def delete_news(news_id: int, session: AsyncSession = Depends(get_async_session)):
+    query = select(News).where(News.id == news_id)
+    result = await session.execute(query)
+    if not result.scalars().first():
+        raise HTTPException(status_code=404, detail="News not found in db")
+
+    try:
+        query = delete(News).where(News.id == news_id)
+        await session.execute(query)
+        await session.commit()
+        # return Response(status_code=204)
+        return {"message": f"Record with id {news_id} was successfully deleted."}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Server error")
