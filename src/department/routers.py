@@ -1,7 +1,10 @@
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, File, UploadFile
+import fastapi_users
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.auth.models import User
+from src.auth.auth_config import fastapi_users
 
 from src.database import get_async_session
 from .utils import (
@@ -42,6 +45,10 @@ theatrical_router = APIRouter(
     prefix="/departments/theatrical_department", tags=["Theatrical Department"]
 )
 
+CURRENT_SUPERUSER = fastapi_users.current_user(
+    active=True, verified=True, superuser=True
+)
+
 DEPARTMENT_RESPONSE = DepartmentBaseSchema
 POST_BODY = DepartmentCreateSchema
 UPDATE_BODY = DepartmentUpdateSchema
@@ -59,6 +66,7 @@ class MusicDepartmentRoutes:
     async def create_music_department(
         music_department: POST_BODY = Depends(POST_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await create_department(music_department, MusicDepartment, session)
 
@@ -74,6 +82,7 @@ class MusicDepartmentRoutes:
         photo: Annotated[UploadFile, File()] = None,
         department_data: UPDATE_BODY = Depends(UPDATE_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await update_department(
             id, department_data, photo, MusicDepartment, session
@@ -81,7 +90,9 @@ class MusicDepartmentRoutes:
 
     @music_router.delete("/{id}", response_model=DELETE_RESPONSE)
     async def delete_music_department(
-        id: int, session: AsyncSession = Depends(get_async_session)
+        id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await delete_department(id, MusicDepartment, session)
 
@@ -97,6 +108,7 @@ class VocalChoirDepartmentRoutes:
     async def create_vocal_choir_department(
         vocal_choir_department: POST_BODY = Depends(POST_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await create_department(
             vocal_choir_department, VocalChoirDepartment, session
@@ -114,6 +126,7 @@ class VocalChoirDepartmentRoutes:
         photo: Annotated[UploadFile, File()] = None,
         department_data: UPDATE_BODY = Depends(UPDATE_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await update_department(
             id, department_data, photo, VocalChoirDepartment, session
@@ -121,7 +134,9 @@ class VocalChoirDepartmentRoutes:
 
     @vocal_choir_router.delete("/{id}", response_model=DELETE_RESPONSE)
     async def delete_vocal_choir_department(
-        id: int, session: AsyncSession = Depends(get_async_session)
+        id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await delete_department(id, VocalChoirDepartment, session)
 
@@ -137,6 +152,7 @@ class ChoreographicDepartmentRoutes:
     async def create_choreographic_department(
         vocal_choir_department: POST_BODY = Depends(POST_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await create_department(
             vocal_choir_department, ChoreographicDepartment, session
@@ -154,6 +170,7 @@ class ChoreographicDepartmentRoutes:
         photo: Annotated[UploadFile, File()] = None,
         department_data: UPDATE_BODY = Depends(UPDATE_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await update_department(
             id, department_data, photo, ChoreographicDepartment, session
@@ -161,7 +178,9 @@ class ChoreographicDepartmentRoutes:
 
     @choreographic_router.delete("/{id}", response_model=DELETE_RESPONSE)
     async def delete_choreographic_department(
-        id: int, session: AsyncSession = Depends(get_async_session)
+        id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await delete_department(id, ChoreographicDepartment, session)
 
@@ -177,6 +196,7 @@ class FineArtsDepartmentRoutes:
     async def create_fine_arts_department(
         vocal_choir_department: POST_BODY = Depends(POST_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await create_department(
             vocal_choir_department, FineArtsDepartment, session
@@ -194,6 +214,7 @@ class FineArtsDepartmentRoutes:
         photo: Annotated[UploadFile, File()] = None,
         department_data: UPDATE_BODY = Depends(UPDATE_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await update_department(
             id, department_data, photo, FineArtsDepartment, session
@@ -201,7 +222,9 @@ class FineArtsDepartmentRoutes:
 
     @fine_arts_router.delete("/{id}", response_model=DELETE_RESPONSE)
     async def delete_fine_arts_department(
-        id: int, session: AsyncSession = Depends(get_async_session)
+        id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await delete_department(id, FineArtsDepartment, session)
 
@@ -217,6 +240,7 @@ class TheatricalDepartmentRoutes:
     async def create_theatrical_department(
         vocal_choir_department: POST_BODY = Depends(POST_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await create_department(
             vocal_choir_department, TheatricalDepartment, session
@@ -234,6 +258,7 @@ class TheatricalDepartmentRoutes:
         photo: Annotated[UploadFile, File()] = None,
         department_data: UPDATE_BODY = Depends(UPDATE_BODY),
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await update_department(
             id, department_data, photo, TheatricalDepartment, session
@@ -241,6 +266,8 @@ class TheatricalDepartmentRoutes:
 
     @theatrical_router.delete("/{id}", response_model=DELETE_RESPONSE)
     async def delete_theatrical_department(
-        id: int, session: AsyncSession = Depends(get_async_session)
+        id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(CURRENT_SUPERUSER),
     ):
         return await delete_department(id, TheatricalDepartment, session)

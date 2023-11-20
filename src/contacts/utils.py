@@ -1,26 +1,24 @@
-# non-business logic functions, e.g. response normalization, data enrichment, etc.
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
+import contextlib
+
 from sqlalchemy import select
+
 from src.contacts.models import Contacts
-
 from src.database import get_async_session
+from src.exceptions import CONTACTS_ALREADY_EXISTS, CONTACTS_SUCCESS_CREATE
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("lifespan start")
-    session = get_async_session()
-    async for s in session:
-        async with s.begin():
-            query = select(Contacts)
-            result = await s.execute(query)
-            contacts = result.scalars().first()
-            if not contacts:
-                contacts = Contacts(
-                    address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40"
-                )
-                s.add(contacts)
-                await s.commit()
-    yield
-    print("lifespan end")
+get_async_session_context = contextlib.asynccontextmanager(get_async_session)
+
+
+async def create_contacts(address: str, phone: str):
+    async with get_async_session_context() as session:
+        query = select(Contacts)
+        result = await session.execute(query)
+        contacts = result.scalars().first()
+        if not contacts:
+            contacts = Contacts(address=address, phone=phone)
+            session.add(contacts)
+            await session.commit()
+            print(CONTACTS_SUCCESS_CREATE)
+        else:
+            print(CONTACTS_ALREADY_EXISTS)

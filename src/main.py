@@ -4,6 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from sqladmin import Admin
 
 from admin import ContactsView
+from src.utils import lifespan
+from src.database import engine
+from src.auth.auth_config import auth_backend, fastapi_users
 from src.contacts.routers import router as router_contacts
 from src.department.routers import (
     music_router,
@@ -12,8 +15,6 @@ from src.department.routers import (
     vocal_choir_router,
     choreographic_router,
 )
-from src.contacts.utils import lifespan
-from src.database import engine
 
 
 app = FastAPI(title="School", lifespan=lifespan)
@@ -25,9 +26,16 @@ app.include_router(fine_arts_router, prefix="/api/v1")
 app.include_router(theatrical_router, prefix="/api/v1")
 app.include_router(vocal_choir_router, prefix="/api/v1")
 app.include_router(choreographic_router, prefix="/api/v1")
-
-admin = Admin(app=app, engine=engine, title="Художня Школа")
-admin.add_view(ContactsView)
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend, requires_verification=True),
+    prefix="/auth",
+    tags=["Auth"],
+)
+app.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["Auth"],
+)
 
 origins = [
     "http://localhost:3000",
@@ -47,3 +55,5 @@ app.add_middleware(
         "Authorization",
     ],
 )
+admin = Admin(app=app, engine=engine, title="Художня Школа")
+admin.add_view(ContactsView)

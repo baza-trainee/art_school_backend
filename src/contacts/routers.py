@@ -3,13 +3,19 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic_core import Url
 
+from src.auth.models import User
+from src.auth.auth_config import fastapi_users
 from src.database import get_async_session
 from src.exceptions import SERVER_ERROR, NO_DATA_FOUND
 from .schemas import ContactsSchema, ContactsUpdateSchema
 from .models import Contacts
 
 
-router = APIRouter(prefix="/contacts", tags=["contacts"])
+router = APIRouter(prefix="/contacts", tags=["Contacts"])
+
+CURRENT_SUPERUSER = fastapi_users.current_user(
+    active=True, verified=True, superuser=True
+)
 
 
 @router.get("", response_model=ContactsSchema)
@@ -30,6 +36,7 @@ async def get_contacts(
 async def update_contacts(
     contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema),
     session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
 ) -> ContactsSchema:
     contacts_data = contacts_update.model_dump(exclude_none=True)
     if not contacts_data:

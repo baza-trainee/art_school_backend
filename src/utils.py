@@ -1,28 +1,18 @@
-import inspect
-from typing import Type
+from fastapi import FastAPI
 
-from pydantic import BaseModel
+from src.auth.utils import create_user
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.contacts.utils import create_contacts
+from src.database import get_async_session
 
 
-# Decorator for PATCH methods, to create a form in Swagger.
-def as_form_patch(cls: Type[BaseModel]):
-    new_parameters = []
-
-    for field_name, field_type in cls.__annotations__.items():
-        new_parameters.append(
-            inspect.Parameter(
-                field_name,
-                inspect.Parameter.POSITIONAL_ONLY,
-                default=None,
-                annotation=field_type,
+async def lifespan(app: FastAPI):
+    print("lifespan start")
+    async for s in get_async_session():
+        async with s.begin():
+            await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+            await create_contacts(
+                address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40"
             )
-        )
-
-    async def as_form_patch_func(**data):
-        return cls(**data)
-
-    sig = inspect.signature(as_form_patch_func)
-    sig = sig.replace(parameters=new_parameters)
-    as_form_patch_func.__signature__ = sig
-    setattr(cls, "as_form_patch", as_form_patch_func)
-    return cls
+    yield
+    print("lifespan end")
