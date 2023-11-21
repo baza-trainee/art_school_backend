@@ -10,5 +10,3 @@ class News(Base):
     title = Column(String)
     text = Column(String)
     photo = Column(String)
-    
-  

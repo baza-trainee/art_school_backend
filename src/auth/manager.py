@@ -20,6 +20,7 @@ from .models import User
 from src.config import SECRET_AUTH
 from src.database import get_async_session
 
+
 def check_password_strength(password: str):
     """
     Checks if password is a combination of
@@ -38,7 +39,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(AFTER_REGISTER % user.email)
 
-    async def validate_password(self, password: str, user: Union[UserCreate, User]) -> None:
+    async def validate_password(
+        self, password: str, user: Union[UserCreate, User]
+    ) -> None:
         if len(password) < 8:
             raise InvalidPasswordException(reason=PASSWORD_LEN_ERROR)
         if user.email in password:

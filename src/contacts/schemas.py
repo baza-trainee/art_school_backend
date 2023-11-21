@@ -1,4 +1,5 @@
 from typing import Optional
+from enum import Enum
 
 from pydantic import BaseModel, EmailStr, constr, AnyHttpUrl
 
@@ -28,3 +29,15 @@ class ContactsUpdateSchema(BaseModel):
     admission_info_url: Optional[AnyHttpUrl] = None
     statute_url: Optional[AnyHttpUrl] = None
     legal_info_url: Optional[AnyHttpUrl] = None
+
+
+class ContactField(str, Enum):
+    map_url = "map_url"
+    address = "address"
+    phone = "phone"
+    email = "email"
+    facebook_url = "facebook_url"
+    youtube_url = "youtube_url"
+    admission_info_url = "admission_info_url"
+    statute_url = "statute_url"
+    legal_info_url = "legal_info_url"

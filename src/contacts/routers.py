@@ -6,8 +6,8 @@ from pydantic_core import Url
 from src.auth.models import User
 from src.auth.auth_config import fastapi_users
 from src.database import get_async_session
-from src.exceptions import SERVER_ERROR, NO_DATA_FOUND
-from .schemas import ContactsSchema, ContactsUpdateSchema
+from src.exceptions import INVALID_FIELD, SERVER_ERROR, NO_DATA_FOUND
+from .schemas import ContactField, ContactsSchema, ContactsUpdateSchema
 from .models import Contacts
 
 
@@ -49,6 +49,28 @@ async def update_contacts(
             update(Contacts)
             .where(Contacts.id == 1)
             .values(**contacts_data)
+            .returning(Contacts)
+        )
+        result = await session.execute(query)
+        await session.commit()
+        return result.scalars().first()
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
+
+@router.delete("/{field}", response_model=ContactsSchema)
+async def clear_field(
+    field: ContactField,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
+) -> ContactsSchema:
+    if field not in Contacts.__table__.columns:
+        raise HTTPException(status_code=400, detail=INVALID_FIELD)
+    try:
+        query = (
+            update(Contacts)
+            .where(Contacts.id == 1)
+            .values({field: None})
             .returning(Contacts)
         )
         result = await session.execute(query)
