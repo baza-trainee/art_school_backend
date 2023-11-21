@@ -11,12 +11,13 @@ class PosterSchema(BaseModel):
     text: Optional[str] = Field(..., max_length=2000)
     photo: Optional[str]
     date: date
-    
+
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):
     #     return (
     #         f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
     #     )
+
 
 class PosterCreateSchema(BaseModel):
     photo: UploadFile = Field(...)
@@ -27,5 +28,3 @@ class PosterCreateSchema(BaseModel):
 class PosterUpdateSchema(BaseModel):
     title: Optional[str] = Field(None, max_length=300)
     text: Optional[str] = Field(None, max_length=2000)
-
-

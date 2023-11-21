@@ -11,12 +11,13 @@ class NewsSchema(BaseModel):
     text: Optional[str] = Field(..., max_length=2000)
     photo: Optional[str]
     created_at: date
-    
+
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):
     #     return (
     #         f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
     #     )
+
 
 class NewsCreateSchema(BaseModel):
     photo: UploadFile = Field(...)

@@ -12,5 +12,3 @@ class Poster(Base):
     text = Column(String)
     photo = Column(String)
     date = Column(Date, default=date.today)
-    
-  

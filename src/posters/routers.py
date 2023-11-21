@@ -13,7 +13,7 @@ from .exceptions import (
     NO_DATA_FOUND,
     SERVER_ERROR,
     NO_RECORD,
-    NO_DATA_LIST_FOUND 
+    NO_DATA_LIST_FOUND,
 )
 from fastapi_pagination import Page, paginate
 
@@ -141,7 +141,7 @@ async def delete_posters(
         query = delete(Poster).where(Poster.id == poster_id)
         await session.execute(query)
         await session.commit()
-        return {"message": "Record with id `%s`was successfully deleted." % poster_id }
+        return {"message": "Record with id `%s`was successfully deleted." % poster_id}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)

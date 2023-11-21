@@ -4,6 +4,6 @@ from .posters import PosterView
 
 __all__ = [
     "ContactsView",
-    "NewsView", 
+    "NewsView",
     "PosterView",
 ]

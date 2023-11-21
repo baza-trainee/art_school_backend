@@ -1,4 +1,3 @@
-
 from src.database import get_async_session
 from src.auth.utils import create_user
 
@@ -6,6 +5,7 @@ from src.auth.utils import create_user
 from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
 from src.contacts.utils import create_contacts
 from src.database import get_async_session
+
 
 async def customlifespan():
     print("lifespan start")
