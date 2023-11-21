@@ -5,7 +5,7 @@ SERVER_ERROR = "Server error has occurred."
 SUCCESS_DELETE = "Record with id: `%s` was successfully deleted."
 
 # DEPARTMENTS
-DEPARTMENTS_EXISTS = "Department with name: `%s` already exists."
+DEPARTMENTS_EXISTS = "Department with name: `%s` already exists in the database."
 
 # CONTACTS
 CONTACTS_SUCCESS_CREATE = "Contacts have been created successfully."
@@ -21,3 +21,6 @@ PASSWORD_LEN_ERROR = "Password should be at least 8 characters."
 PASSWORD_UNIQUE_ERROR = "Password should not contain e-mail."
 PASSWORD_STRENGTH_ERROR = "Password must contain a lowercase letter, uppercase letter, a number and a special symbol."
 PASSWORD_CHANGE_SUCCESS = "The password has been changed."
+
+# SCHOOL ADMINISTRATION
+PERSON_EXISTS = "Administrator with name %s already exists in the database."

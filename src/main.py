@@ -8,6 +8,9 @@ from src.utils import lifespan
 from src.database import engine
 from src.auth.auth_config import auth_backend, fastapi_users
 from src.contacts.routers import router as router_contacts
+from src.administrations.routers import school_admin_router
+from src.news.routers import news_router
+from src.posters.routers import posters_router
 from src.department.routers import (
     music_router,
     fine_arts_router,
@@ -15,9 +18,6 @@ from src.department.routers import (
     vocal_choir_router,
     choreographic_router,
 )
-
-from src.news.routers import news_router
-from src.posters.routers import posters_router
 
 
 app = FastAPI(title="School", lifespan=lifespan)
@@ -34,7 +34,6 @@ app.include_router(
     prefix="/auth",
     tags=["Auth"],
 )
-
 app.include_router(router_contacts, prefix="/api/v1")
 app.include_router(music_router, prefix="/api/v1")
 app.include_router(fine_arts_router, prefix="/api/v1")
@@ -43,7 +42,7 @@ app.include_router(vocal_choir_router, prefix="/api/v1")
 app.include_router(choreographic_router, prefix="/api/v1")
 app.include_router(news_router, prefix="/api/v1")
 app.include_router(posters_router, prefix="/api/v1")
-
+app.include_router(school_admin_router, prefix="/api/v1")
 
 origins = [
     "http://localhost:3000",
