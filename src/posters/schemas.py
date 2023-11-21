@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, validator
 from src.config import BASE_URL
 from fastapi import UploadFile
+from datetime import date
 
 
 class PosterSchema(BaseModel):
@@ -9,6 +10,7 @@ class PosterSchema(BaseModel):
     title: Optional[str] = Field(..., max_length=300)
     text: Optional[str] = Field(..., max_length=2000)
     photo: Optional[str]
+    date: date
 
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqladmin import Admin
+from fastapi_pagination import add_pagination
 
 from admin import ContactsView
 from src.utils import lifespan
@@ -64,3 +65,4 @@ app.add_middleware(
 )
 admin = Admin(app=app, engine=engine, title="Художня Школа")
 admin.add_view(ContactsView)
+add_pagination(app)

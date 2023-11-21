@@ -11,3 +11,4 @@ urllib3==1.26.16
 cloudinary==1.36.0
 fastapi-users[sqlalchemy]
 fastapi-mail
+fastapi-pagination==0.12.12
