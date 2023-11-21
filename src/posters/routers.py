@@ -15,6 +15,7 @@ from .exceptions import (
     NO_RECORD,
     NO_DATA_LIST_FOUND 
 )
+from fastapi_pagination import Page, paginate
 
 CURRENT_SUPERUSER = fastapi_users.current_user(
     active=True, verified=True, superuser=True
@@ -23,16 +24,16 @@ CURRENT_SUPERUSER = fastapi_users.current_user(
 posters_router = APIRouter(prefix="/posters", tags=["Posters"])
 
 
-@posters_router.get("", response_model=List[PosterSchema])
+@posters_router.get("", response_model=Page[PosterSchema])
 async def get_posters_list(
     session: AsyncSession = Depends(get_async_session),
 ) -> PosterSchema:
-    query = select(Poster)
+    query = select(Poster).order_by(Poster.date)
     posters = await session.execute(query)
     all_posters = posters.scalars().all()
     if not all_posters:
         raise HTTPException(status_code=404, detail=NO_DATA_LIST_FOUND)
-    return all_posters
+    return paginate(all_posters)
 
 
 @posters_router.get("/{id}", response_model=PosterSchema)
