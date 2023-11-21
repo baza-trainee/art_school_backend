@@ -1,13 +1,16 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
+from fastapi_pagination import Page, paginate
+from sqlalchemy import select, update, delete, func, insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from cloudinary import uploader
+
 from src.auth.models import User
 from src.database import get_async_session
+from src.auth.auth_config import CURRENT_SUPERUSER
 from .models import Poster
 from .schemas import PosterSchema, PosterCreateSchema, PosterUpdateSchema
-from sqlalchemy import select, update, delete, func, insert
-from typing import Annotated, List
-from cloudinary import uploader
-from src.auth.auth_config import fastapi_users
 from .exceptions import (
     POSTERS_EXISTS,
     NO_DATA_FOUND,
@@ -15,11 +18,7 @@ from .exceptions import (
     NO_RECORD,
     NO_DATA_LIST_FOUND,
 )
-from fastapi_pagination import Page, paginate
 
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
 
 posters_router = APIRouter(prefix="/posters", tags=["Posters"])
 

@@ -1,13 +1,16 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_pagination import Page, paginate
+from sqlalchemy import select, update, delete, func, insert
+from cloudinary import uploader
+
 from src.auth.models import User
 from src.database import get_async_session
+from src.auth.auth_config import CURRENT_SUPERUSER
 from .models import News
 from .schemas import NewsSchema, NewsCreateSchema, NewsUpdateSchema
-from sqlalchemy import select, update, delete, func, insert
-from typing import Annotated, List
-from cloudinary import uploader
-from src.auth.auth_config import fastapi_users
 from .exceptions import (
     NEWS_EXISTS,
     NO_DATA_FOUND,
@@ -15,11 +18,7 @@ from .exceptions import (
     NO_RECORD,
     SUCCESS_DELETE,
 )
-from fastapi_pagination import Page, paginate
 
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
 
 news_router = APIRouter(prefix="/news", tags=["News"])
 

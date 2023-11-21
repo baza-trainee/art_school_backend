@@ -21,7 +21,17 @@ from src.department.routers import (
 )
 
 
-app = FastAPI(title="School", lifespan=lifespan)
+app = FastAPI(
+    swagger_ui_parameters={
+        "syntaxHighlight.theme": "obsidian",
+        "tryItOutEnabled": True,
+        "displayOperationId": True,
+        "filter": True,
+        "requestSnippets": True,
+    },
+    title="School",
+    lifespan=lifespan,
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
