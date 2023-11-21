@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic_core import Url
 
 from src.auth.models import User
-from src.auth.auth_config import fastapi_users
+from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
 from src.exceptions import INVALID_FIELD, SERVER_ERROR, NO_DATA_FOUND
 from .schemas import ContactField, ContactsSchema, ContactsUpdateSchema
@@ -12,10 +12,6 @@ from .models import Contacts
 
 
 router = APIRouter(prefix="/contacts", tags=["Contacts"])
-
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
 
 
 @router.get("", response_model=ContactsSchema)
