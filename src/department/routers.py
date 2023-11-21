@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, File, UploadFile
 import fastapi_users
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
-from src.auth.auth_config import fastapi_users
+from src.auth.auth_config import CURRENT_SUPERUSER
 
 from src.database import get_async_session
 from .utils import (
@@ -43,10 +43,6 @@ fine_arts_router = APIRouter(
 )
 theatrical_router = APIRouter(
     prefix="/departments/theatrical_department", tags=["Theatrical Department"]
-)
-
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
 )
 
 DEPARTMENT_RESPONSE = DepartmentBaseSchema
