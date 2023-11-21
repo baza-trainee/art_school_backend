@@ -15,6 +15,7 @@ from .exceptions import (
     NO_RECORD,
     SUCCESS_DELETE,
 )
+from fastapi_pagination import Page, paginate
 
 CURRENT_SUPERUSER = fastapi_users.current_user(
     active=True, verified=True, superuser=True
@@ -23,16 +24,16 @@ CURRENT_SUPERUSER = fastapi_users.current_user(
 news_router = APIRouter(prefix="/news", tags=["News"])
 
 
-@news_router.get("", response_model=List[NewsSchema])
+@news_router.get("", response_model=Page[NewsSchema])
 async def get_news_list(
     session: AsyncSession = Depends(get_async_session),
 ) -> NewsSchema:
-    query = select(News)
+    query = select(News).order_by(News.created_at)
     news = await session.execute(query)
     all_news = news.scalars().all()
     if not all_news:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    return all_news
+    return paginate(all_news)
 
 
 @news_router.get("/{id}", response_model=NewsSchema)
