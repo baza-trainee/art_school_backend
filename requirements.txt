@@ -9,6 +9,6 @@ sqladmin[full]==0.16.0
 aiofiles==23.2.1
 urllib3==1.26.16
 cloudinary==1.36.0
-fastapi-users[sqlalchemy]
-fastapi-mail
+fastapi-users[sqlalchemy]==12.1.2
+fastapi-mail==1.4.1
 fastapi-pagination==0.12.12
