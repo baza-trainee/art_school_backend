@@ -14,7 +14,7 @@ cloudinary.config(
 )
 
 COOKIE_NAME = "art_school"
-
+API_PREFIX = "/api/v1"
 BASE_URL = os.environ.get("BASE_URL")
 
 DB_HOST = os.environ.get("DB_HOST")
@@ -47,3 +47,23 @@ mail_config = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
 )
+
+ALLOW_METHODS = ["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"]
+ALLOW_HEADERS = [
+    "Content-Type",
+    "Set-Cookie",
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Origin",
+    "Authorization",
+]
+ORIGINS = [
+    "http://localhost:3000",
+    "https://art-school-frontend.vercel.app",
+]
+SWAGGER_PARAMETERS = {
+    "syntaxHighlight.theme": "obsidian",
+    "tryItOutEnabled": True,
+    "displayOperationId": True,
+    "filter": True,
+    "requestSnippets": True,
+}
