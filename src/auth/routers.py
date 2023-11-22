@@ -3,18 +3,17 @@ from fastapi_users.password import PasswordHelper
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update
 
-from src.auth.auth_config import CURRENT_SUPERUSER
+from src.auth.auth_config import CURRENT_SUPERUSER, fastapi_users, auth_backend
 from src.database import get_async_session
 from src.exceptions import PASSWORD_STRENGTH_ERROR
 from src.auth.models import User
 from src.database import get_async_session
 from .manager import get_user_manager
 
+auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
-password_router = APIRouter(prefix="/auth", tags=["Auth"])
 
-
-@password_router.post("/change-password")
+@auth_router.post("/change-password")
 async def change_password(
     old_password: str,
     new_password: str,
@@ -43,3 +42,9 @@ async def change_password(
     await session.execute(query)
     await session.commit()
     return {"detail": "Successfully changed password"}
+
+
+auth_router.include_router(
+    fastapi_users.get_auth_router(auth_backend, requires_verification=True)
+)
+auth_router.include_router(fastapi_users.get_reset_password_router())
