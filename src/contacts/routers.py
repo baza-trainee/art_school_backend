@@ -17,7 +17,7 @@ router = APIRouter(prefix="/contacts", tags=["Contacts"])
 @router.get("", response_model=ContactsSchema)
 async def get_contacts(
     session: AsyncSession = Depends(get_async_session),
-) -> ContactsSchema:
+):
     try:
         query = select(Contacts)
         contacts = await session.execute(query)
@@ -33,7 +33,7 @@ async def update_contacts(
     contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
-) -> ContactsSchema:
+):
     contacts_data = contacts_update.model_dump(exclude_none=True)
     if not contacts_data:
         return Response(status_code=204)
@@ -59,7 +59,7 @@ async def clear_field(
     field: ContactField,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
-) -> ContactsSchema:
+):
     if field not in Contacts.__table__.columns:
         raise HTTPException(status_code=400, detail=INVALID_FIELD)
     try:

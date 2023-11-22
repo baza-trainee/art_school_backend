@@ -26,7 +26,7 @@ news_router = APIRouter(prefix="/news", tags=["News"])
 @news_router.get("", response_model=Page[NewsSchema])
 async def get_news_list(
     session: AsyncSession = Depends(get_async_session),
-) -> NewsSchema:
+):
     query = select(News).order_by(News.created_at)
     news = await session.execute(query)
     all_news = news.scalars().all()
@@ -39,7 +39,7 @@ async def get_news_list(
 async def get_news_list(
     id: int,
     session: AsyncSession = Depends(get_async_session),
-) -> NewsSchema:
+):
     query = select(News).where(News.id == id)
     result = await session.execute(query)
     response = result.scalars().first()

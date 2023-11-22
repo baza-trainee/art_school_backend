@@ -26,7 +26,7 @@ posters_router = APIRouter(prefix="/posters", tags=["Posters"])
 @posters_router.get("", response_model=Page[PosterSchema])
 async def get_posters_list(
     session: AsyncSession = Depends(get_async_session),
-) -> PosterSchema:
+):
     query = select(Poster).order_by(Poster.date)
     posters = await session.execute(query)
     all_posters = posters.scalars().all()
@@ -39,7 +39,7 @@ async def get_posters_list(
 async def get_posters_list(
     id: int,
     session: AsyncSession = Depends(get_async_session),
-) -> PosterSchema:
+):
     query = select(Poster).where(Poster.id == id)
     result = await session.execute(query)
     response = result.scalars().first()

@@ -24,3 +24,8 @@ PASSWORD_CHANGE_SUCCESS = "The password has been changed."
 
 # SCHOOL ADMINISTRATION
 PERSON_EXISTS = "Administrator with name %s already exists in the database."
+
+# GALLERY
+GALLERY_PINNED_EXISTS = "Media with position number: `%s` already exists."
+GALLERY_IS_NOT_A_VIDEO = "The selected recording is not a video"
+GALLERY_IS_NOT_A_PHOTO = "The selected recording is not a photo"
