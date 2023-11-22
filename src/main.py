@@ -19,7 +19,7 @@ from src.department.routers import (
     vocal_choir_router,
     choreographic_router,
 )
-
+from src.gallery.routers import gallery_router
 
 app = FastAPI(
     swagger_ui_parameters={
@@ -54,6 +54,7 @@ app.include_router(choreographic_router, prefix="/api/v1")
 app.include_router(news_router, prefix="/api/v1")
 app.include_router(posters_router, prefix="/api/v1")
 app.include_router(school_admin_router, prefix="/api/v1")
+app.include_router(gallery_router, prefix="/api/v1")
 
 origins = [
     "http://localhost:3000",
