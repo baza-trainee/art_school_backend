@@ -92,7 +92,7 @@ async def create_video(
 async def update_photo(
     id: int,
     pinned_position: PositionEnum,
-    media: UploadFile | None,
+    media: Optional[UploadFile],
     model: Type[Base],
     session: AsyncSession,
 ):
