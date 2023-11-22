@@ -1,12 +1,9 @@
-from ctypes import Union
-import os
 from typing import Optional, Type
 
 from cloudinary import uploader
-import aiofiles
 from pydantic import AnyHttpUrl
-from sqlalchemy import delete, func, insert, select, update
-from fastapi import HTTPException, Response, UploadFile
+from sqlalchemy import delete, insert, select, update
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
