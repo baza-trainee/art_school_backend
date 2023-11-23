@@ -8,6 +8,7 @@ from fastapi import UploadFile
 from src.config import BASE_URL
 from src.exceptions import SUCCESS_DELETE
 
+
 class GetPhotoSchema(BaseModel):
     id: int
     media: Union[AnyHttpUrl, FilePath]
@@ -19,11 +20,13 @@ class GetPhotoSchema(BaseModel):
     # @validator("media", pre=True)
     # def add_base_url(cls, v, values):
     #     return v if values['is_video'] else f"{BASE_URL}/{v}"
-    
+
+
 class GetVideoSchema(BaseModel):
     id: int
     media: Union[AnyHttpUrl, FilePath]
     created_at: datetime
+
 
 class GallerySubDepartmentEnum(int, Enum):
     default_department = 0
@@ -46,6 +49,7 @@ class GallerySubDepartmentEnum(int, Enum):
     imagination_development = 17
     painting = 18
     design_graphic = 19
+
 
 class PositionEnum(int, Enum):
     default_position = 0

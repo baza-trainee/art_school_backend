@@ -7,7 +7,12 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
-from src.gallery.schemas import CreatePhotoSchema, PositionEnum, GallerySubDepartmentEnum, CreateVideoSchema
+from src.gallery.schemas import (
+    CreatePhotoSchema,
+    PositionEnum,
+    GallerySubDepartmentEnum,
+    CreateVideoSchema,
+)
 from src.exceptions import (
     GALLERY_IS_NOT_A_PHOTO,
     GALLERY_IS_NOT_A_VIDEO,
@@ -32,7 +37,9 @@ async def get_all_media_by_type(
     return response
 
 
-async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int, is_video: bool):
+async def get_media_by_id(
+    model: Type[Base], session: AsyncSession, id: int, is_video: bool
+):
     query = select(model).filter_by(id=id, is_video=is_video)
     result = await session.execute(query)
     response = result.scalars().one_or_none()
@@ -151,7 +158,9 @@ async def update_photo(
         upload_result = uploader.upload(media.file, folder=folder_path)
         update_data["media"] = upload_result["url"]
     try:
-        query = update(model).where(model.id == id).values(**update_data).returning(model)
+        query = (
+            update(model).where(model.id == id).values(**update_data).returning(model)
+        )
         result = await session.execute(query)
         await session.commit()
         return result.scalars().first()
@@ -178,7 +187,9 @@ async def update_video(
     if media:
         update_data["media"] = str(media)
     try:
-        query = update(model).where(model.id == id).values(**update_data).returning(model)
+        query = (
+            update(model).where(model.id == id).values(**update_data).returning(model)
+        )
         result = await session.execute(query)
         await session.commit()
         return result.scalars().first()

@@ -7,7 +7,11 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
-from src.achievements.schemas import CreateAchievementSchema, PositionEnum, GallerySubDepartmentEnum
+from src.achievements.schemas import (
+    CreateAchievementSchema,
+    PositionEnum,
+    GallerySubDepartmentEnum,
+)
 from src.exceptions import (
     GALLERY_PINNED_EXISTS,
     NO_DATA_FOUND,
@@ -15,6 +19,7 @@ from src.exceptions import (
     SERVER_ERROR,
     SUCCESS_DELETE,
 )
+
 
 async def get_all_media_by_type(
     model: Type[Base],
@@ -35,6 +40,7 @@ async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int):
     if not response:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     return response
+
 
 async def create_photo(
     gallery: CreateAchievementSchema,
@@ -71,6 +77,7 @@ async def create_photo(
     gallery = result.scalars().first()
     await session.commit()
     return gallery
+
 
 async def update_photo(
     id: int,
@@ -118,12 +125,15 @@ async def update_photo(
         upload_result = uploader.upload(media.file, folder=folder_path)
         update_data["media"] = upload_result["url"]
     try:
-        query = update(model).where(model.id == id).values(**update_data).returning(model)
+        query = (
+            update(model).where(model.id == id).values(**update_data).returning(model)
+        )
         result = await session.execute(query)
         await session.commit()
         return result.scalars().first()
     except:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
 
 async def delete_media_by_id(id: int, model: Type[Base], session: AsyncSession):
     query = select(model).where(model.id == id)
