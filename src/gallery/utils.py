@@ -33,7 +33,9 @@ async def get_all_media_by_type(
     return response
 
 
-async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int, is_video: bool):
+async def get_media_by_id(
+    model: Type[Base], session: AsyncSession, id: int, is_video: bool
+):
     query = select(model).filter_by(id=id, is_video=is_video)
     result = await session.execute(query)
     response = result.scalars().one_or_none()
@@ -50,7 +52,7 @@ async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int, is_
 
 async def create_photo(
     pinned_position: PositionEnum,
-    sub_department : SubDepartmentEnum,
+    sub_department: SubDepartmentEnum,
     gallery: CreatePhotoSchema,
     model: Type[Base],
     session: AsyncSession,
@@ -75,9 +77,9 @@ async def create_photo(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % pinned_position.value,
             )
-        schema_output['pinned_position'] = pinned_position
+        schema_output["pinned_position"] = pinned_position
     if sub_department:
-        schema_output['sub_department'] = sub_department
+        schema_output["sub_department"] = sub_department
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
     gallery = result.scalars().first()
@@ -104,7 +106,7 @@ async def create_video(
 async def update_photo(
     id: int,
     pinned_position: PositionEnum,
-    sub_department : SubDepartmentEnum,
+    sub_department: SubDepartmentEnum,
     media: Optional[UploadFile],
     model: Type[Base],
     session: AsyncSession,
@@ -120,7 +122,7 @@ async def update_photo(
         "is_video": False,
     }
     if not sub_department is None:
-        update_data['sub_department'] = sub_department
+        update_data["sub_department"] = sub_department
     if not pinned_position is None:
         if pinned_position > 0 and pinned_position != record.pinned_position:
             query = select(model).filter_by(pinned_position=pinned_position)
