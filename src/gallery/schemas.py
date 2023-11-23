@@ -46,9 +46,11 @@ class GallerySubDepartmentEnum(int, Enum):
     classical_dance = 14
     folk_dance = 15
     modern_dance = 16
-    imagination_development = 17
-    painting = 18
-    design_graphic = 19
+    fake_theatrical = 17
+    imagination_development = 18
+    painting = 19
+    design_graphic = 20
+    fake_preschool = 21
 
 
 class PositionEnum(int, Enum):
