@@ -9,8 +9,8 @@ class Achievement(Base):
     __tablename__ = "achievements"
 
     id: int = Column(Integer, primary_key=True)
-    is_pinned: bool = Column(Boolean, nullable=False)
     media: str = Column(String, nullable=False)
+    pinned_position: int = Column(Integer, nullable=True)
     description: str = Column(String, nullable=True)
     sub_department: int = Column(Integer, ForeignKey("sub_departments.id"), nullable=True)
     created_at: datetime = Column(DateTime, default=func.now())

@@ -8,9 +8,8 @@ from fastapi import UploadFile
 from src.config import BASE_URL
 from src.exceptions import SUCCESS_DELETE
 
-class GetPhotoSchema(BaseModel):
+class GetAchievementSchema(BaseModel):
     id: int
-    is_achivement : bool
     media: Union[AnyHttpUrl, FilePath]
     pinned_position: Optional[int]
     description: Optional[str]
@@ -60,16 +59,11 @@ class PositionEnum(int, Enum):
     position_8 = 8
 
 
-class CreatePhotoSchema(BaseModel):
+class CreateAchievementSchema(BaseModel):
     pinned_position: PositionEnum
     media: UploadFile
-    is_achivement : bool = False
     sub_department: GallerySubDepartmentEnum
     description: Optional[str] = None
-
-
-class CreateVideoSchema(BaseModel):
-    media: AnyHttpUrl
 
 
 class DeleteResponseSchema(BaseModel):

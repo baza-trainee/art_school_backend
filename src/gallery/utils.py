@@ -139,6 +139,8 @@ async def update_photo(
                 )
         if pinned_position == 0:
             update_data["pinned_position"] = None
+        else:
+            update_data["pinned_position"] = pinned_position
     if media:
         folder_path = f"static/{model.__name__}"
         # os.makedirs(folder_path, exist_ok=True)
