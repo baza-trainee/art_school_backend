@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, Union
 
 from pydantic import AnyHttpUrl, BaseModel, validator, FilePath
-from fastapi import UploadFile
+from fastapi import Form, UploadFile
 
 from src.config import BASE_URL
 from src.exceptions import SUCCESS_DELETE
@@ -69,11 +69,26 @@ class CreatePhotoSchema(BaseModel):
     # pinned_position: PositionEnum
     media: UploadFile
     # sub_department: GallerySubDepartmentEnum
-    description: Optional[str] = None
+    description: str = None
+
+    @classmethod
+    def as_form(
+        cls,
+        media: UploadFile,
+        description: str = Form(default=None),
+    ):
+        return cls(media=media, description=description)
 
 
 class CreateVideoSchema(BaseModel):
     media: AnyHttpUrl
+
+    @classmethod
+    def as_form(
+        cls,
+        media: AnyHttpUrl = Form(),
+    ):
+        return cls(media=media)
 
 
 class DeleteResponseSchema(BaseModel):

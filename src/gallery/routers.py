@@ -1,6 +1,6 @@
 from typing import Union
 import fastapi_users
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, Form, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from pydantic import AnyHttpUrl
@@ -83,9 +83,9 @@ async def get_video(
 
 @gallery_router.post("/photo", response_model=GET_PHOTO_RESPONSE)
 async def post_photo(
-    pinned_position: PositionEnum = None,
-    sub_department: GallerySubDepartmentEnum = None,
-    gallery: POST_PHOTO_BODY = Depends(POST_PHOTO_BODY),
+    pinned_position: PositionEnum = Form(default=None),
+    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    gallery: POST_PHOTO_BODY = Depends(POST_PHOTO_BODY.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -96,7 +96,7 @@ async def post_photo(
 
 @gallery_router.post("/video", response_model=GET_VIDEO_RESPONSE)
 async def post_video(
-    gallery: POST_VIDEO_BODY = Depends(POST_VIDEO_BODY),
+    gallery: POST_VIDEO_BODY = Depends(POST_VIDEO_BODY.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -106,10 +106,10 @@ async def post_video(
 @gallery_router.patch("/photo/{id}", response_model=GET_PHOTO_RESPONSE)
 async def patch_photo(
     id: int,
-    pinned_position: PositionEnum = None,
-    sub_department: GallerySubDepartmentEnum = None,
-    description: str = None,
-    media: UploadFile = None,
+    pinned_position: PositionEnum = Form(default=None),
+    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    description: str = Form(default=None),
+    media: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -121,7 +121,7 @@ async def patch_photo(
 @gallery_router.patch("/video/{id}", response_model=GET_VIDEO_RESPONSE)
 async def patch_video(
     id: int,
-    media: AnyHttpUrl = None,
+    media: AnyHttpUrl = Form(),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
