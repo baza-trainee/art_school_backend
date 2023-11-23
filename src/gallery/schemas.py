@@ -69,13 +69,13 @@ class CreatePhotoSchema(BaseModel):
     # pinned_position: PositionEnum
     media: UploadFile
     # sub_department: GallerySubDepartmentEnum
-    description: str = None
+    description: Optional[str] = None
 
     @classmethod
     def as_form(
         cls,
         media: UploadFile,
-        description: str = Form(default=None),
+        description: Optional[str] = Form(default=None),
     ):
         return cls(media=media, description=description)
 
