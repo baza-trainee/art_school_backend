@@ -164,6 +164,12 @@ SUB_DEPARTMENTS = [
         "description": desc,
         "main_department_id": 3,
     },
+    # Театральне відділення
+    {
+        "sub_department_name": "Псевдо відділ Театрального відділення",
+        "description": desc,
+        "main_department_id": 4,
+    },
     # Образотворче відділення
     {
         "sub_department_name": "Розвиток образотворчої уяви та мислення 1-4 класи",
@@ -179,6 +185,12 @@ SUB_DEPARTMENTS = [
         "sub_department_name": "Дизайнерсько-графічний напрямок 4-7 класи",
         "description": desc,
         "main_department_id": 5,
+    },
+    # Дошкільне та підготовче відділення
+    {
+        "sub_department_name": "Псевдо відділ Дошкільного та підготовчого відділення",
+        "description": desc,
+        "main_department_id": 6,
     },
 ]
 CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "phone": "+38(097)290-79-40"}

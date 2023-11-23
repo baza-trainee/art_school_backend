@@ -31,9 +31,11 @@ class SubDepartmentEnum(int, Enum):
     classical_dance = 14
     folk_dance = 15
     modern_dance = 16
-    imagination_development = 17
-    painting = 18
-    design_graphic = 19
+    fake_theatrical = 17
+    imagination_development = 18
+    painting = 19
+    design_graphic = 20
+    fake_preschool = 21
 
 
 class DepartmentSchema(BaseModel):
@@ -58,6 +60,14 @@ class SubDepartmentGallerySchema(BaseModel):
     is_video: bool
     description: Optional[str]
     sub_department: Optional[int]
-    is_achivement: bool
+    pinned_position: Optional[int]
+    created_at: datetime
+
+
+class SubDepartmentAchievementSchema(BaseModel):
+    id: int
+    media: str
+    description: Optional[str]
+    sub_department: Optional[int]
     pinned_position: Optional[int]
     created_at: datetime
