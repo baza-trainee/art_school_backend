@@ -1,11 +1,12 @@
 from typing import List
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
-from sqlalchemy import select, update
+from sqlalchemy import desc, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NO_DATA_FOUND, NO_RECORD, NO_SUB_DEPARTMENT, SERVER_ERROR
 from src.database import get_async_session
+from src.gallery.models import Gallery
 from .models import MainDepartment, SubDepartment
 from .schemas import (
     DepartmentEnum,
@@ -62,6 +63,46 @@ async def get_sub_department_by_id(
         if not sub_department:
             raise HTTPException(status_code=404, detail=NO_RECORD)
         return sub_department
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
+
+@departments.get("/sub_department_gallery/{id}")
+async def get_gallery_for_sub_department(
+    id: SubDepartmentEnum,
+    session: AsyncSession = Depends(get_async_session),
+):
+    try:
+        query = (
+            select(Gallery)
+            .where(Gallery.sub_department == id)
+            .order_by(desc(Gallery.created_at))
+        )
+        result = await session.execute(query)
+        gallery = result.scalars().all()
+        if not gallery:
+            return HTTPException(status_code=404, detail=NO_RECORD)
+        return gallery
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
+
+@departments.get("/sub_department_achivement/{id}")
+async def get_achivement_for_sub_department(
+    id: SubDepartmentEnum,
+    session: AsyncSession = Depends(get_async_session),
+):
+    try:
+        query = (
+            select(Gallery)
+            .where(Gallery.sub_department == id, Gallery.is_achivement == True)
+            .order_by(desc(Gallery.created_at))
+        )
+        result = await session.execute(query)
+        gallery = result.scalars().all()
+        if not gallery:
+            return HTTPException(status_code=404, detail=NO_RECORD)
+        return gallery
     except:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
