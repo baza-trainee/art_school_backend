@@ -2,9 +2,10 @@ from typing import Optional, Type
 
 from cloudinary import uploader
 from pydantic import AnyHttpUrl
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, select, update, and_
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 from src.database import Base
 from src.gallery.schemas import (
@@ -28,8 +29,18 @@ async def get_all_media_by_type(
     model: Type[Base],
     session: AsyncSession,
     is_video: bool,
+    is_pinned: bool,
 ):
-    query = select(model).filter_by(is_video=is_video).order_by(model.created_at.desc())
+    if is_pinned:
+        query = (
+            select(model)
+            .filter(and_(model.pinned_position.isnot(None), model.is_video == is_video))
+            .order_by(model.pinned_position)
+        )
+    else:
+        query = (
+            select(model).filter_by(is_video=is_video).order_by(model.created_at.desc())
+        )
     result = await session.execute(query)
     response = result.scalars().all()
     if not response:
@@ -55,21 +66,12 @@ async def get_media_by_id(
 
 
 async def create_photo(
+    pinned_position: PositionEnum,
+    sub_department: GallerySubDepartmentEnum,
     gallery: CreatePhotoSchema,
     model: Type[Base],
     session: AsyncSession,
 ):
-    if gallery.pinned_position:
-        query = select(model).filter_by(pinned_position=gallery.pinned_position)
-        record = await session.execute(query)
-        instance = record.scalars().first()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=GALLERY_PINNED_EXISTS % gallery.pinned_position.value,
-            )
-        if gallery.pinned_position == 0:
-            schema_output["pinned_position"] = None
     photo = gallery.media
     folder_path = f"static/{model.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
@@ -81,10 +83,24 @@ async def create_photo(
     gallery.media = upload_result["url"]
     schema_output = gallery.model_dump()
     schema_output["is_video"] = False
-    if gallery.sub_department == 0:
+
+    if not sub_department:
         schema_output["sub_department"] = None
-    if gallery.pinned_position == 0:
+    else:
+        schema_output["sub_department"] = sub_department
+    if not pinned_position:
         schema_output["pinned_position"] = None
+    else:
+        query = select(model).filter_by(pinned_position=pinned_position)
+        record = await session.execute(query)
+        instance = record.scalars().first()
+        if instance:
+            raise HTTPException(
+                status_code=400,
+                detail=GALLERY_PINNED_EXISTS % pinned_position.value,
+            )
+        schema_output["pinned_position"] = pinned_position
+
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
     gallery = result.scalars().first()

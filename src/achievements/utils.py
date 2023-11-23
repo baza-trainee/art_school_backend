@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import Base
 from src.achievements.schemas import (
     CreateAchievementSchema,
-    PositionEnum,
     GallerySubDepartmentEnum,
+    PositionEnum,
 )
 from src.exceptions import (
     GALLERY_PINNED_EXISTS,
@@ -21,11 +21,19 @@ from src.exceptions import (
 )
 
 
-async def get_all_media_by_type(
+async def get_all_achievements_by_filter(
     model: Type[Base],
     session: AsyncSession,
+    is_pinned: bool,
 ):
-    query = select(model).order_by(model.created_at.desc())
+    if is_pinned:
+        query = (
+            select(model)
+            .filter(model.pinned_position.isnot(None))
+            .order_by(model.pinned_position)
+        )
+    else:
+        query = select(model).order_by(model.created_at.desc())
     result = await session.execute(query)
     response = result.scalars().all()
     if not response:
@@ -43,21 +51,12 @@ async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int):
 
 
 async def create_photo(
+    pinned_position: PositionEnum,
+    sub_department: GallerySubDepartmentEnum,
     gallery: CreateAchievementSchema,
     model: Type[Base],
     session: AsyncSession,
 ):
-    if gallery.pinned_position:
-        query = select(model).filter_by(pinned_position=gallery.pinned_position)
-        record = await session.execute(query)
-        instance = record.scalars().first()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=GALLERY_PINNED_EXISTS % gallery.pinned_position.value,
-            )
-        if gallery.pinned_position == 0:
-            schema_output["pinned_position"] = None
     photo = gallery.media
     folder_path = f"static/{model.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
@@ -68,10 +67,24 @@ async def create_photo(
     upload_result = uploader.upload(photo.file, folder=folder_path)
     gallery.media = upload_result["url"]
     schema_output = gallery.model_dump()
-    if gallery.sub_department == 0:
+
+    if not sub_department:
         schema_output["sub_department"] = None
-    if gallery.pinned_position == 0:
+    else:
+        schema_output["sub_department"] = sub_department
+    if not pinned_position:
         schema_output["pinned_position"] = None
+    else:
+        query = select(model).filter_by(pinned_position=pinned_position)
+        record = await session.execute(query)
+        instance = record.scalars().first()
+        if instance:
+            raise HTTPException(
+                status_code=400,
+                detail=GALLERY_PINNED_EXISTS % pinned_position.value,
+            )
+        schema_output["pinned_position"] = pinned_position
+
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
     gallery = result.scalars().first()
@@ -93,6 +106,7 @@ async def update_photo(
     record = result.scalars().first()
     if not record:
         raise HTTPException(status_code=404, detail=NO_RECORD)
+
     update_data = {
         "description": description,
     }
@@ -102,19 +116,20 @@ async def update_photo(
         else:
             update_data["sub_department"] = sub_department
     if not pinned_position is None:
-        if pinned_position != record.pinned_position:
-            query = select(model).filter_by(pinned_position=pinned_position)
-            record = await session.execute(query)
-            instance = record.scalars().first()
-            if instance:
-                raise HTTPException(
-                    status_code=400,
-                    detail=GALLERY_PINNED_EXISTS % pinned_position.value,
-                )
         if pinned_position == 0:
             update_data["pinned_position"] = None
         else:
+            if pinned_position != record.pinned_position:
+                query = select(model).filter_by(pinned_position=pinned_position)
+                record = await session.execute(query)
+                instance = record.scalars().first()
+                if instance:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=GALLERY_PINNED_EXISTS % pinned_position.value,
+                    )
             update_data["pinned_position"] = pinned_position
+
     if media:
         folder_path = f"static/{model.__name__}"
         # os.makedirs(folder_path, exist_ok=True)
@@ -135,7 +150,7 @@ async def update_photo(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def delete_media_by_id(id: int, model: Type[Base], session: AsyncSession):
+async def delete_achievement_by_id(id: int, model: Type[Base], session: AsyncSession):
     query = select(model).where(model.id == id)
     result = await session.execute(query)
     if not result.scalars().first():

@@ -64,9 +64,9 @@ class PositionEnum(int, Enum):
 
 
 class CreatePhotoSchema(BaseModel):
-    pinned_position: PositionEnum
+    # pinned_position: PositionEnum
     media: UploadFile
-    sub_department: GallerySubDepartmentEnum
+    # sub_department: GallerySubDepartmentEnum
     description: Optional[str] = None
 
 

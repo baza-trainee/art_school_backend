@@ -2,6 +2,7 @@ from typing import Union
 import fastapi_users
 from fastapi import APIRouter, Depends, UploadFile
 from fastapi_pagination import Page, paginate
+from fastapi_pagination.utils import disable_installed_extensions_check
 from pydantic import AnyHttpUrl
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -43,10 +44,12 @@ DELETE_RESPONSE = DeleteResponseSchema
 
 @gallery_router.get("/photo", response_model=Page[GET_PHOTO_RESPONSE])
 async def get_all_photo(
+    is_pinned: bool = None,
     session: AsyncSession = Depends(get_async_session),
 ):
     is_video = False
-    result = await get_all_media_by_type(Gallery, session, is_video)
+    result = await get_all_media_by_type(Gallery, session, is_video, is_pinned)
+    disable_installed_extensions_check()
     return paginate(result)
 
 
@@ -56,6 +59,7 @@ async def get_all_video(
 ):
     is_video = True
     result = await get_all_media_by_type(Gallery, session, is_video)
+    disable_installed_extensions_check()
     return paginate(result)
 
 
@@ -79,11 +83,15 @@ async def get_video(
 
 @gallery_router.post("/photo", response_model=GET_PHOTO_RESPONSE)
 async def post_photo(
+    pinned_position: PositionEnum = None,
+    sub_department: GallerySubDepartmentEnum = None,
     gallery: POST_PHOTO_BODY = Depends(POST_PHOTO_BODY),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await create_photo(gallery, Gallery, session)
+    return await create_photo(
+        pinned_position, sub_department, gallery, Gallery, session
+    )
 
 
 @gallery_router.post("/video", response_model=GET_VIDEO_RESPONSE)
@@ -98,8 +106,8 @@ async def post_video(
 @gallery_router.patch("/photo/{id}", response_model=GET_PHOTO_RESPONSE)
 async def patch_photo(
     id: int,
-    sub_department: GallerySubDepartmentEnum = None,
     pinned_position: PositionEnum = None,
+    sub_department: GallerySubDepartmentEnum = None,
     description: str = None,
     media: UploadFile = None,
     session: AsyncSession = Depends(get_async_session),
