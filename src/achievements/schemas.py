@@ -61,12 +61,16 @@ class PositionEnum(int, Enum):
     position_6 = 6
     position_7 = 7
     position_8 = 8
+    position_9 = 9
+    position_10 = 10
+    position_11 = 11
+    position_12 = 12
 
 
 class CreateAchievementSchema(BaseModel):
-    pinned_position: PositionEnum
+    # pinned_position: PositionEnum
     media: UploadFile
-    sub_department: GallerySubDepartmentEnum
+    # sub_department: GallerySubDepartmentEnum
     description: Optional[str] = None
 
 
