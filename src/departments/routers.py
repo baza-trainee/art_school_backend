@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from sqlalchemy import desc, select, update
@@ -12,6 +12,7 @@ from .schemas import (
     DepartmentEnum,
     DepartmentSchema,
     SubDepartmentEnum,
+    SubDepartmentGallerySchema,
     SubDepartmentSchema,
     SubDepartmentUpdateSchema,
 )
@@ -67,27 +68,30 @@ async def get_sub_department_by_id(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-@departments.get("/sub_department_gallery/{id}")
+@departments.get(
+    "/sub_department_gallery/{id}",
+    response_model=Union[List[SubDepartmentGallerySchema], Any],
+)
 async def get_gallery_for_sub_department(
     id: SubDepartmentEnum,
     session: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        query = (
-            select(Gallery)
-            .where(Gallery.sub_department == id)
-            .order_by(desc(Gallery.created_at))
-        )
-        result = await session.execute(query)
-        gallery = result.scalars().all()
-        if not gallery:
-            return HTTPException(status_code=404, detail=NO_RECORD)
-        return gallery
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+    query = (
+        select(Gallery)
+        .where(Gallery.sub_department == id)
+        .order_by(desc(Gallery.created_at))
+    )
+    result = await session.execute(query)
+    gallery = result.scalars().all()
+    if not gallery:
+        raise HTTPException(status_code=404, detail=NO_RECORD)
+    return gallery
 
 
-@departments.get("/sub_department_achivement/{id}")
+@departments.get(
+    "/sub_department_achivement/{id}",
+    response_model=Union[List[SubDepartmentGallerySchema], Any],
+)
 async def get_achivement_for_sub_department(
     id: SubDepartmentEnum,
     session: AsyncSession = Depends(get_async_session),

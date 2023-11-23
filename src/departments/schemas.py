@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Optional
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
@@ -49,3 +50,14 @@ class SubDepartmentSchema(BaseModel):
 
 class SubDepartmentUpdateSchema(BaseModel):
     description: Optional[str] = Field(None, max_length=2000)
+
+
+class SubDepartmentGallerySchema(BaseModel):
+    id: int
+    media: str
+    is_video: bool
+    description: Optional[str]
+    sub_department: Optional[int]
+    is_achivement: bool
+    pinned_position: Optional[int]
+    created_at: datetime

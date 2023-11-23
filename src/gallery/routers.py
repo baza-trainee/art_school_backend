@@ -30,7 +30,9 @@ from .schemas import (
 
 gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
 
-CURRENT_SUPERUSER = fastapi_users.current_user(active=True, verified=True, superuser=True)
+CURRENT_SUPERUSER = fastapi_users.current_user(
+    active=True, verified=True, superuser=True
+)
 
 GET_PHOTO_RESPONSE = GetPhotoSchema
 GET_VIDEO_RESPONSE = GetVideoSchema
@@ -83,7 +85,9 @@ async def post_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await create_photo(pinned_position, sub_department, gallery, Gallery, session)
+    return await create_photo(
+        pinned_position, sub_department, gallery, Gallery, session
+    )
 
 
 @gallery_router.post("/video", response_model=GET_VIDEO_RESPONSE)
@@ -104,7 +108,9 @@ async def patch_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await update_photo(id, pinned_position, sub_department, media, Gallery, session)
+    return await update_photo(
+        id, pinned_position, sub_department, media, Gallery, session
+    )
 
 
 @gallery_router.patch("/video/{id}", response_model=GET_VIDEO_RESPONSE)

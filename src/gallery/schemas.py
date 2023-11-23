@@ -13,7 +13,7 @@ from src.exceptions import SUCCESS_DELETE
 
 class GetPhotoSchema(BaseModel):
     id: int
-    is_achivement : bool
+    is_achivement: bool
     media: Union[AnyHttpUrl, FilePath]
     pinned_position: Optional[int]
     description: Optional[str]
@@ -23,7 +23,8 @@ class GetPhotoSchema(BaseModel):
     # @validator("media", pre=True)
     # def add_base_url(cls, v, values):
     #     return v if values['is_video'] else f"{BASE_URL}/{v}"
-    
+
+
 class GetVideoSchema(BaseModel):
     id: int
     media: Union[AnyHttpUrl, FilePath]
@@ -44,8 +45,8 @@ class PositionEnum(int, Enum):
 class CreatePhotoSchema(BaseModel):
     # pinned_position: PositionEnum
     media: UploadFile
-    is_achivement : bool = False
-    # sub_department: Optional[SubDepartmentEnum] = None 
+    is_achivement: bool = False
+    # sub_department: Optional[SubDepartmentEnum] = None
     description: Optional[str] = None
 
 
