@@ -1,3 +1,4 @@
+from typing import Union
 import fastapi_users
 from fastapi import APIRouter, Depends, UploadFile
 from fastapi_pagination import Page, paginate
@@ -17,8 +18,10 @@ from .utils import (
     update_photo,
     update_video,
 )
+from src.departments.schemas import SubDepartmentEnum
 from .schemas import (
-    MediaSchema,
+    PhotoSchema,
+    VideoSchema,
     PhotoCreateSchema,
     PositionEnum,
     VideoCreateSchema,
@@ -27,26 +30,25 @@ from .schemas import (
 
 gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
 
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
+CURRENT_SUPERUSER = fastapi_users.current_user(active=True, verified=True, superuser=True)
 
-GALLERY_RESPONSE = MediaSchema
+PHOTO_RESPONSE = PhotoSchema
+VIDEO_RESPONSE = VideoSchema
 POST_PHOTO_BODY = PhotoCreateSchema
 POST_VIDEO_BODY = VideoCreateSchema
 DELETE_RESPONSE = DeleteResponseSchema
 
 
-@gallery_router.get("", response_model=Page[GALLERY_RESPONSE])
+@gallery_router.get("", response_model=Page[Union[PHOTO_RESPONSE, VIDEO_RESPONSE]])
 async def get_all_media(
-    is_video: bool = None,
+    is_video: bool = False,
     session: AsyncSession = Depends(get_async_session),
 ):
-    result = await get_all_media_by_type(Gallery, session, bool(is_video))
+    result = await get_all_media_by_type(Gallery, session, is_video)
     return paginate(result)
 
 
-@gallery_router.get("/{id}", response_model=GALLERY_RESPONSE)
+@gallery_router.get("/{id}", response_model=Union[PHOTO_RESPONSE, VIDEO_RESPONSE])
 async def get_media(
     id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -54,17 +56,19 @@ async def get_media(
     return await get_media_by_id(id, Gallery, session)
 
 
-@gallery_router.post("/photo", response_model=GALLERY_RESPONSE)
+@gallery_router.post("/photo")
 async def post_photo(
+    sub_department: SubDepartmentEnum = None,
+    pinned_position: PositionEnum = None,
     gallery: POST_PHOTO_BODY = Depends(POST_PHOTO_BODY),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await create_photo(gallery, Gallery, session)
+    return await create_photo(sub_department, pinned_position, gallery, Gallery, session)
 
 
-@gallery_router.post("/video", response_model=GALLERY_RESPONSE)
-async def post_photo(
+@gallery_router.post("/video", response_model=VIDEO_RESPONSE)
+async def post_video(
     gallery: POST_VIDEO_BODY = Depends(POST_VIDEO_BODY),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
@@ -72,7 +76,7 @@ async def post_photo(
     return await create_video(gallery, Gallery, session)
 
 
-@gallery_router.patch("/photo/{id}", response_model=GALLERY_RESPONSE)
+@gallery_router.patch("/photo/{id}", response_model=PHOTO_RESPONSE)
 async def patch_photo(
     id: int,
     pinned_position: PositionEnum = None,
@@ -83,7 +87,7 @@ async def patch_photo(
     return await update_photo(id, pinned_position, media, Gallery, session)
 
 
-@gallery_router.patch("/video/{id}", response_model=GALLERY_RESPONSE)
+@gallery_router.patch("/video/{id}", response_model=VIDEO_RESPONSE)
 async def patch_video(
     id: int,
     media: AnyHttpUrl = None,
