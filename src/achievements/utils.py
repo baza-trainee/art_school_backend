@@ -19,7 +19,7 @@ from src.exceptions import (
 )
 
 
-async def get_all_media_by_type(
+async def get_all_achievements(
     model: Type[Base],
     session: AsyncSession,
     is_video: bool,
@@ -61,8 +61,6 @@ async def create_photo(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % gallery.pinned_position.value,
             )
-        if gallery.pinned_position == 0:
-            schema_output["pinned_position"] = None
     photo = gallery.media
     folder_path = f"static/{model.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
@@ -94,6 +92,7 @@ async def create_video(
     schema_output["sub_department"] = None
     schema_output["pinned_position"] = None
     schema_output["is_video"] = True
+    schema_output["is_achivement"] = False
     schema_output["media"] = str(schema_output["media"])
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
@@ -128,7 +127,7 @@ async def update_photo(
         else:
             update_data["sub_department"] = sub_department
     if not pinned_position is None:
-        if pinned_position != record.pinned_position:
+        if pinned_position > 0 and pinned_position != record.pinned_position:
             query = select(model).filter_by(pinned_position=pinned_position)
             record = await session.execute(query)
             instance = record.scalars().first()
@@ -137,8 +136,7 @@ async def update_photo(
                     status_code=400,
                     detail=GALLERY_PINNED_EXISTS % pinned_position.value,
                 )
-        if pinned_position == 0:
-            update_data["pinned_position"] = None
+        update_data["pinned_position"] = pinned_position
     if media:
         folder_path = f"static/{model.__name__}"
         # os.makedirs(folder_path, exist_ok=True)
