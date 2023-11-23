@@ -12,6 +12,7 @@ from src.administrations.routers import school_admin_router
 from src.news.routers import news_router
 from src.posters.routers import posters_router
 from src.gallery.routers import gallery_router
+from src.achievements.routers import achievements_router
 from src.auth.routers import auth_router
 from src.departments.routers import departments
 from src.config import (
@@ -34,6 +35,7 @@ api_routers = [
     auth_router,
     router_contacts,
     gallery_router,
+    achievements_router,
     news_router,
     posters_router,
     departments,
