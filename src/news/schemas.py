@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field, validator
 from src.config import BASE_URL
-from fastapi import UploadFile
+from fastapi import Form, UploadFile
 from datetime import date
 
 
@@ -24,10 +24,27 @@ class NewsCreateSchema(BaseModel):
     title: str = Field(..., max_length=300)
     text: str = Field(..., max_length=2000)
 
+    @classmethod
+    def as_form(
+        cls,
+        photo: UploadFile,
+        title: str = Form(max_length=300),
+        text: str = Form(max_length=2000),
+    ):
+        return cls(photo=photo, title=title, text=text)
+
 
 class NewsUpdateSchema(BaseModel):
     title: Optional[str] = Field(None, max_length=300)
     text: Optional[str] = Field(None, max_length=2000)
+
+    @classmethod
+    def as_form(
+        cls,
+        title: Optional[str] = Form(max_length=300, default=None),
+        text: Optional[str] = Form(max_length=2000, default=None),
+    ):
+        return cls(title=title, text=text)
 
 
 # class DeleteNewsResponseSchema(BaseModel):

@@ -50,7 +50,7 @@ async def get_posters_list(
 
 @posters_router.post("", response_model=PosterSchema)
 async def create_posters(
-    poster_data: PosterCreateSchema = Depends(PosterCreateSchema),
+    poster_data: PosterCreateSchema = Depends(PosterCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -90,7 +90,7 @@ async def create_posters(
 async def partial_update_posters(
     poster_id: int,
     photo: Annotated[UploadFile, File()] = None,
-    posters_data: PosterUpdateSchema = Depends(PosterUpdateSchema),
+    posters_data: PosterUpdateSchema = Depends(PosterUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

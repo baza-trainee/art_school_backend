@@ -1,6 +1,6 @@
 from typing import Optional, Union
 import fastapi_users
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, UploadFile, Form
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 
@@ -57,9 +57,9 @@ async def get_achievement(
 
 @achievements_router.post("", response_model=GET_ACHIEVEMENT_RESPONSE)
 async def post_achievement(
-    sub_department: GallerySubDepartmentEnum = None,
-    pinned_position: PositionEnum = None,
-    gallery: POST_ACHIEVEMENT_BODY = Depends(POST_ACHIEVEMENT_BODY),
+    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    pinned_position: PositionEnum = Form(default=None),
+    gallery: POST_ACHIEVEMENT_BODY = Depends(POST_ACHIEVEMENT_BODY.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -71,10 +71,10 @@ async def post_achievement(
 @achievements_router.patch("/{id}", response_model=GET_ACHIEVEMENT_RESPONSE)
 async def patch_achievement(
     id: int,
-    sub_department: GallerySubDepartmentEnum = None,
-    pinned_position: PositionEnum = None,
-    description: str = None,
-    media: UploadFile = None,
+    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    pinned_position: PositionEnum = Form(default=None),
+    description: str = Form(default=None),
+    media: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

@@ -108,7 +108,7 @@ async def update_photo(
         raise HTTPException(status_code=404, detail=NO_RECORD)
 
     update_data = {
-        "description": description,
+        "description": description if description else record.description,
     }
     if not sub_department is None:
         if sub_department == 0:
