@@ -7,10 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.exceptions import NO_DATA_FOUND, NO_RECORD, NO_SUB_DEPARTMENT, SERVER_ERROR
 from src.database import get_async_session
 from src.gallery.models import Gallery
+from src.achievements.models import Achievement
 from .models import MainDepartment, SubDepartment
 from .schemas import (
     DepartmentEnum,
     DepartmentSchema,
+    SubDepartmentAchievementSchema,
     SubDepartmentEnum,
     SubDepartmentGallerySchema,
     SubDepartmentSchema,
@@ -89,26 +91,23 @@ async def get_gallery_for_sub_department(
 
 
 @departments.get(
-    "/sub_department_achivement/{id}",
-    response_model=Union[List[SubDepartmentGallerySchema], Any],
+    "/sub_department_achievement/{id}",
+    response_model=Union[List[SubDepartmentAchievementSchema], Any],
 )
-async def get_achivement_for_sub_department(
+async def get_achievement_for_sub_department(
     id: SubDepartmentEnum,
     session: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        query = (
-            select(Gallery)
-            .where(Gallery.sub_department == id, Gallery.is_achivement == True)
-            .order_by(desc(Gallery.created_at))
-        )
-        result = await session.execute(query)
-        gallery = result.scalars().all()
-        if not gallery:
-            return HTTPException(status_code=404, detail=NO_RECORD)
-        return gallery
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+    query = (
+        select(Achievement)
+        .where(Achievement.sub_department == id)
+        .order_by(desc(Achievement.created_at))
+    )
+    result = await session.execute(query)
+    gallery = result.scalars().all()
+    if not gallery:
+        return HTTPException(status_code=404, detail=NO_RECORD)
+    return gallery
 
 
 @departments.patch("/sub_department/{id}", response_model=SubDepartmentSchema)
