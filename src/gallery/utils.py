@@ -7,7 +7,8 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
-from src.gallery.schemas import PhotoCreateSchema, PositionEnum, VideoCreateSchema
+from src.departments.schemas import SubDepartmentEnum
+from src.gallery.schemas import CreatePhotoSchema, PositionEnum, CreateVideoSchema
 from src.exceptions import (
     GALLERY_IS_NOT_A_PHOTO,
     GALLERY_IS_NOT_A_VIDEO,
@@ -22,7 +23,7 @@ from src.exceptions import (
 async def get_all_media_by_type(
     model: Type[Base],
     session: AsyncSession,
-    is_video: bool = False,
+    is_video: bool,
 ):
     query = select(model).filter_by(is_video=is_video).order_by(model.created_at.desc())
     result = await session.execute(query)
@@ -32,31 +33,30 @@ async def get_all_media_by_type(
     return response
 
 
-async def get_media_by_id(id: int, model: Type[Base], session: AsyncSession):
-    query = select(model).filter_by(id=id)
+async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int, is_video: bool):
+    query = select(model).filter_by(id=id, is_video=is_video)
     result = await session.execute(query)
     response = result.scalars().one_or_none()
     if not response:
+        query = select(model).filter_by(id=id)
+        result = await session.execute(query)
+        response = result.scalars().one_or_none()
+        if response:
+            error_text = GALLERY_IS_NOT_A_VIDEO if is_video else GALLERY_IS_NOT_A_PHOTO
+            raise HTTPException(status_code=404, detail=error_text)
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     return response
 
 
 async def create_photo(
-    gallery: PhotoCreateSchema,
+    pinned_position: PositionEnum,
+    sub_department : SubDepartmentEnum,
+    gallery: CreatePhotoSchema,
     model: Type[Base],
     session: AsyncSession,
 ):
     photo = gallery.media
     folder_path = f"static/{model.__name__}"
-    if gallery.pinned_position > 0:
-        query = select(model).filter_by(pinned_position=gallery.pinned_position)
-        record = await session.execute(query)
-        instance = record.scalars().first()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=GALLERY_PINNED_EXISTS % gallery.pinned_position.value,
-            )
     # os.makedirs(folder_path, exist_ok=True)
     # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
     # async with aiofiles.open(file_path, "wb") as buffer:
@@ -66,6 +66,18 @@ async def create_photo(
     gallery.media = upload_result["url"]
     schema_output = gallery.model_dump()
     schema_output["is_video"] = False
+    if pinned_position:
+        query = select(model).filter_by(pinned_position=pinned_position)
+        record = await session.execute(query)
+        instance = record.scalars().first()
+        if instance:
+            raise HTTPException(
+                status_code=400,
+                detail=GALLERY_PINNED_EXISTS % pinned_position.value,
+            )
+        schema_output['pinned_position'] = pinned_position
+    if sub_department:
+        schema_output['sub_department'] = sub_department
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
     gallery = result.scalars().first()
@@ -74,13 +86,13 @@ async def create_photo(
 
 
 async def create_video(
-    gallery: VideoCreateSchema,
+    gallery: CreateVideoSchema,
     model: Type[Base],
     session: AsyncSession,
 ):
     schema_output = gallery.model_dump()
     schema_output["is_video"] = True
-    schema_output["pinned_position"] = 0
+    schema_output["is_achivement"] = False
     schema_output["media"] = str(schema_output["media"])
     query = insert(model).values(**schema_output).returning(model)
     result = await session.execute(query)
@@ -92,6 +104,7 @@ async def create_video(
 async def update_photo(
     id: int,
     pinned_position: PositionEnum,
+    sub_department : SubDepartmentEnum,
     media: Optional[UploadFile],
     model: Type[Base],
     session: AsyncSession,
@@ -106,6 +119,8 @@ async def update_photo(
     update_data = {
         "is_video": False,
     }
+    if not sub_department is None:
+        update_data['sub_department'] = sub_department
     if not pinned_position is None:
         if pinned_position > 0 and pinned_position != record.pinned_position:
             query = select(model).filter_by(pinned_position=pinned_position)
