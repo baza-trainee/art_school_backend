@@ -11,18 +11,14 @@ from src.database import get_async_session
 from src.exceptions import SUCCESS_DELETE
 
 
-class PhotoSchema(BaseModel):
+class MediaSchema(BaseModel):
     id: int
+    is_video: bool
     is_achivement : bool
     media: Union[AnyHttpUrl, FilePath]
     pinned_position: Optional[int]
     description: Optional[str]
     sub_department: Optional[SubDepartmentEnum]
-    created_at: datetime
-
-class VideoSchema(BaseModel):
-    id: int
-    media: Union[AnyHttpUrl, FilePath]
     created_at: datetime
 
     # To save files locally

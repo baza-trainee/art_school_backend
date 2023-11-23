@@ -20,8 +20,7 @@ from .utils import (
 )
 from src.departments.schemas import SubDepartmentEnum
 from .schemas import (
-    PhotoSchema,
-    VideoSchema,
+    MediaSchema,
     PhotoCreateSchema,
     PositionEnum,
     VideoCreateSchema,
@@ -32,14 +31,13 @@ gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
 
 CURRENT_SUPERUSER = fastapi_users.current_user(active=True, verified=True, superuser=True)
 
-PHOTO_RESPONSE = PhotoSchema
-VIDEO_RESPONSE = VideoSchema
+GALLERY_RESPONSE = MediaSchema
 POST_PHOTO_BODY = PhotoCreateSchema
 POST_VIDEO_BODY = VideoCreateSchema
 DELETE_RESPONSE = DeleteResponseSchema
 
 
-@gallery_router.get("", response_model=Page[Union[PHOTO_RESPONSE, VIDEO_RESPONSE]])
+@gallery_router.get("", response_model=Page[GALLERY_RESPONSE], response_model_exclude_none=True)
 async def get_all_media(
     is_video: bool = False,
     session: AsyncSession = Depends(get_async_session),
@@ -48,7 +46,7 @@ async def get_all_media(
     return paginate(result)
 
 
-@gallery_router.get("/{id}", response_model=Union[PHOTO_RESPONSE, VIDEO_RESPONSE])
+@gallery_router.get("/{id}", response_model=GALLERY_RESPONSE, response_model_exclude_none=True)
 async def get_media(
     id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -67,8 +65,8 @@ async def post_photo(
     return await create_photo(sub_department, pinned_position, gallery, Gallery, session)
 
 
-@gallery_router.post("/video", response_model=VIDEO_RESPONSE)
-async def post_video(
+@gallery_router.post("/video", response_model=GALLERY_RESPONSE)
+async def post_photo(
     gallery: POST_VIDEO_BODY = Depends(POST_VIDEO_BODY),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
@@ -76,7 +74,7 @@ async def post_video(
     return await create_video(gallery, Gallery, session)
 
 
-@gallery_router.patch("/photo/{id}", response_model=PHOTO_RESPONSE)
+@gallery_router.patch("/photo/{id}", response_model=GALLERY_RESPONSE)
 async def patch_photo(
     id: int,
     pinned_position: PositionEnum = None,
@@ -87,7 +85,7 @@ async def patch_photo(
     return await update_photo(id, pinned_position, media, Gallery, session)
 
 
-@gallery_router.patch("/video/{id}", response_model=VIDEO_RESPONSE)
+@gallery_router.patch("/video/{id}", response_model=GALLERY_RESPONSE)
 async def patch_video(
     id: int,
     media: AnyHttpUrl = None,
