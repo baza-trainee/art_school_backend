@@ -13,13 +13,7 @@ from src.news.routers import news_router
 from src.posters.routers import posters_router
 from src.gallery.routers import gallery_router
 from src.auth.routers import auth_router
-from src.department.routers import (
-    music_router,
-    fine_arts_router,
-    theatrical_router,
-    vocal_choir_router,
-    choreographic_router,
-)
+from src.departments.routers import departments
 from src.config import (
     ALLOW_HEADERS,
     ALLOW_METHODS,
@@ -37,17 +31,13 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 api_routers = [
+    departments,
     auth_router,
     router_contacts,
     gallery_router,
     news_router,
     posters_router,
     school_admin_router,
-    music_router,
-    fine_arts_router,
-    theatrical_router,
-    vocal_choir_router,
-    choreographic_router,
 ]
 [app.include_router(router, prefix=API_PREFIX) for router in api_routers]
 
