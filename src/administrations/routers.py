@@ -43,7 +43,7 @@ async def get_all_school_administration(
 
 @school_admin_router.post("", response_model=AdministratorSchema)
 async def create_school_administration(
-    person: AdministratorCreateSchema = Depends(AdministratorCreateSchema),
+    person: AdministratorCreateSchema = Depends(AdministratorCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -93,7 +93,7 @@ async def get_school_administration(
 async def update_school_administration(
     id: int,
     photo: Annotated[UploadFile, File()] = None,
-    person: AdministratorUpdateSchema = Depends(AdministratorUpdateSchema),
+    person: AdministratorUpdateSchema = Depends(AdministratorUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

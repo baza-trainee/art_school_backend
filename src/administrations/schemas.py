@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Annotated, Optional
 
-from fastapi import UploadFile
+from fastapi import Body, Form, UploadFile
 from pydantic import BaseModel, Field
 
 from src.exceptions import SUCCESS_DELETE
@@ -18,10 +18,27 @@ class AdministratorCreateSchema(BaseModel):
     full_name: str = Field(..., max_length=150)
     position: str = Field(..., max_length=2000)
 
+    @classmethod
+    def as_form(
+        cls,
+        photo: UploadFile,
+        full_name: str = Form(...),
+        position: str = Form(...),
+    ):
+        return cls(photo=photo, full_name=full_name, position=position)
+
 
 class AdministratorUpdateSchema(BaseModel):
     full_name: Optional[str] = Field(None, max_length=150)
     position: Optional[str] = Field(None, max_length=2000)
+
+    @classmethod
+    def as_form(
+        cls,
+        full_name: str = Form(None),
+        position: str = Form(None),
+    ):
+        return cls(full_name=full_name, position=position)
 
 
 class DeleteResponseSchema(BaseModel):
