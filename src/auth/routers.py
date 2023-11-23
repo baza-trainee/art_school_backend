@@ -5,10 +5,16 @@ from sqlalchemy import update
 
 from src.auth.auth_config import CURRENT_SUPERUSER, fastapi_users, auth_backend
 from src.database import get_async_session
-from src.exceptions import PASSWORD_STRENGTH_ERROR
+from src.exceptions import (
+    OLD_PASS_INCORRECT,
+    PASSWORD_CHANGE_SUCCESS,
+    PASSWORD_NOT_MATCH,
+    PASSWORD_STRENGTH_ERROR,
+)
 from src.auth.models import User
 from src.database import get_async_session
 from .manager import get_user_manager
+
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -28,12 +34,12 @@ async def change_password(
         raise HTTPException(status_code=400, detail=PASSWORD_STRENGTH_ERROR)
     password_helper = PasswordHelper()
     if new_password != new_password_confirm:
-        raise HTTPException(status_code=400, detail="New passwords do not match")
+        raise HTTPException(status_code=400, detail=PASSWORD_NOT_MATCH)
     verified, updated = password_helper.verify_and_update(
         old_password, user.hashed_password
     )
     if not verified:
-        raise HTTPException(status_code=400, detail="Old password is incorrect")
+        raise HTTPException(status_code=400, detail=OLD_PASS_INCORRECT)
     query = (
         update(User)
         .where(User.id == user.id)
@@ -41,7 +47,7 @@ async def change_password(
     )
     await session.execute(query)
     await session.commit()
-    return {"detail": "Successfully changed password"}
+    return {"detail": PASSWORD_CHANGE_SUCCESS}
 
 
 auth_router.include_router(
