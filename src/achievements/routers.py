@@ -28,7 +28,9 @@ from .schemas import (
 
 achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
 
-CURRENT_SUPERUSER = fastapi_users.current_user(active=True, verified=True, superuser=True)
+CURRENT_SUPERUSER = fastapi_users.current_user(
+    active=True, verified=True, superuser=True
+)
 
 GET_ACHIEVEMENT_RESPONSE = GetAchievementSchema
 POST_ACHIEVEMENT_BODY = CreateAchievementSchema
@@ -61,7 +63,9 @@ async def post_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await create_photo(pinned_position, sub_department, gallery, Achievement, session)
+    return await create_photo(
+        pinned_position, sub_department, gallery, Achievement, session
+    )
 
 
 @achievements_router.patch("/{id}", response_model=GET_ACHIEVEMENT_RESPONSE)
@@ -74,7 +78,9 @@ async def patch_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await update_photo(id, pinned_position, sub_department, description, media, Achievement, session)
+    return await update_photo(
+        id, pinned_position, sub_department, description, media, Achievement, session
+    )
 
 
 @achievements_router.delete("/{id}", response_model=DELETE_RESPONSE)

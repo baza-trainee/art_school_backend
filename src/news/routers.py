@@ -50,7 +50,7 @@ async def get_news_list(
 
 @news_router.post("", response_model=NewsSchema)
 async def create_news(
-    news_data: NewsCreateSchema = Depends(NewsCreateSchema),
+    news_data: NewsCreateSchema = Depends(NewsCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -90,7 +90,7 @@ async def create_news(
 async def partial_update_news(
     news_id: int,
     photo: Annotated[UploadFile, File()] = None,
-    news_data: NewsUpdateSchema = Depends(NewsUpdateSchema),
+    news_data: NewsUpdateSchema = Depends(NewsUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

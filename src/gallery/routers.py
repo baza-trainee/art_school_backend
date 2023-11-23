@@ -121,7 +121,7 @@ async def patch_photo(
 @gallery_router.patch("/video/{id}", response_model=GET_VIDEO_RESPONSE)
 async def patch_video(
     id: int,
-    media: AnyHttpUrl = Form(),
+    media: AnyHttpUrl = Form(None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
