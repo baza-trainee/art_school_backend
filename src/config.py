@@ -50,7 +50,7 @@ mail_config = ConnectionConfig(
     VALIDATE_CERTS=True,
 )
 
-ALLOW_METHODS = ["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"]
+ALLOW_METHODS = ["GET", "POST", "OPTIONS", "DELETE", "PATCH"]
 ALLOW_HEADERS = [
     "Content-Type",
     "Set-Cookie",
