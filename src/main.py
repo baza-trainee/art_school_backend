@@ -31,12 +31,12 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 api_routers = [
-    departments,
     auth_router,
     router_contacts,
     gallery_router,
     news_router,
     posters_router,
+    departments,
     school_admin_router,
 ]
 [app.include_router(router, prefix=API_PREFIX) for router in api_routers]
