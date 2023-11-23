@@ -2,9 +2,10 @@ from src.database import get_async_session
 from src.auth.utils import create_user
 
 from src.auth.utils import create_user
-from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME, CONTACTS, DEPARTMENTS, SUB_DEPARTMENTS
 from src.contacts.utils import create_contacts
 from src.database import get_async_session
+from src.departments.utils import create_main_departments, create_sub_departments
 
 
 async def customlifespan():
@@ -13,9 +14,9 @@ async def customlifespan():
     async for s in session:
         async with s.begin():
             await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
-            await create_contacts(
-                address="вул.Бульварно-Кудрявська, 2", phone="+38(097)290-79-40"
-            )
+            await create_main_departments(DEPARTMENTS)
+            await create_sub_departments(SUB_DEPARTMENTS)
+            await create_contacts(**CONTACTS)
     print("lifespan end")
 
 
