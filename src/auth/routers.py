@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException
 from fastapi_users.password import PasswordHelper
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update
@@ -21,9 +21,9 @@ auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @auth_router.post("/change-password")
 async def change_password(
-    old_password: str,
-    new_password: str,
-    new_password_confirm: str,
+    old_password: str = Form(...),
+    new_password: str = Form(...),
+    new_password_confirm: str = Form(...),
     user: User = Depends(CURRENT_SUPERUSER),
     session: AsyncSession = Depends(get_async_session),
     user_manager=Depends(get_user_manager),
