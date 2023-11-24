@@ -21,10 +21,10 @@ async def lifespan(app: FastAPI):
             await create_main_departments(DEPARTMENTS)
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)
-            # await create_slide(title="Slide1", description="Slide1 Test description")
-            # await create_slide(title="Slide2", description="Slide2 Test description")
-            # await create_slide(title="Slide3", description="Slide3 Test description")
-            # await create_slide(title="Slide4", description="Slide4 Test description")
-            # await create_slide(title="Slide5", description="Slide5 Test description")
+            await create_slide(title="Slide1", description="Slide1 Test description")
+            await create_slide(title="Slide2", description="Slide2 Test description")
+            await create_slide(title="Slide3", description="Slide3 Test description")
+            await create_slide(title="Slide4", description="Slide4 Test description")
+            await create_slide(title="Slide5", description="Slide5 Test description")
 
     yield
