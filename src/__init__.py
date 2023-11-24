@@ -6,3 +6,4 @@ from src.administrations.models import *
 from src.gallery.models import *
 from src.departments.models import *
 from src.achievements.models import *
+from src.slider_main.models import *

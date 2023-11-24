@@ -11,6 +11,7 @@ from src.contacts.routers import router as router_contacts
 from src.administrations.routers import school_admin_router
 from src.news.routers import news_router
 from src.posters.routers import posters_router
+from src.slider_main.routers import slider_main_router
 from src.gallery.routers import gallery_router
 from src.achievements.routers import achievements_router
 from src.auth.routers import auth_router
@@ -38,6 +39,7 @@ api_routers = [
     achievements_router,
     news_router,
     posters_router,
+    slider_main_router,
     departments,
     school_admin_router,
 ]
