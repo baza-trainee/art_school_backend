@@ -19,7 +19,7 @@ from .exceptions import (
 )
 
 
-slider_main_router = APIRouter(prefix="/slider_main", tags=["Slider ain"])
+slider_main_router = APIRouter(prefix="/slider_main", tags=["Slider main"])
 
 
 @slider_main_router.get("", response_model=List[SliderMainSchema])
