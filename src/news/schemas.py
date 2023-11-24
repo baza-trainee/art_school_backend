@@ -1,16 +1,17 @@
 from typing import Optional
 from pydantic import BaseModel, Field, validator
-from src.config import BASE_URL
 from fastapi import Form, UploadFile
-from datetime import date
+from datetime import datetime
+
 
 
 class NewsSchema(BaseModel):
     id: int
     title: Optional[str] = Field(..., max_length=300)
     text: Optional[str] = Field(..., max_length=2000)
-    photo: Optional[str]
-    created_at: date
+    photo: str
+    created_at: datetime
+
 
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):
@@ -45,7 +46,3 @@ class NewsUpdateSchema(BaseModel):
         text: Optional[str] = Form(max_length=2000, default=None),
     ):
         return cls(title=title, text=text)
-
-
-# class DeleteNewsResponseSchema(BaseModel):
-#     message: str = "Record with id 1 was successfully deleted."

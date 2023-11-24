@@ -3,7 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination import Page, paginate
-from sqlalchemy import select, update, delete, func, insert
+from fastapi_pagination.utils import disable_installed_extensions_check
+from sqlalchemy import select, update, delete, func, insert, desc
 from cloudinary import uploader
 
 from src.auth.models import User
@@ -27,11 +28,12 @@ news_router = APIRouter(prefix="/news", tags=["News"])
 async def get_news_list(
     session: AsyncSession = Depends(get_async_session),
 ):
-    query = select(News).order_by(News.created_at)
+    query = select(News).order_by(desc(News.created_at))
     news = await session.execute(query)
     all_news = news.scalars().all()
     if not all_news:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
+    disable_installed_extensions_check()
     return paginate(all_news)
 
 
@@ -48,7 +50,7 @@ async def get_news_list(
     return response
 
 
-@news_router.post("", response_model=NewsSchema)
+@news_router.post("")
 async def create_news(
     news_data: NewsCreateSchema = Depends(NewsCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
@@ -77,7 +79,8 @@ async def create_news(
 
     news_data.photo = upload_result["url"]
     try:
-        query = insert(News).values(**news_data.model_dump()).returning(News)
+        news_data = news_data.model_dump()
+        query = insert(News).values(**news_data).returning(News)
         result = await session.execute(query)
         news_data = result.scalars().first()
         await session.commit()

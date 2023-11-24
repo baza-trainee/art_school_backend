@@ -2,9 +2,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from fastapi_pagination import Page, paginate
-from sqlalchemy import select, update, delete, func, insert
+from sqlalchemy import select, update, delete, func, insert, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from cloudinary import uploader
+from fastapi_pagination.utils import disable_installed_extensions_check
+
 
 from src.auth.models import User
 from src.database import get_async_session
@@ -27,11 +29,12 @@ posters_router = APIRouter(prefix="/posters", tags=["Posters"])
 async def get_posters_list(
     session: AsyncSession = Depends(get_async_session),
 ):
-    query = select(Poster).order_by(Poster.date)
+    query = select(Poster).order_by(desc(Poster.created_at))
     posters = await session.execute(query)
     all_posters = posters.scalars().all()
     if not all_posters:
         raise HTTPException(status_code=404, detail=NO_DATA_LIST_FOUND)
+    disable_installed_extensions_check()
     return paginate(all_posters)
 
 
