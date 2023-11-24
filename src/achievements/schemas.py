@@ -65,13 +65,13 @@ class PositionEnum(int, Enum):
 
 class CreateAchievementSchema(BaseModel):
     media: UploadFile
-    description: Optional[str] = None
+    description: Optional[str] = Form(default=None, max_length=300)
 
     @classmethod
     def as_form(
         cls,
         media: UploadFile,
-        description: Optional[str] = Form(default=None),
+        description: Optional[str] = Form(default=None, max_length=300),
     ):
         return cls(media=media, description=description)
 
