@@ -5,7 +5,6 @@ from pydantic import AnyHttpUrl
 from sqlalchemy import delete, insert, select, update, and_
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi_pagination.ext.sqlalchemy import paginate
 
 from src.database import Base
 from src.gallery.schemas import (

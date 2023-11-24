@@ -57,8 +57,9 @@ async def get_all_photo(
 async def get_all_video(
     session: AsyncSession = Depends(get_async_session),
 ):
+    is_pinned = False
     is_video = True
-    result = await get_all_media_by_type(Gallery, session, is_video)
+    result = await get_all_media_by_type(Gallery, session, is_video, is_pinned)
     disable_installed_extensions_check()
     return paginate(result)
 

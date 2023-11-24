@@ -1,7 +1,6 @@
 from typing import Optional, Type
 
 from cloudinary import uploader
-from pydantic import AnyHttpUrl
 from sqlalchemy import delete, insert, select, update
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession

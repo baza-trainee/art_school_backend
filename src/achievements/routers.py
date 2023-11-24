@@ -1,10 +1,7 @@
-from typing import Optional, Union
 import fastapi_users
 from fastapi import APIRouter, Depends, UploadFile, Form
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
-
-from pydantic import AnyHttpUrl
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Optional, Union
+from typing import Optional, Union
 
 from pydantic import AnyHttpUrl, BaseModel, validator, FilePath
 from fastapi import Form, UploadFile

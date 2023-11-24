@@ -97,7 +97,7 @@ html = (
 <body>
     <div class="container">
         <h1>Hello from FastAPI@{__version__} app</h1>
-        <h3>get started?</h3>
+        <h3>Let's get started?</h3>
         <ul>
             <li><h2><a href="/docs">/docs</a></h2></li>
             <li><h2><a href="/redoc">/redoc</a></h2></li>
@@ -113,4 +113,3 @@ html = (
 @app.get("/", include_in_schema=False)
 async def root():
     return HTMLResponse(html)
-

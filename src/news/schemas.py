@@ -1,8 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel, Field, validator
-from fastapi import Form, UploadFile
 from datetime import datetime
 
+from pydantic import BaseModel, Field, validator
+from fastapi import Form, UploadFile
 
 
 class NewsSchema(BaseModel):
@@ -11,7 +11,6 @@ class NewsSchema(BaseModel):
     text: Optional[str] = Field(..., max_length=2000)
     photo: str
     created_at: datetime
-
 
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):

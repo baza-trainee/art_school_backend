@@ -13,7 +13,7 @@ class SliderMainSchema(BaseModel):
 class SliderMainUpdateSchema(BaseModel):
     title: Optional[str] = Field(None, max_length=300)
     description: Optional[str] = Field(None, max_length=2000)
-    
+
     @classmethod
     def as_form(
         cls,
@@ -21,5 +21,3 @@ class SliderMainUpdateSchema(BaseModel):
         description: Optional[str] = Form(max_length=2000, default=None),
     ):
         return cls(title=title, description=description)
-
-
