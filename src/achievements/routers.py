@@ -70,7 +70,7 @@ async def patch_achievement(
     id: int,
     sub_department: GallerySubDepartmentEnum = Form(default=None),
     pinned_position: PositionEnum = Form(default=None),
-    description: str = Form(default=None),
+    description: str = Form(default=None, max_length=300),
     media: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
