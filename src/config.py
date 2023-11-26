@@ -58,10 +58,8 @@ ALLOW_HEADERS = [
     "Access-Control-Allow-Origin",
     "Authorization",
 ]
-ORIGINS = [
-    "http://localhost:3000",
-    "https://art-school-frontend.vercel.app",
-]
+# "https://art-school-frontend.vercel.app",
+ORIGINS = ["*"]
 SWAGGER_PARAMETERS = {
     "syntaxHighlight.theme": "obsidian",
     "tryItOutEnabled": True,
