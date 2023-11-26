@@ -2,7 +2,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, func
+from sqlalchemy import select, update, func, insert
 from cloudinary import uploader
 from fastapi_pagination.utils import disable_installed_extensions_check
 
@@ -10,12 +10,13 @@ from src.auth.models import User
 from src.database import get_async_session
 from src.auth.auth_config import CURRENT_SUPERUSER
 from .models import SliderMain
-from .schemas import SliderMainSchema, SliderMainUpdateSchema
+from .schemas import SliderMainSchema, SliderMainUpdateSchema, SliderCreateSchema
 from .exceptions import (
     NO_DATA_FOUND,
     SERVER_ERROR,
     NO_RECORD,
     SUCCESS_DELETE,
+    SLIDE_EXISTS,
 )
 
 
@@ -33,6 +34,54 @@ async def get_slider_list(
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     disable_installed_extensions_check()
     return all_slides
+
+
+@slider_main_router.post("", response_model=SliderMainSchema)
+async def create_slide(
+    slide_data: SliderCreateSchema = Depends(SliderCreateSchema.as_form),
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
+):
+    if slide_data.description is None:
+        slide_data.description = None
+
+    if slide_data.title is not None and isinstance(slide_data.title, str):
+        query = select(SliderMain).where(
+            func.lower(SliderMain.title) == slide_data.title.lower()
+        )
+        result = await session.execute(query)
+        instance = result.scalars().first()
+        if instance:
+            raise HTTPException(
+                status_code=400,
+                detail=SLIDE_EXISTS % slide_data.title,
+            )
+    else:
+        slide_data.title = None
+
+    photo = slide_data.photo
+    folder_path = f"static/{SliderMain.__name__}"
+    # os.makedirs(folder_path, exist_ok=True)
+    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
+    # async with aiofiles.open(file_path, "wb") as buffer:
+    #     await buffer.write(await photo.read())
+    # update_data["photo"] = file_path
+    try:
+        upload_result = uploader.upload(photo.file, folder=folder_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="cloudinary error")
+
+    slide_data.photo = upload_result["url"]
+    try:
+        query = (
+            insert(SliderMain).values(**slide_data.model_dump()).returning(SliderMain)
+        )
+        result = await session.execute(query)
+        slide_data = result.scalars().first()
+        await session.commit()
+        return slide_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
 @slider_main_router.patch("/{slide_id}", response_model=SliderMainSchema)
