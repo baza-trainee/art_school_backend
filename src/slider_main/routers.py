@@ -2,7 +2,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, func, insert
+from sqlalchemy import select, update, func, insert, delete
 from cloudinary import uploader
 from fastapi_pagination.utils import disable_installed_extensions_check
 
@@ -17,6 +17,7 @@ from .exceptions import (
     NO_RECORD,
     SUCCESS_DELETE,
     SLIDE_EXISTS,
+    MAXIMUM_SLIDE
 )
 
 
@@ -41,7 +42,17 @@ async def create_slide(
     slide_data: SliderCreateSchema = Depends(SliderCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
-):
+):  
+    try:
+        total_slides = await session.execute(select(func.count()).select_from(SliderMain))
+        total_count = total_slides.scalar()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
+    if total_count >= 8:
+        raise HTTPException(status_code=400, detail=MAXIMUM_SLIDE)
+
+
     if slide_data.description is None:
         slide_data.description = None
 
@@ -129,16 +140,15 @@ async def delete_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    if slide_id in (1, 2):
+        raise HTTPException(status_code=400, detail="Cannot delete slide with this ID")
+
     query = select(SliderMain).where(SliderMain.id == slide_id)
     result = await session.execute(query)
     if not result.scalars().first():
         raise HTTPException(status_code=404, detail=NO_RECORD)
     try:
-        query = (
-            update(SliderMain)
-            .where(SliderMain.id == slide_id)
-            .values(title=None, description=None)
-        )
+        query = delete(SliderMain).where(SliderMain.id == slide_id)
         await session.execute(query)
         await session.commit()
         return {"message": SUCCESS_DELETE % slide_id}
