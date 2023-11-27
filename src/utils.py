@@ -7,11 +7,12 @@ from src.config import (
     CONTACTS,
     DEPARTMENTS,
     SUB_DEPARTMENTS,
+    SLIDES,
 )
 from src.contacts.utils import create_contacts
 from src.database import get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
-from src.slider_main.utils import create_slide
+from src.slider_main.utils import create_slides
 
 
 async def lifespan(app: FastAPI):
@@ -21,10 +22,6 @@ async def lifespan(app: FastAPI):
             await create_main_departments(DEPARTMENTS)
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)
-            await create_slide(title="Slide1", description="Slide1 Test description")
-            await create_slide(title="Slide2", description="Slide2 Test description")
-            await create_slide(title="Slide3", description="Slide3 Test description")
-            await create_slide(title="Slide4", description="Slide4 Test description")
-            await create_slide(title="Slide5", description="Slide5 Test description")
+            await create_slides(SLIDES)
 
     yield
