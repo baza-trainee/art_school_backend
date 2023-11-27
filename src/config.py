@@ -192,3 +192,14 @@ SUB_DEPARTMENTS = [
     },
 ]
 CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "phone": "+38(097)290-79-40"}
+
+SLIDES = [
+    {
+            "title": "Slide1", 
+            "description": "Slide1 Test description",
+        },
+        {
+            "title": " Slide2", 
+            "description": "Slide2 Test description",
+        },
+]

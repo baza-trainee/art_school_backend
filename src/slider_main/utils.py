@@ -1,6 +1,7 @@
 import contextlib
 import os
 
+from typing import List
 from sqlalchemy import select
 
 from src.slider_main.models import SliderMain
@@ -24,3 +25,7 @@ async def create_slide(title: str, description: str):
             print(f"Slide {slide.id} have been created successfully.")
         else:
             print(f"Slide with title:'{slide.title}' already exists")
+
+async def create_slides(slides_list: List[dict]):
+    for slide_data in slides_list:
+        await create_slide(**slide_data)
