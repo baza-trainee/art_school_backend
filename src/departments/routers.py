@@ -106,7 +106,7 @@ async def get_achievement_for_sub_department(
     result = await session.execute(query)
     gallery = result.scalars().all()
     if not gallery:
-        return HTTPException(status_code=404, detail=NO_RECORD)
+        raise HTTPException(status_code=404, detail=NO_RECORD)
     return gallery
 
 
