@@ -192,13 +192,13 @@ async def update_video(
     query = select(model).where(model.id == id)
     result = await session.execute(query)
     record = result.scalars().first()
+    if not record:
+        raise HTTPException(status_code=404, detail=NO_RECORD)
     if not record.is_video:
         raise HTTPException(status_code=404, detail=GALLERY_IS_NOT_A_VIDEO)
     update_data = {
         "is_video": True,
     }
-    if not record:
-        raise HTTPException(status_code=404, detail=NO_RECORD)
     if media:
         update_data["media"] = str(media)
     try:
