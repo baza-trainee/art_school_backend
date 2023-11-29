@@ -23,5 +23,4 @@ async def lifespan(app: FastAPI):
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)
             await create_slides(SLIDES)
-
     yield

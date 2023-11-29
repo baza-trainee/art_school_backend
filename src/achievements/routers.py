@@ -1,14 +1,13 @@
-import fastapi_users
 from fastapi import APIRouter, Depends, UploadFile, Form
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
-from src.auth.auth_config import fastapi_users
+from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
 from .models import Achievement
-from .utils import (
+from .service import (
     delete_achievement_by_id,
     get_all_achievements_by_filter,
     create_photo,
@@ -23,11 +22,8 @@ from .schemas import (
     GallerySubDepartmentEnum,
 )
 
-achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
 
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
+achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
 
 GET_ACHIEVEMENT_RESPONSE = GetAchievementSchema
 POST_ACHIEVEMENT_BODY = CreateAchievementSchema
