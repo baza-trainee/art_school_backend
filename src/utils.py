@@ -19,8 +19,8 @@ async def lifespan(app: FastAPI):
     async for s in get_async_session():
         async with s.begin():
             await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
-            await create_main_departments(DEPARTMENTS)
-            await create_sub_departments(SUB_DEPARTMENTS)
-            await create_contacts(**CONTACTS)
-            await create_slides(SLIDES)
+            # await create_main_departments(DEPARTMENTS)
+            # await create_sub_departments(SUB_DEPARTMENTS)
+            # await create_contacts(**CONTACTS)
+            # await create_slides(SLIDES)
     yield

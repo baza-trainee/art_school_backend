@@ -8,11 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import Base
 from src.achievements.schemas import (
     CreateAchievementSchema,
-    GallerySubDepartmentEnum,
     PositionEnum,
 )
+from src.departments.models import SubDepartment
 from src.exceptions import (
     GALLERY_PINNED_EXISTS,
+    INVALID_DEPARTMENT,
     NO_DATA_FOUND,
     NO_RECORD,
     SERVER_ERROR,
@@ -51,7 +52,7 @@ async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int):
 
 async def create_photo(
     pinned_position: PositionEnum,
-    sub_department: GallerySubDepartmentEnum,
+    sub_department: int,
     gallery: CreateAchievementSchema,
     model: Type[Base],
     session: AsyncSession,
@@ -67,10 +68,16 @@ async def create_photo(
     gallery.media = upload_result["url"]
     schema_output = gallery.model_dump()
 
-    if not sub_department:
-        schema_output["sub_department"] = None
-    else:
+    if sub_department:
+        query = select(SubDepartment).where(SubDepartment.id == sub_department)
+        result = await session.execute(query)
+        record = result.scalars().first()
+        if not record:
+            raise HTTPException(
+                status_code=404, detail=INVALID_DEPARTMENT % sub_department
+            )
         schema_output["sub_department"] = sub_department
+
     if not pinned_position:
         schema_output["pinned_position"] = None
     else:
@@ -94,7 +101,7 @@ async def create_photo(
 async def update_photo(
     id: int,
     pinned_position: PositionEnum,
-    sub_department: GallerySubDepartmentEnum,
+    sub_department: int,
     description: str,
     media: Optional[UploadFile],
     model: Type[Base],
@@ -113,7 +120,15 @@ async def update_photo(
         if sub_department == 0:
             update_data["sub_department"] = None
         else:
+            query = select(SubDepartment).where(SubDepartment.id == sub_department)
+            result = await session.execute(query)
+            record = result.scalars().first()
+            if not record:
+                raise HTTPException(
+                    status_code=404, detail=INVALID_DEPARTMENT % sub_department
+                )
             update_data["sub_department"] = sub_department
+
     if not pinned_position is None:
         if pinned_position == 0:
             update_data["pinned_position"] = None

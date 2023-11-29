@@ -28,31 +28,6 @@ class GetVideoSchema(BaseModel):
     created_at: datetime
 
 
-class GallerySubDepartmentEnum(int, Enum):
-    default_department = 0
-    string = 1
-    wind = 2
-    folk = 3
-    theoretical = 4
-    jazz = 5
-    specialized_piano = 6
-    concertmasters = 7
-    chamber_ensemble = 8
-    art_history = 9
-    choral = 10
-    solo_singing = 11
-    pop_vocals = 12
-    folk_singing = 13
-    classical_dance = 14
-    folk_dance = 15
-    modern_dance = 16
-    fake_theatrical = 17
-    imagination_development = 18
-    painting = 19
-    design_graphic = 20
-    fake_preschool = 21
-
-
 class PositionEnum(int, Enum):
     default_position = 0
     position_1 = 1

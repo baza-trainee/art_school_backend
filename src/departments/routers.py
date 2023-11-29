@@ -1,10 +1,18 @@
 from typing import Any, List, Union
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Response
-from sqlalchemy import desc, select, update
+from fastapi import APIRouter, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.exceptions import NO_DATA_FOUND, NO_RECORD, NO_SUB_DEPARTMENT, SERVER_ERROR
+from src.departments.service import (
+    create_sub_dep,
+    delete_sub_dep,
+    get_achievement_list,
+    get_dep,
+    get_galery_list,
+    get_one_sub_dep,
+    get_sub_dep_list,
+    update_sub_dep,
+)
 from src.database import get_async_session
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
@@ -13,7 +21,7 @@ from .schemas import (
     DepartmentEnum,
     DepartmentSchema,
     SubDepartmentAchievementSchema,
-    SubDepartmentEnum,
+    SubDepartmentCreateSchema,
     SubDepartmentGallerySchema,
     SubDepartmentSchema,
     SubDepartmentUpdateSchema,
@@ -27,14 +35,7 @@ departments = APIRouter(prefix="/departments", tags=["Departments"])
 async def get_all_departments(
     session: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        query = select(MainDepartment).order_by(MainDepartment.id)
-        departments = await session.execute(query)
-        if not departments:
-            raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-        return departments.scalars().all()
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+    return await get_dep(MainDepartment, session)
 
 
 @departments.get("/{id}", response_model=List[SubDepartmentSchema])
@@ -42,32 +43,23 @@ async def get_sub_departments_by_department_id(
     id: DepartmentEnum,
     session: AsyncSession = Depends(get_async_session),
 ):
-    query = (
-        select(SubDepartment)
-        .where(SubDepartment.main_department_id == id)
-        .order_by(SubDepartment.id)
-    )
-    result = await session.execute(query)
-    sub_departments = result.scalars().all()
-    if not sub_departments:
-        raise HTTPException(status_code=404, detail=NO_SUB_DEPARTMENT)
-    return sub_departments
+    return await get_sub_dep_list(id, SubDepartment, session)
+
+
+@departments.post("/sub_department", response_model=SubDepartmentSchema)
+async def create_sub_department(
+    data: SubDepartmentCreateSchema,
+    session: AsyncSession = Depends(get_async_session),
+):
+    return await create_sub_dep(data, SubDepartment, session)
 
 
 @departments.get("/sub_department/{id}", response_model=SubDepartmentSchema)
 async def get_sub_department_by_id(
-    id: SubDepartmentEnum,
+    id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        query = select(SubDepartment).where(SubDepartment.id == id)
-        result = await session.execute(query)
-        sub_department = result.scalars().first()
-        if not sub_department:
-            raise HTTPException(status_code=404, detail=NO_RECORD)
-        return sub_department
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+    return await get_one_sub_dep(id, SubDepartment, session)
 
 
 @departments.get(
@@ -75,19 +67,10 @@ async def get_sub_department_by_id(
     response_model=Union[List[SubDepartmentGallerySchema], Any],
 )
 async def get_gallery_for_sub_department(
-    id: SubDepartmentEnum,
+    id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    query = (
-        select(Gallery)
-        .where(Gallery.sub_department == id)
-        .order_by(desc(Gallery.created_at))
-    )
-    result = await session.execute(query)
-    gallery = result.scalars().all()
-    if not gallery:
-        raise HTTPException(status_code=404, detail=NO_RECORD)
-    return gallery
+    return await get_galery_list(id, Gallery, session)
 
 
 @departments.get(
@@ -95,65 +78,24 @@ async def get_gallery_for_sub_department(
     response_model=Union[List[SubDepartmentAchievementSchema], Any],
 )
 async def get_achievement_for_sub_department(
-    id: SubDepartmentEnum,
+    id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    query = (
-        select(Achievement)
-        .where(Achievement.sub_department == id)
-        .order_by(desc(Achievement.created_at))
-    )
-    result = await session.execute(query)
-    gallery = result.scalars().all()
-    if not gallery:
-        raise HTTPException(status_code=404, detail=NO_RECORD)
-    return gallery
+    return await get_achievement_list(id, Achievement, session)
 
 
 @departments.patch("/sub_department/{id}", response_model=SubDepartmentSchema)
 async def update_sub_department_by_id(
-    id: SubDepartmentEnum,
+    id: int,
     department_data: SubDepartmentUpdateSchema = Body(None),
     session: AsyncSession = Depends(get_async_session),
 ):
-    try:
-        update_data = department_data.model_dump(exclude_none=True)
-        if not update_data:
-            return Response(status_code=204)
-        query = select(SubDepartment).where(SubDepartment.id == id)
-        result = await session.execute(query)
-        record = result.scalars().first()
-        if not record:
-            return HTTPException(status_code=404, detail=NO_RECORD)
-        query = (
-            update(SubDepartment)
-            .where(SubDepartment.id == id)
-            .values(**update_data)
-            .returning(SubDepartment)
-        )
-        result = await session.execute(query)
-        await session.commit()
-        return result.scalars().first()
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+    return await update_sub_dep(id, department_data, SubDepartment, session)
 
 
-@departments.delete("/sub_department/{id}", response_model=SubDepartmentSchema)
-async def delete_sub_department_description_by_id(
-    id: SubDepartmentEnum,
+@departments.delete("/sub_department/{id}")
+async def delete_sub_department_by_id(
+    id: int,
     session: AsyncSession = Depends(get_async_session),
-):
-    try:
-        query = select(SubDepartment).where(SubDepartment.id == id)
-        result = await session.execute(query)
-        record = result.scalars().first()
-        if not record:
-            return HTTPException(status_code=404, detail=NO_RECORD)
-        query = (
-            update(SubDepartment).where(SubDepartment.id == id).values(description=None)
-        )
-        await session.execute(query)
-        await session.commit()
-        return record
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+) -> dict:
+    return await delete_sub_dep(id, SubDepartment, session)

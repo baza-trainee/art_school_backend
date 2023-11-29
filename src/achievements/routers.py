@@ -19,7 +19,6 @@ from .schemas import (
     CreateAchievementSchema,
     DeleteResponseSchema,
     PositionEnum,
-    GallerySubDepartmentEnum,
 )
 
 
@@ -50,7 +49,7 @@ async def get_achievement(
 
 @achievements_router.post("", response_model=GET_ACHIEVEMENT_RESPONSE)
 async def post_achievement(
-    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    sub_department: int = Form(default=None),
     pinned_position: PositionEnum = Form(default=None),
     gallery: POST_ACHIEVEMENT_BODY = Depends(POST_ACHIEVEMENT_BODY.as_form),
     session: AsyncSession = Depends(get_async_session),
@@ -64,7 +63,7 @@ async def post_achievement(
 @achievements_router.patch("/{id}", response_model=GET_ACHIEVEMENT_RESPONSE)
 async def patch_achievement(
     id: int,
-    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    sub_department: int = Form(default=None),
     pinned_position: PositionEnum = Form(default=None),
     description: str = Form(default=None, max_length=300),
     media: UploadFile = Form(default=None),

@@ -1,5 +1,3 @@
-from typing import Union
-import fastapi_users
 from fastapi import APIRouter, Depends, Form, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
@@ -7,10 +5,10 @@ from pydantic import AnyHttpUrl
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
-from src.auth.auth_config import fastapi_users
+from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
 from .models import Gallery
-from .utils import (
+from .service import (
     delete_media_by_id,
     get_all_media_by_type,
     create_photo,
@@ -26,14 +24,10 @@ from .schemas import (
     CreateVideoSchema,
     DeleteResponseSchema,
     PositionEnum,
-    GallerySubDepartmentEnum,
 )
+
 
 gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
-
-CURRENT_SUPERUSER = fastapi_users.current_user(
-    active=True, verified=True, superuser=True
-)
 
 GET_PHOTO_RESPONSE = GetPhotoSchema
 GET_VIDEO_RESPONSE = GetVideoSchema
@@ -85,7 +79,7 @@ async def get_video(
 @gallery_router.post("/photo", response_model=GET_PHOTO_RESPONSE)
 async def post_photo(
     pinned_position: PositionEnum = Form(default=None),
-    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    sub_department: int = Form(default=None),
     gallery: POST_PHOTO_BODY = Depends(POST_PHOTO_BODY.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
@@ -108,7 +102,7 @@ async def post_video(
 async def patch_photo(
     id: int,
     pinned_position: PositionEnum = Form(default=None),
-    sub_department: GallerySubDepartmentEnum = Form(default=None),
+    sub_department: int = Form(default=None),
     description: str = Form(default=None, max_length=300),
     media: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),

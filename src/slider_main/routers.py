@@ -17,7 +17,7 @@ from .exceptions import (
     NO_RECORD,
     SUCCESS_DELETE,
     SLIDE_EXISTS,
-    MAXIMUM_SLIDE
+    MAXIMUM_SLIDE,
 )
 
 
@@ -42,16 +42,17 @@ async def create_slide(
     slide_data: SliderCreateSchema = Depends(SliderCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
-):  
+):
     try:
-        total_slides = await session.execute(select(func.count()).select_from(SliderMain))
+        total_slides = await session.execute(
+            select(func.count()).select_from(SliderMain)
+        )
         total_count = total_slides.scalar()
     except Exception as e:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
     if total_count >= 8:
         raise HTTPException(status_code=400, detail=MAXIMUM_SLIDE)
-
 
     if slide_data.description is None:
         slide_data.description = None

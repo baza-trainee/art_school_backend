@@ -11,6 +11,8 @@ SUCCESS_CREATE = "Successfully created Sub Department: %s for Main Department %s
 CREATE_MAIN = "Successfully created Main Department: %s."
 EXISTS_MAIN = "Main Department `%s` already exists."
 NO_SUB_DEPARTMENT = "No sub-departments found for this department."
+NO_MEDIA = "Media for this sub-department not found."
+
 # CONTACTS
 CONTACTS_SUCCESS_CREATE = "Contacts have been created successfully."
 CONTACTS_ALREADY_EXISTS = "Contacts already exists."
@@ -35,3 +37,4 @@ PERSON_EXISTS = "Administrator with name %s already exists in the database."
 GALLERY_PINNED_EXISTS = "Media with position number: `%s` already exists."
 GALLERY_IS_NOT_A_VIDEO = "The selected recording is not a video"
 GALLERY_IS_NOT_A_PHOTO = "The selected recording is not a photo"
+INVALID_DEPARTMENT = "SubDepartment with id %s not found."

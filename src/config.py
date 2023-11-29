@@ -195,11 +195,11 @@ CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "pho
 
 SLIDES = [
     {
-            "title": "Slide1", 
-            "description": "Slide1 Test description",
-        },
-        {
-            "title": " Slide2", 
-            "description": "Slide2 Test description",
-        },
+        "title": "Slide1",
+        "description": "Slide1 Test description",
+    },
+    {
+        "title": " Slide2",
+        "description": "Slide2 Test description",
+    },
 ]

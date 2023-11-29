@@ -20,7 +20,8 @@ from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
 
 
 async def get_all_administration(
-    model: Type[Base], session: AsyncSession,
+    model: Type[Base],
+    session: AsyncSession,
 ) -> List[SchoolAdministration]:
     query = select(model)
     result = await session.execute(query)
@@ -109,7 +110,9 @@ async def update_administration(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def delete_administration(id: int, model: Type[Base], session: AsyncSession) -> dict:
+async def delete_administration(
+    id: int, model: Type[Base], session: AsyncSession
+) -> dict:
     query = select(model).where(model.id == id)
     result = await session.execute(query)
     if not result.scalars().first():
