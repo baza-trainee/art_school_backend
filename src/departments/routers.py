@@ -2,7 +2,6 @@ from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi_cache.decorator import cache
 
 from src.departments.service import (
     create_sub_dep,
@@ -33,7 +32,6 @@ departments = APIRouter(prefix="/departments", tags=["Departments"])
 
 
 @departments.get("", response_model=List[DepartmentSchema])
-@cache(expire=60)
 async def get_all_departments(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -41,7 +39,6 @@ async def get_all_departments(
 
 
 @departments.get("/{id}", response_model=List[SubDepartmentSchema])
-@cache(expire=60)
 async def get_sub_departments_by_department_id(
     id: DepartmentEnum,
     session: AsyncSession = Depends(get_async_session),
@@ -54,7 +51,6 @@ async def create_sub_department(
     data: SubDepartmentCreateSchema,
     session: AsyncSession = Depends(get_async_session),
 ):
-    cache.invalidate(get_all_departments)
     return await create_sub_dep(data, SubDepartment, session)
 
 
