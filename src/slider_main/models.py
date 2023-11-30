@@ -7,8 +7,8 @@ class SliderMain(Base):
     __tablename__ = "slider_main"
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(300))
-    description = Column(String(2000))
+    title = Column(String(150))
+    description = Column(String(150))
     photo = Column(String, nullable=False)
 
     # id = Column(Integer, primary_key=True)
