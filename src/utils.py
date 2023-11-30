@@ -9,8 +9,8 @@ from src.config import (
     ADMIN_USERNAME,
     CONTACTS,
     DEPARTMENTS,
-    REDIS_HOST,
-    REDIS_PORT,
+    # REDIS_HOST,
+    # REDIS_PORT,
     SUB_DEPARTMENTS,
     SLIDES,
 )
