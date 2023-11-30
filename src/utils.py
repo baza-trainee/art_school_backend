@@ -1,8 +1,8 @@
-from typing import Optional
+# from typing import Optional
 from fastapi import FastAPI, Request, Response
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
+# from fastapi_cache import FastAPICache
+# from fastapi_cache.backends.redis import RedisBackend
+# from redis import asyncio as aioredis
 
 from src.auth.utils import create_user
 from src.config import (
