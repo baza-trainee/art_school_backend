@@ -140,7 +140,7 @@ async def delete_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    if slide_id in (1, 2):
+    if slide_id in (1,):
         raise HTTPException(status_code=400, detail="Cannot delete slide with this ID")
 
     query = select(SliderMain).where(SliderMain.id == slide_id)
