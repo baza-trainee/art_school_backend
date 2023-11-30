@@ -12,3 +12,5 @@ fastapi-users[sqlalchemy]==12.1.2
 fastapi-mail==1.4.1
 fastapi-pagination==0.12.12
 faker==20.1.0
+# gunicorn==21.2.0
+fastapi-cache2[redis]

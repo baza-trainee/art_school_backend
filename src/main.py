@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+import time
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_pagination import add_pagination
 
 from src.utils import lifespan
-from src.database import engine
 from src.contacts.routers import router as router_contacts
 from src.administrations.routers import school_admin_router
 from src.news.routers import news_router
@@ -22,11 +23,22 @@ from src.config import (
     SWAGGER_PARAMETERS,
 )
 
+
 app = FastAPI(
     swagger_ui_parameters=SWAGGER_PARAMETERS,
     title="School",
     lifespan=lifespan,
 )
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Process-Time"] = f"{round(process_time)} ms"
+    return response
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

@@ -18,3 +18,6 @@ migrate:
 
 upgrade:
 	alembic upgrade head
+
+open-redis:
+	docker exec -it $$(docker-compose ps -q redis) redis-cli
