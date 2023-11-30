@@ -140,13 +140,20 @@ async def delete_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    if slide_id in (1,):
-        raise HTTPException(status_code=400, detail="Cannot delete slide with this ID")
-
+ 
     query = select(SliderMain).where(SliderMain.id == slide_id)
     result = await session.execute(query)
     if not result.scalars().first():
         raise HTTPException(status_code=404, detail=NO_RECORD)
+    
+    try:
+        total_slides = await session.execute(select(func.count()).select_from(SliderMain))
+        total_count = total_slides.scalar()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+
+    if total_count == 1:
+        raise HTTPException(status_code=400, detail="Cannot delete last slide")
     try:
         query = delete(SliderMain).where(SliderMain.id == slide_id)
         await session.execute(query)
