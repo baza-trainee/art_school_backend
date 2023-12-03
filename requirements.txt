@@ -13,4 +13,5 @@ fastapi-mail==1.4.1
 fastapi-pagination==0.12.12
 faker==20.1.0
 # gunicorn==21.2.0
-# fastapi-cache2[redis]
+# fastapi-cache2==0.2.0
+# redis==4.4.2

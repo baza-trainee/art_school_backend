@@ -1,23 +1,19 @@
-.PHONY: init init-migration down build run db-migrate test tox
+.PHONY: down build run
 
 down:
 	docker compose down
 
-run: build upgrade
+run: down
+	docker compose up postgres -d
+	alembic upgrade head
+	sleep 2
 	uvicorn vercel:app --reload
 
 start:
 	uvicorn vercel:app --reload
 
-build:
+build: down
 	docker compose up -d
-	sleep 2
-
-migrate:
-	alembic revision --autogenerate -m
-
-upgrade:
-	alembic upgrade head
 
 open-redis:
-	docker exec -it $$(docker-compose ps -q redis) redis-cli
+	docker exec -it fastapi-redis redis-cli

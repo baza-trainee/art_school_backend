@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
+
+# from src.redis import invalidate_cache
 from .models import Achievement
 from .service import (
     delete_achievement_by_id,
@@ -55,6 +57,8 @@ async def post_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # if sub_department:
+    #     await invalidate_cache("get_achievement_for_sub_department", sub_department)
     return await create_photo(
         pinned_position, sub_department, gallery, Achievement, session
     )
@@ -70,9 +74,12 @@ async def patch_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await update_photo(
+    result: Achievement = await update_photo(
         id, pinned_position, sub_department, description, media, Achievement, session
     )
+    # if x := result.sub_department:
+    #     await invalidate_cache("get_achievement_for_sub_department", x)
+    return result
 
 
 @achievements_router.delete("/{id}", response_model=DELETE_RESPONSE)
@@ -81,4 +88,7 @@ async def delete_media(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # media: Achievement = await get_media_by_id(Achievement, session, id)
+    # await session.commit()
+    # await invalidate_cache("get_achievement_for_sub_department", media.sub_department)
     return await delete_achievement_by_id(id, Achievement, session)

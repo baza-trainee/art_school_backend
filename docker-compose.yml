@@ -6,24 +6,30 @@ services:
     image: postgres:latest
     container_name: postgres_db
     ports:
-      - "5432:5432"
+      - ${DB_PORT}:${DB_PORT}
     env_file:
       - .env
 
-  # redis:
-  #   image: redis:7
-  #   container_name: redis_app
+  redis:
+    container_name: fastapi-redis
+    image: redis:7.2.3
+    restart: on-failure
+    env_file:
+      - .env
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
 
-
-  # app:
-  #   build:
-  #     context: .
-  #   env_file:
-  #     - .env
-  #   container_name: fastapi_app
-  #   command: ["bash", "app.sh"]
-  #   ports:
-  #     - 9999:8000
-  #   depends_on:
-  #     - postgres
-  #     - redis
+  app:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: fastapi_app
+    command: ["bash", "app.sh"]
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+      - redis

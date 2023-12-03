@@ -3,6 +3,9 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+# from fastapi_cache.decorator import cache
+
+# from src.config import HOUR, MONTH
 from src.administrations.service import (
     create_administration,
     delete_administration,
@@ -13,6 +16,8 @@ from src.administrations.service import (
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
+
+# from src.redis import invalidate_cache, my_key_builder
 from .models import SchoolAdministration
 from .schemas import (
     AdministratorSchema,
@@ -28,6 +33,7 @@ school_admin_router = APIRouter(
 
 
 @school_admin_router.get("", response_model=List[AdministratorSchema])
+# @cache(expire=HOUR, key_builder=my_key_builder)
 async def get_all_school_administration(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -40,6 +46,7 @@ async def create_school_administration(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # await invalidate_cache("get_all_school_administration")
     return await create_administration(person, SchoolAdministration, session)
 
 
@@ -58,6 +65,7 @@ async def update_school_administration(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # await invalidate_cache("get_all_school_administration")
     return await update_administration(id, person, photo, SchoolAdministration, session)
 
 
@@ -67,4 +75,5 @@ async def delete_school_administration(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # await invalidate_cache("get_all_school_administration")
     return await delete_administration(id, SchoolAdministration, session)

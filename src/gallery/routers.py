@@ -2,11 +2,14 @@ from fastapi import APIRouter, Depends, Form, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from pydantic import AnyHttpUrl
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database import get_async_session
+
+# from src.redis import invalidate_cache
 from .models import Gallery
 from .service import (
     delete_media_by_id,
@@ -84,6 +87,8 @@ async def post_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # if sub_department:
+    #     await invalidate_cache("get_gallery_for_sub_department", sub_department)
     return await create_photo(
         pinned_position, sub_department, gallery, Gallery, session
     )
@@ -108,6 +113,8 @@ async def patch_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # if sub_department:
+    #     await invalidate_cache("get_gallery_for_sub_department", sub_department)
     return await update_photo(
         id, pinned_position, sub_department, description, media, Gallery, session
     )
@@ -129,4 +136,8 @@ async def delete_media(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
+    # query = select(Gallery).where(Gallery.id == id, Gallery.is_video == False)
+    # result = await session.execute(query)
+    # if x := result.scalars().first():
+    #     await invalidate_cache("get_gallery_for_sub_department", x.sub_department)
     return await delete_media_by_id(id, Gallery, session)
