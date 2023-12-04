@@ -27,7 +27,7 @@ async def get_contacts(
 
 @router.patch("", response_model=ContactsSchema)
 async def update_contacts(
-    contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema.as_form),
+    contacts_update: ContactsUpdateSchema,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
