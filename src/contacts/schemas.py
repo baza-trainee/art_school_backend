@@ -1,7 +1,14 @@
-from typing import Annotated, Any, Optional, Union
+from typing import Any, Optional, Union
 from enum import Enum
 
-from pydantic import BaseModel, EmailStr, constr, AnyHttpUrl, validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    constr,
+    AnyHttpUrl,
+    field_validator,
+    ValidationInfo,
+)
 
 
 class ContactsSchema(BaseModel):
@@ -30,27 +37,24 @@ class ContactsUpdateSchema(BaseModel):
     statute_url: Optional[Union[AnyHttpUrl, str]] = None
     legal_info_url: Optional[Union[AnyHttpUrl, str]] = None
 
-    @validator(
+    @field_validator(
         "map_url",
         "facebook_url",
         "youtube_url",
         "admission_info_url",
         "statute_url",
         "legal_info_url",
-        pre=True,
+        "email",
     )
-    def validate_url(cls, v):
-        if not v:
+    @classmethod
+    def validate(cls, value: str, info: ValidationInfo) -> str:
+        if not value:
             return ""
         else:
-            return AnyHttpUrl(v)
-
-    @validator("email", pre=True)
-    def validate_email(cls, v):
-        if not v:
-            return ""
-        else:
-            return EmailStr._validate(v)
+            if info.field_name == "email":
+                return EmailStr._validate(value)
+            else:
+                return AnyHttpUrl(value)
 
 
 class ContactField(str, Enum):
