@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Annotated, Any, Optional, Union
 from enum import Enum
 
 from pydantic import BaseModel, EmailStr, constr, AnyHttpUrl, validator
@@ -44,6 +44,13 @@ class ContactsUpdateSchema(BaseModel):
             return ""
         else:
             return AnyHttpUrl(v)
+
+    @validator("email", pre=True)
+    def validate_email(cls, v):
+        if not v:
+            return ""
+        else:
+            return EmailStr._validate(v)
 
 
 class ContactField(str, Enum):
