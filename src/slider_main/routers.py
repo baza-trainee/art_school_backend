@@ -1,6 +1,6 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, File, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, func, insert, delete
 from cloudinary import uploader
@@ -99,8 +99,8 @@ async def create_slide(
 @slider_main_router.patch("/{slide_id}", response_model=SliderMainSchema)
 async def partial_update_slide(
     slide_id: int,
-    photo: Annotated[UploadFile, File()] = None,
-    slider_data: SliderMainSchema = Depends(SliderMainUpdateSchema.as_form),
+    slider_data: SliderMainUpdateSchema = None,
+    photo: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
