@@ -14,30 +14,6 @@ class DepartmentEnum(int, Enum):
     preschool = 6
 
 
-class SubDepartmentEnum(int, Enum):
-    string = 1
-    wind = 2
-    folk = 3
-    theoretical = 4
-    jazz = 5
-    specialized_piano = 6
-    concertmasters = 7
-    chamber_ensemble = 8
-    art_history = 9
-    choral = 10
-    solo_singing = 11
-    pop_vocals = 12
-    folk_singing = 13
-    classical_dance = 14
-    folk_dance = 15
-    modern_dance = 16
-    fake_theatrical = 17
-    imagination_development = 18
-    painting = 19
-    design_graphic = 20
-    fake_preschool = 21
-
-
 class DepartmentSchema(BaseModel):
     id: Optional[int]
     department_name: Optional[str]
@@ -48,6 +24,12 @@ class SubDepartmentSchema(BaseModel):
     sub_department_name: Optional[str]
     description: Optional[str]
     main_department_id: Optional[int]
+
+
+class SubDepartmentCreateSchema(BaseModel):
+    sub_department_name: str
+    description: str = Field(..., max_length=2000)
+    main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentUpdateSchema(BaseModel):

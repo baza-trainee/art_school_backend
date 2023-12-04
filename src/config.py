@@ -25,6 +25,15 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 
+# REDIS_HOST = os.environ.get("REDIS_HOST")
+# REDIS_PORT = os.environ.get("REDIS_PORT")
+# REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+# CACHE_PREFIX = "fastapi-cache"
+
+# HOUR = 3600
+# DAY = HOUR*24
+# MONTH = DAY*30
+
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
 
 SMTP_USER = os.environ.get("SMTP_USER")
@@ -195,11 +204,11 @@ CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "pho
 
 SLIDES = [
     {
-            "title": "Slide1", 
-            "description": "Slide1 Test description",
-        },
-        {
-            "title": " Slide2", 
-            "description": "Slide2 Test description",
-        },
+        "title": "Slide1",
+        "description": "Slide1 Test description",
+    },
+    {
+        "title": " Slide2",
+        "description": "Slide2 Test description",
+    },
 ]

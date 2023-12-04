@@ -26,6 +26,7 @@ async def create_slide(title: str, description: str):
         else:
             print(f"Slide with title:'{slide.title}' already exists")
 
+
 async def create_slides(slides_list: List[dict]):
     for slide_data in slides_list:
         await create_slide(**slide_data)
