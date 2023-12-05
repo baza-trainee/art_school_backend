@@ -1,20 +1,22 @@
+from re import match
 from typing import Any, Optional, Union
 from enum import Enum
 
 from pydantic import (
     BaseModel,
     EmailStr,
-    constr,
     AnyHttpUrl,
     field_validator,
     ValidationInfo,
 )
 
+from src.exceptions import INVALID_PHONE
+
 
 class ContactsSchema(BaseModel):
     map_url: Union[AnyHttpUrl, Any]
     address: str
-    phone: constr(max_length=15)
+    phone: str
     email: Union[EmailStr, str]
     facebook_url: Union[AnyHttpUrl, Any]
     youtube_url: Union[AnyHttpUrl, Any]
@@ -29,7 +31,7 @@ class ContactsSchema(BaseModel):
 class ContactsUpdateSchema(BaseModel):
     map_url: Optional[Union[AnyHttpUrl, str]] = None
     address: Optional[str] = None
-    phone: Optional[constr(max_length=15)] = None
+    phone: Optional[str] = None
     email: Optional[Union[EmailStr, str]] = None
     facebook_url: Optional[Union[AnyHttpUrl, str]] = None
     youtube_url: Optional[Union[AnyHttpUrl, str]] = None
@@ -45,6 +47,7 @@ class ContactsUpdateSchema(BaseModel):
         "statute_url",
         "legal_info_url",
         "email",
+        "phone",
     )
     @classmethod
     def validate(cls, value: str, info: ValidationInfo) -> str:
@@ -53,6 +56,11 @@ class ContactsUpdateSchema(BaseModel):
         else:
             if info.field_name == "email":
                 return EmailStr._validate(value)
+            elif info.field_name == "phone":
+                if not (match(r"^[\d\+\-\(\)]{10,20}$", value)):
+                    raise ValueError(INVALID_PHONE)
+                else:
+                    return value
             else:
                 return AnyHttpUrl(value)
 
