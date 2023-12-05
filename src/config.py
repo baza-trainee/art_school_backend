@@ -72,6 +72,8 @@ SWAGGER_PARAMETERS = {
     "displayOperationId": True,
     "filter": True,
     "requestSnippets": True,
+    "defaultModelsExpandDepth": -1,
+    "docExpansion": "none"
 }
 
 API_PREFIX = "/api/v1"
