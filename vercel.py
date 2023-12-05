@@ -1,15 +1,16 @@
+from src.administrations.utils import create_administrations
 from src.database import get_async_session
 from src.auth.utils import create_user
 
 from src.auth.utils import create_user
-from src.config import (
-    ADMIN_PASSWORD,
-    ADMIN_USERNAME,
+from src.fake_data import (
+    ADMINISTRATIONS,
     CONTACTS,
     DEPARTMENTS,
     SUB_DEPARTMENTS,
     SLIDES,
 )
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
 from src.contacts.utils import create_contacts
 from src.database import get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
@@ -26,6 +27,7 @@ async def customlifespan():
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)
             await create_slides(SLIDES)
+            await create_administrations(ADMINISTRATIONS)
 
     print("lifespan end")
 

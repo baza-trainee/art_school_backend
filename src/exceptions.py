@@ -32,6 +32,7 @@ OLD_PASS_INCORRECT = "Old password is incorrect."
 
 # SCHOOL ADMINISTRATION
 PERSON_EXISTS = "Administrator with name %s already exists in the database."
+SUCCESS = "Administrator %s create successfuly."
 
 # GALLERY
 GALLERY_PINNED_EXISTS = "Media with position number: `%s` already exists."
