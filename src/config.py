@@ -1,14 +1,11 @@
 import os
 
-from faker import Faker
 import cloudinary
 from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig
 
 
 load_dotenv()
-faker = Faker()
-desc = faker.text()
 
 cloudinary.config(
     cloud_name=os.environ.get("CLOUD_NAME"),
@@ -79,136 +76,3 @@ SWAGGER_PARAMETERS = {
 
 API_PREFIX = "/api/v1"
 COOKIE_NAME = "art_school"
-DEPARTMENTS = [
-    "Музичне відділення",
-    "Вокально-хорове відділення",
-    "Хореографічне відділення",
-    "Театральне відділення",
-    "Образотворче відділення",
-    "Дошкільне та підготовче відділення",
-]
-SUB_DEPARTMENTS = [
-    # Музичне відділення
-    {
-        "sub_department_name": "Струнний відділ",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Духовий відділ",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Народний відділ",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Теоретичний відділ",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Джазовий відділ",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Відділ спеціалізованого та загального фортепіано",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Відділ концертмейстрів",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Відділ камерного ансамблю",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    {
-        "sub_department_name": "Історія мистецтв",
-        "description": desc,
-        "main_department_id": 1,
-    },
-    # Вокально-хорове відділення
-    {
-        "sub_department_name": "Хоровий відділ",
-        "description": desc,
-        "main_department_id": 2,
-    },
-    {
-        "sub_department_name": "Відділ сольного співу",
-        "description": desc,
-        "main_department_id": 2,
-    },
-    {
-        "sub_department_name": "Відділ естрадного вокалу",
-        "description": desc,
-        "main_department_id": 2,
-    },
-    {
-        "sub_department_name": "Відділ народного співу",
-        "description": desc,
-        "main_department_id": 2,
-    },
-    # Хореографічне відділення
-    {
-        "sub_department_name": "Відділ класичного танцю",
-        "description": desc,
-        "main_department_id": 3,
-    },
-    {
-        "sub_department_name": "Відділ народного танцю",
-        "description": desc,
-        "main_department_id": 3,
-    },
-    {
-        "sub_department_name": "Відділ сучасного танцю",
-        "description": desc,
-        "main_department_id": 3,
-    },
-    # Театральне відділення
-    {
-        "sub_department_name": "Псевдо відділ Театрального відділення",
-        "description": desc,
-        "main_department_id": 4,
-    },
-    # Образотворче відділення
-    {
-        "sub_department_name": "Розвиток образотворчої уяви та мислення 1-4 класи",
-        "description": desc,
-        "main_department_id": 5,
-    },
-    {
-        "sub_department_name": "Живопис 4-7 класи",
-        "description": desc,
-        "main_department_id": 5,
-    },
-    {
-        "sub_department_name": "Дизайнерсько-графічний напрямок 4-7 класи",
-        "description": desc,
-        "main_department_id": 5,
-    },
-    # Дошкільне та підготовче відділення
-    {
-        "sub_department_name": "Псевдо відділ Дошкільного та підготовчого відділення",
-        "description": desc,
-        "main_department_id": 6,
-    },
-]
-CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "phone": "+38(097)290-79-40"}
-
-SLIDES = [
-    {
-        "title": "Slide1",
-        "description": "Slide1 Test description",
-    },
-    {
-        "title": " Slide2",
-        "description": "Slide2 Test description",
-    },
-]

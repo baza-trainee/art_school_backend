@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from sqlalchemy import func, select
+from src.administrations.utils import create_administrations
 
 from src.auth.models import User
 from src.auth.utils import create_user
@@ -9,13 +10,13 @@ from src.departments.utils import create_main_departments, create_sub_department
 
 # from src.redis import init_redis, redis
 from src.slider_main.utils import create_slides
-from src.config import (
-    ADMIN_PASSWORD,
-    ADMIN_USERNAME,
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.fake_data import (
     CONTACTS,
     DEPARTMENTS,
     SUB_DEPARTMENTS,
     SLIDES,
+    ADMINISTRATIONS,
 )
 
 
@@ -34,5 +35,6 @@ async def lifespan(app: FastAPI):
                 await create_sub_departments(SUB_DEPARTMENTS)
                 await create_contacts(**CONTACTS)
                 await create_slides(SLIDES)
+                await create_administrations(ADMINISTRATIONS)
     # await lock.release()
     yield
