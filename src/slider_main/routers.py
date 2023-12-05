@@ -96,11 +96,11 @@ async def create_slide(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-@slider_main_router.patch("/{slide_id}", response_model=SliderMainSchema)
+@slider_main_router.put("/{slide_id}", response_model=SliderMainSchema)
 async def partial_update_slide(
     slide_id: int,
-    slider_data: SliderMainUpdateSchema = None,
-    photo: UploadFile = Form(default=None),
+    photo: UploadFile = None,
+    slider_data: SliderMainUpdateSchema = Depends(SliderMainUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

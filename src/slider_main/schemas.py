@@ -1,6 +1,6 @@
 import json
 from typing import Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from fastapi import Body, Form, UploadFile
 
 
@@ -27,20 +27,21 @@ class SliderCreateSchema(BaseModel):
 
 
 class SliderMainUpdateSchema(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    title: Optional[str] = (Body(max_length=150, default=None),)
+    description: Optional[str] = (Body(max_length=150, default=None),)
 
     @classmethod
     def as_form(
         cls,
-        title: Optional[str] = Body(max_length=150, default=None),
-        description: Optional[str] = Body(max_length=150, default=None),
+        title: Optional[str] = Body(
+            max_length=150,
+            default=None,
+            description="Залиште поле пустим, щоб видалити дані",
+        ),
+        description: Optional[str] = Body(
+            max_length=150,
+            default=None,
+            description="Залиште поле пустим, щоб видалити дані",
+        ),
     ):
         return cls(title=title, description=description)
-
-    @model_validator(mode='before')
-    @classmethod
-    def validate_to_json(cls, value):
-        if isinstance(value, str):
-            return cls(**json.loads(value))
-        return value
