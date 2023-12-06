@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response
+from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.utils import disable_installed_extensions_check
@@ -8,9 +8,9 @@ from fastapi_pagination.utils import disable_installed_extensions_check
 # from fastapi_cache.decorator import cache
 
 # from src.config import HALF_DAY
-# from src.redis import invalidate_cache, my_key_builder
+# from src.database.redis import invalidate_cache, my_key_builder
 from src.auth.models import User
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.auth.auth_config import CURRENT_SUPERUSER
 from .models import Poster
 from .schemas import PosterSchema, PosterCreateSchema, PosterUpdateSchema

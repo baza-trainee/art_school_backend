@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select, update
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import Base
+from src.database.database import Base
 from src.achievements.schemas import (
     CreateAchievementSchema,
     PositionEnum,

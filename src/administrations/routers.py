@@ -15,9 +15,9 @@ from src.administrations.service import (
 )
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
-from src.database import get_async_session
+from src.database.database import get_async_session
 
-# from src.redis import invalidate_cache, my_key_builder
+# from src.database.redis import invalidate_cache, my_key_builder
 from .models import SchoolAdministration
 from .schemas import (
     AdministratorSchema,

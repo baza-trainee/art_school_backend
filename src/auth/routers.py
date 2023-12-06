@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update
 
 from src.auth.auth_config import CURRENT_SUPERUSER, fastapi_users, auth_backend
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.exceptions import (
     OLD_PASS_INCORRECT,
     PASSWORD_CHANGE_SUCCESS,
@@ -12,7 +12,7 @@ from src.exceptions import (
     PASSWORD_STRENGTH_ERROR,
 )
 from src.auth.models import User
-from src.database import get_async_session
+from src.database.database import get_async_session
 from .manager import get_user_manager
 
 

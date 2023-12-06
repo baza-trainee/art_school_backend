@@ -1,24 +1,17 @@
-from typing import List, Optional, Type
+from typing import Type
 
-from cloudinary import uploader
-from fastapi import HTTPException, Response, UploadFile
+from fastapi import HTTPException, Response
 from pydantic_core import Url
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import Base
-from src.auth.models import User
-from src.auth.auth_config import CURRENT_SUPERUSER
+from src.database.database import Base
 from src.exceptions import (
     INVALID_FIELD,
-    NO_DATA_FOUND,
     NO_RECORD,
-    PERSON_EXISTS,
     SERVER_ERROR,
-    SUCCESS_DELETE,
 )
-from .models import Contacts
-from .schemas import ContactField, ContactsSchema, ContactsUpdateSchema
+from .schemas import ContactField, ContactsUpdateSchema
 
 
 async def get_record(model: Type[Base], session: AsyncSession):

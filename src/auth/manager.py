@@ -6,6 +6,9 @@ from fastapi_users import BaseUserManager, IntegerIDMixin, InvalidPasswordExcept
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .models import User
+from src.config import SECRET_AUTH
+from src.database.database import get_async_session
 from src.auth.schemas import UserCreate
 from src.exceptions import (
     AFTER_LOGIN,
@@ -15,10 +18,6 @@ from src.exceptions import (
     PASSWORD_STRENGTH_ERROR,
     PASSWORD_UNIQUE_ERROR,
 )
-
-from .models import User
-from src.config import SECRET_AUTH
-from src.database import get_async_session
 
 
 def check_password_strength(password: str):

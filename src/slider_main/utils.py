@@ -1,11 +1,12 @@
 import contextlib
 import os
-
 from typing import List
+
 from sqlalchemy import select
 
 from src.slider_main.models import SliderMain
-from src.database import get_async_session
+from src.database.database import get_async_session
+
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 

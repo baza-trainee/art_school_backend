@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
-from src.database import get_async_session
+from src.database.database import get_async_session
 
-# from src.redis import invalidate_cache
+# from src.database.redis import invalidate_cache
 from .models import Achievement
 from .service import (
     delete_achievement_by_id,

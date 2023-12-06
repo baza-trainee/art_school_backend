@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, UploadFile, Response
 from sqlalchemy import delete, insert, select, update, desc, func
 
-from src.database import Base
+from src.database.database import Base
 from src.posters.schemas import PosterCreateSchema, PosterUpdateSchema
 from src.utils import save_photo
 from .exceptions import (

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .models import SchoolAdministration
 from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
 from src.utils import save_photo
-from src.database import Base
+from src.database.database import Base
 from src.exceptions import (
     NO_DATA_FOUND,
     NO_RECORD,

@@ -1,20 +1,17 @@
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.contacts.utils import create_contacts
+from src.departments.utils import create_main_departments, create_sub_departments
+from src.slider_main.utils import create_slides
 from src.administrations.utils import create_administrations
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.auth.utils import create_user
-
-from src.auth.utils import create_user
-from src.fake_data import (
+from src.database.fake_data import (
     ADMINISTRATIONS,
     CONTACTS,
     DEPARTMENTS,
     SUB_DEPARTMENTS,
     SLIDES,
 )
-from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
-from src.contacts.utils import create_contacts
-from src.database import get_async_session
-from src.departments.utils import create_main_departments, create_sub_departments
-from src.slider_main.utils import create_slides
 
 
 async def customlifespan():

@@ -16,11 +16,11 @@ from src.departments.service import (
     get_sub_dep_list,
     update_sub_dep,
 )
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
 
-# from src.redis import invalidate_cache, my_key_builder
+# from src.database.redis import invalidate_cache, my_key_builder
 from .models import MainDepartment, SubDepartment
 from .schemas import (
     DepartmentEnum,

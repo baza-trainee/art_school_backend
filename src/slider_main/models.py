@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from src.database import Base
+from src.database.database import Base
 
 
 class SliderMain(Base):
