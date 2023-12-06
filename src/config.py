@@ -32,6 +32,7 @@ DB_PASS = os.environ.get("DB_PASS")
 
 # HOUR = 3600
 # DAY = HOUR*24
+# HALF_DAY = HOUR*12
 # MONTH = DAY*30
 
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
