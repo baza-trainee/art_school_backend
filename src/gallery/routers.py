@@ -88,7 +88,7 @@ async def post_photo(
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # if sub_department:
-    #     await invalidate_cache("get_gallery_for_sub_department", sub_department)
+    #    await invalidate_cache("get_gallery_for_sub_department", sub_department)
     return await create_photo(
         pinned_position, sub_department, gallery, Gallery, session
     )
