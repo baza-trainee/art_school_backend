@@ -1,12 +1,12 @@
 from typing import Optional, Type
 
-from cloudinary import uploader
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, UploadFile, Response
 from sqlalchemy import delete, insert, select, update, desc, func
 
 from src.database import Base
 from src.posters.schemas import PosterCreateSchema, PosterUpdateSchema
+from src.utils import save_photo
 from .exceptions import (
     POSTERS_EXISTS,
     NO_DATA_FOUND,
@@ -47,20 +47,7 @@ async def create_poster(
             status_code=400,
             detail=POSTERS_EXISTS % poster_data.title,
         )
-
-    photo = poster_data.photo
-    folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # update_data["photo"] = file_path
-    try:
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="cloudinary error")
-
-    poster_data.photo = upload_result["url"]
+    poster_data.photo = await save_photo(poster_data.photo, model)
     try:
         query = insert(model).values(**poster_data.model_dump()).returning(model)
         result = await session.execute(query)
@@ -85,14 +72,7 @@ async def patch_poster(
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     update_data = posters_data.model_dump(exclude_none=True)
     if photo:
-        folder_path = f"static/{model.__name__}"
-        # os.makedirs(folder_path, exist_ok=True)
-        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        # async with aiofiles.open(file_path, "wb") as buffer:
-        #     await buffer.write(await photo.read())
-        # update_data["photo"] = file_path
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-        update_data["photo"] = upload_result["url"]
+        update_data["photo"] = await save_photo(photo, model)
     if not update_data:
         return Response(status_code=204)
     try:

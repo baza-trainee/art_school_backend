@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Form, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from pydantic import AnyHttpUrl
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
@@ -109,7 +108,7 @@ async def patch_photo(
     pinned_position: PositionEnum = Form(default=None),
     sub_department: int = Form(default=None),
     description: str = Form(default=None, max_length=300),
-    media: UploadFile = Form(default=None),
+    media: UploadFile = None,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):

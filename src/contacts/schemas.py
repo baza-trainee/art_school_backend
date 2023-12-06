@@ -15,9 +15,9 @@ from src.exceptions import INVALID_PHONE
 
 class ContactsSchema(BaseModel):
     map_url: Union[AnyHttpUrl, Any]
-    address: str
-    phone: str
-    email: Union[EmailStr, str]
+    address: Union[str, Any]
+    phone: Union[str, Any]
+    email: Union[EmailStr, Any]
     facebook_url: Union[AnyHttpUrl, Any]
     youtube_url: Union[AnyHttpUrl, Any]
     admission_info_url: Union[AnyHttpUrl, Any]

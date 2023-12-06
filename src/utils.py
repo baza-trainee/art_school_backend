@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from typing import Type
+from fastapi import FastAPI, UploadFile
 from sqlalchemy import func, select
-from src.administrations.utils import create_administrations
+from cloudinary import uploader
 
+from src.administrations.utils import create_administrations
 from src.auth.models import User
 from src.auth.utils import create_user
 from src.contacts.utils import create_contacts
-from src.database import get_async_session
+from src.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 
 # from src.redis import init_redis, redis
@@ -38,3 +40,14 @@ async def lifespan(app: FastAPI):
                 await create_administrations(ADMINISTRATIONS)
     # await lock.release()
     yield
+
+
+async def save_photo(file: UploadFile, model: Type[Base]) -> str:
+    folder_path = f"static/{model.__name__}"
+    # os.makedirs(folder_path, exist_ok=True)
+    # file_path = f"{folder_path}/{file.filename.replace(' ', '_')}"
+    # async with aiofiles.open(file_path, "wb") as buffer:
+    #     await buffer.write(await file.read())
+    # return file_path
+    upload_result = uploader.upload(file.file, folder=folder_path)
+    return upload_result["url"]
