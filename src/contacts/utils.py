@@ -3,7 +3,7 @@ import contextlib
 from sqlalchemy import select
 
 from src.contacts.models import Contacts
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.exceptions import CONTACTS_ALREADY_EXISTS, CONTACTS_SUCCESS_CREATE
 
 

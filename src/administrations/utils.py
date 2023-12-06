@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import select
 
 from src.administrations.models import SchoolAdministration
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.exceptions import PERSON_EXISTS, SUCCESS
 
 

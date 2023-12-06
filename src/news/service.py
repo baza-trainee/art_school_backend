@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, UploadFile, Response
 from sqlalchemy import delete, insert, select, update, desc, func
 
-from src.database import Base
+from src.database.database import Base
 from src.news.schemas import (
     NewsCreateSchema,
     NewsUpdateSchema,

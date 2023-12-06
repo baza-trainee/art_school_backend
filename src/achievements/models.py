@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Integer, String, func, ForeignKey
 
-from src.database import Base
+from src.database.database import Base
 
 
 class Achievement(Base):

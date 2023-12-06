@@ -1,11 +1,10 @@
 from typing import Optional, Type
 
-from cloudinary import uploader
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, UploadFile, Response
-from sqlalchemy import delete, insert, select, update, desc, func
+from sqlalchemy import delete, insert, select, update, func
 
-from src.database import Base
+from src.database.database import Base
 from src.utils import save_photo
 from .schemas import SliderCreateSchema, SliderMainUpdateSchema
 from .exceptions import (

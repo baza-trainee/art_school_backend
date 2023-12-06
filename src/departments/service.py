@@ -5,7 +5,7 @@ from fastapi import HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.achievements.models import Achievement
-from src.database import Base
+from src.database.database import Base
 from src.gallery.models import Gallery
 from src.exceptions import (
     NO_DATA_FOUND,

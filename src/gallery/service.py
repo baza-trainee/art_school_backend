@@ -5,7 +5,7 @@ from sqlalchemy import delete, insert, select, update, and_
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import Base
+from src.database.database import Base
 from src.departments.models import SubDepartment
 from src.utils import save_photo
 from src.gallery.schemas import (

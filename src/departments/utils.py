@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import select
 
 from src.departments.models import MainDepartment, SubDepartment
-from src.database import get_async_session
+from src.database.database import get_async_session
 from src.exceptions import (
     CREATE_MAIN,
     EXISTS_MAIN,

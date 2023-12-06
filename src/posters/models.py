@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
 from datetime import datetime
 
-from src.database import Base
+from sqlalchemy import Column, Integer, String, DateTime, func
+
+from src.database.database import Base
 
 
 class Poster(Base):

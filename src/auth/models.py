@@ -6,7 +6,7 @@ from sqlalchemy import (
     String,
 )
 
-from src.database import Base
+from src.database.database import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
