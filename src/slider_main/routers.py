@@ -8,6 +8,7 @@ from fastapi import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.utils import disable_installed_extensions_check
+
 # from fastapi_cache.decorator import cache
 
 # from src.config import HALF_DAY

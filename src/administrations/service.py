@@ -1,13 +1,13 @@
 from typing import List, Optional, Type
 
-from cloudinary import uploader
 from fastapi import HTTPException, Response, UploadFile
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .models import SchoolAdministration
+from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
+from src.utils import save_photo
 from src.database import Base
-from src.auth.models import User
-from src.auth.auth_config import CURRENT_SUPERUSER
 from src.exceptions import (
     NO_DATA_FOUND,
     NO_RECORD,
@@ -15,8 +15,6 @@ from src.exceptions import (
     SERVER_ERROR,
     SUCCESS_DELETE,
 )
-from .models import SchoolAdministration
-from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
 
 
 async def get_all_administration(
@@ -44,15 +42,7 @@ async def create_administration(
             status_code=400,
             detail=PERSON_EXISTS % person.full_name,
         )
-    photo = person.photo
-    folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # department.photo = file_path
-    upload_result = uploader.upload(photo.file, folder=folder_path)
-    person.photo = upload_result["url"]
+    person.photo = await save_photo(person.photo, model)
     query = (
         insert(SchoolAdministration)
         .values(**person.model_dump())
@@ -89,14 +79,7 @@ async def update_administration(
         raise HTTPException(status_code=404, detail=NO_RECORD)
     update_data = person.model_dump(exclude_none=True)
     if photo:
-        folder_path = f"static/{model.__name__}"
-        # os.makedirs(folder_path, exist_ok=True)
-        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        # async with aiofiles.open(file_path, "wb") as buffer:
-        #     await buffer.write(await photo.read())
-        # update_data["photo"] = file_path
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-        update_data["photo"] = upload_result["url"]
+        update_data["photo"] = await save_photo(photo, model)
     if not update_data:
         return Response(status_code=204)
     try:

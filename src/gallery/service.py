@@ -1,6 +1,5 @@
 from typing import Optional, Type
 
-from cloudinary import uploader
 from pydantic import AnyHttpUrl
 from sqlalchemy import delete, insert, select, update, and_
 from fastapi import HTTPException, UploadFile
@@ -8,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import Base
 from src.departments.models import SubDepartment
+from src.utils import save_photo
 from src.gallery.schemas import (
     CreatePhotoSchema,
     PositionEnum,
@@ -72,15 +72,7 @@ async def create_photo(
     model: Type[Base],
     session: AsyncSession,
 ):
-    photo = gallery.media
-    folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # department.photo = file_path
-    upload_result = uploader.upload(photo.file, folder=folder_path)
-    gallery.media = upload_result["url"]
+    gallery.media = await save_photo(gallery.media, model)
     schema_output = gallery.model_dump()
     schema_output["is_video"] = False
 
@@ -178,14 +170,7 @@ async def update_photo(
         else:
             update_data["pinned_position"] = pinned_position
     if media:
-        folder_path = f"static/{model.__name__}"
-        # os.makedirs(folder_path, exist_ok=True)
-        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        # async with aiofiles.open(file_path, "wb") as buffer:
-        #     await buffer.write(await photo.read())
-        # update_data["photo"] = file_path
-        upload_result = uploader.upload(media.file, folder=folder_path)
-        update_data["media"] = upload_result["url"]
+        update_data["media"] = await save_photo(media, model)
     try:
         query = (
             update(model).where(model.id == id).values(**update_data).returning(model)

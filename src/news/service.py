@@ -1,6 +1,5 @@
 from typing import Optional, Type
 
-from cloudinary import uploader
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, UploadFile, Response
 from sqlalchemy import delete, insert, select, update, desc, func
@@ -10,6 +9,7 @@ from src.news.schemas import (
     NewsCreateSchema,
     NewsUpdateSchema,
 )
+from src.utils import save_photo
 from .exceptions import (
     NEWS_EXISTS,
     NO_DATA_FOUND,
@@ -54,19 +54,7 @@ async def create_news(
             detail=NEWS_EXISTS % news_data.title,
         )
 
-    photo = news_data.photo
-    folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # update_data["photo"] = file_path
-    try:
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="cloudinary error")
-
-    news_data.photo = upload_result["url"]
+    news_data.photo = await save_photo(news_data.photo, model)
     try:
         news_data = news_data.model_dump()
         query = insert(model).values(**news_data).returning(model)
@@ -92,14 +80,7 @@ async def update_news(
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     update_data = news_data.model_dump(exclude_none=True)
     if photo:
-        folder_path = f"static/{model.__name__}"
-        # os.makedirs(folder_path, exist_ok=True)
-        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        # async with aiofiles.open(file_path, "wb") as buffer:
-        #     await buffer.write(await photo.read())
-        # update_data["photo"] = file_path
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-        update_data["photo"] = upload_result["url"]
+        update_data["photo"] = await save_photo(photo, model)
     if not update_data:
         return Response(status_code=204)
     try:

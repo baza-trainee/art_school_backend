@@ -6,6 +6,7 @@ from fastapi import HTTPException, UploadFile, Response
 from sqlalchemy import delete, insert, select, update, desc, func
 
 from src.database import Base
+from src.utils import save_photo
 from .schemas import SliderCreateSchema, SliderMainUpdateSchema
 from .exceptions import (
     NO_DATA_FOUND,
@@ -55,20 +56,7 @@ async def new_slide(
             )
     else:
         slide_data.title = None
-
-    photo = slide_data.photo
-    folder_path = f"static/{model.__name__}"
-    # os.makedirs(folder_path, exist_ok=True)
-    # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-    # async with aiofiles.open(file_path, "wb") as buffer:
-    #     await buffer.write(await photo.read())
-    # update_data["photo"] = file_path
-    try:
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="cloudinary error")
-
-    slide_data.photo = upload_result["url"]
+    slide_data.photo = await save_photo(slide_data.photo, model)
     try:
         query = insert(model).values(**slide_data.model_dump()).returning(model)
         result = await session.execute(query)
@@ -93,14 +81,7 @@ async def update_slide(
         raise HTTPException(status_code=404, detail=NO_RECORD)
     update_data = slider_data.model_dump(exclude_none=True)
     if photo:
-        folder_path = f"static/{model.__name__}"
-        # os.makedirs(folder_path, exist_ok=True)
-        # file_path = f"{folder_path}/{photo.filename.replace(' ', '_')}"
-        # async with aiofiles.open(file_path, "wb") as buffer:
-        #     await buffer.write(await photo.read())
-        # update_data["photo"] = file_path
-        upload_result = uploader.upload(photo.file, folder=folder_path)
-        update_data["photo"] = upload_result["url"]
+        update_data["photo"] = await save_photo(photo, model)
     if not update_data:
         return Response(status_code=204)
     try:

@@ -67,10 +67,10 @@ async def post_achievement(
 @achievements_router.patch("/{id}", response_model=GET_ACHIEVEMENT_RESPONSE)
 async def patch_achievement(
     id: int,
+    media: UploadFile = None,
     sub_department: int = Form(default=None),
     pinned_position: PositionEnum = Form(default=None),
     description: str = Form(default=None, max_length=300),
-    media: UploadFile = Form(default=None),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
