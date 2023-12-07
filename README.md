@@ -101,6 +101,13 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
     <b class="variable-name">EMAIL_PASSWORD</b>=<span class="variable-value">Password or Key (if use gmail)</span>
     </details>
 
+    <details class="custom-details">
+    <summary><b>Redis settings</b></summary>
+    <p class="custom-details-description"><i>Variables for configuring Redis container.</i></p>
+
+    <b class="variable-name">REDIS_HOST</b>=<span class="variable-value">localhost</span><br>
+    <b class="variable-name">REDIS_PORT</b>=<span class="variable-value">6379</span><br>
+    </details>
 
 <h2 align="center" style="color: #B5E5E8;">USAGE</h2>
 
@@ -121,8 +128,18 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
     ```
     make start
     ```
-    Interactive documentation is available at `/docs` and `/redoc` for two different interfaces: [Swagger](https://swagger.io/) and [ReDoc](https://redoc.ly/). They allow you to view and test all the API endpoints, as well as get information about the parameters, data types, and response codes. You can learn more about Swagger and ReDoc on their official websites.
 
+    If you want to initiate the application build in the docker container, use next command:
+    ```
+    make build
+    ```
+    This will commence the build process and launch the containers in the background.
+    <br>
+    **Please ensure that you have correctly specified the environment variables. Prior to building the application in the container, update the values of the `REDIS_HOST` and `DB_HOST` variables from '`localhost`' to '`redis`' and '`postgres`' respectively.**
+    
+    <h2 align="center" style="color: #B5E5E8;">DOCUMENTATION</h2>
+
+    Interactive documentation is available at `/docs` and `/redoc` for two different interfaces: [Swagger](https://swagger.io/) and [ReDoc](https://redoc.ly/). They allow you to view and test all the API endpoints, as well as get information about the parameters, data types, and response codes. You can learn more about Swagger and ReDoc on their official websites.
 <p align="center">
   <a href="https://swagger.io/" target="_blank">
     <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger">
