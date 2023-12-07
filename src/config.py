@@ -7,7 +7,7 @@ IS_PROD = False
 
 
 class Settings(BaseSettings):
-    BASE_URL: str
+    # BASE_URL: str
     CLOUD_NAME: str
     API_KEY: str
     API_SECRET: str
@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     EMAIL_PASSWORD: str
     ADMIN_USERNAME: str
     ADMIN_PASSWORD: str
-    REDIS_HOST: str
-    REDIS_PORT: str
+    # REDIS_HOST: str
+    # REDIS_PORT: str
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
