@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, Field, validator
-from src.config import BASE_URL
+from src.config import settings
 from fastapi import Form, UploadFile
 from datetime import datetime
 
@@ -15,7 +15,7 @@ class PosterSchema(BaseModel):
     # @validator("photo", pre=True)
     # def add_base_url(cls, v):
     #     return (
-    #         f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
+    #         f"{settings.BASE_URL if settings.BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
     #     )
 
 
