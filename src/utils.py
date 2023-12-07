@@ -1,6 +1,6 @@
 from typing import Type
 
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile
 from sqlalchemy import func, select
 from cloudinary import uploader
 
@@ -11,8 +11,9 @@ from src.contacts.utils import create_contacts
 from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 
+from src.exceptions import INVALID_PHOTO
 from src.slider_main.utils import create_slides
-from src.config import settings, IS_PROD
+from src.config import PHOTO_FORMATS, settings, IS_PROD
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -49,6 +50,10 @@ async def lifespan(app: FastAPI):
 
 
 async def save_photo(file: UploadFile, model: Type[Base]) -> str:
+    if not file.content_type in PHOTO_FORMATS:
+        raise HTTPException(
+            status_code=415, detail=INVALID_PHOTO % (file.content_type, PHOTO_FORMATS)
+        )
     folder_path = f"static/{model.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
     # file_path = f"{folder_path}/{file.filename.replace(' ', '_')}"

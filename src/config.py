@@ -5,6 +5,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 IS_PROD = False
 
+PHOTO_FORMATS = [
+    "application/pdf",
+    "image/webp",
+    "image/png",
+    "image/jpeg",
+]
+
 
 class Settings(BaseSettings):
     # BASE_URL: str
@@ -57,7 +64,6 @@ mail_config = ConnectionConfig(
 if IS_PROD:
     DB_HOST = "postgres"
     REDIS_HOST = "redis"
-    # REDIS_HOST = os.environ.get("REDIS_HOST")
     REDIS_PORT = settings.REDIS_PORT
     REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
     CACHE_PREFIX = "fastapi-cache"
