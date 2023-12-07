@@ -11,9 +11,8 @@ from src.contacts.utils import create_contacts
 from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 
-# from src.redis import init_redis, redis
 from src.slider_main.utils import create_slides
-from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.config import ADMIN_PASSWORD, ADMIN_USERNAME, IS_PROD
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -22,13 +21,16 @@ from src.database.fake_data import (
     ADMINISTRATIONS,
 )
 
+if IS_PROD:
+    from src.database.redis import init_redis, redis
 
-# lock = redis.lock("my_lock")
+    lock = redis.lock("my_lock")
 
 
 async def lifespan(app: FastAPI):
-    # await init_redis()
-    # await lock.acquire(blocking=True)
+    if IS_PROD:
+        await init_redis()
+        await lock.acquire(blocking=True)
     async for s in get_async_session():
         async with s.begin():
             user_count = await s.execute(select(func.count()).select_from(User))
@@ -39,7 +41,8 @@ async def lifespan(app: FastAPI):
                 await create_contacts(**CONTACTS)
                 await create_slides(SLIDES)
                 await create_administrations(ADMINISTRATIONS)
-    # await lock.release()
+    if IS_PROD:
+        await lock.release()
     yield
 
 

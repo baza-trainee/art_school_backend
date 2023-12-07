@@ -7,7 +7,6 @@ run: down
 	docker compose up postgres -d
 	sleep 2
 	alembic upgrade head
-	sleep 2
 	uvicorn vercel:app --reload
 
 start:

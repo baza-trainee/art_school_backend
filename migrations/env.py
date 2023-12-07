@@ -4,8 +4,17 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from src.database.database import Base
 from src.config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+from src.database.database import Base
+from src.contacts.models import *
+from src.auth.models import *
+from src.news.models import *
+from src.posters.models import *
+from src.administrations.models import *
+from src.gallery.models import *
+from src.departments.models import *
+from src.achievements.models import *
+from src.slider_main.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

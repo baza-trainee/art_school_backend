@@ -7,6 +7,8 @@ from fastapi_mail import ConnectionConfig
 
 load_dotenv()
 
+IS_PROD = False
+
 cloudinary.config(
     cloud_name=os.environ.get("CLOUD_NAME"),
     api_key=os.environ.get("API_KEY"),
@@ -22,15 +24,19 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 
-# REDIS_HOST = os.environ.get("REDIS_HOST")
-# REDIS_PORT = os.environ.get("REDIS_PORT")
-# REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
-# CACHE_PREFIX = "fastapi-cache"
 
-# HOUR = 3600
-# DAY = HOUR*24
-# HALF_DAY = HOUR*12
-# MONTH = DAY*30
+if IS_PROD:
+    DB_HOST = "postgres"
+    REDIS_HOST = "redis"
+    # REDIS_HOST = os.environ.get("REDIS_HOST")
+    REDIS_PORT = os.environ.get("REDIS_PORT")
+    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+    CACHE_PREFIX = "fastapi-cache"
+
+HOUR = 3600
+DAY = HOUR * 24
+HALF_DAY = HOUR * 12
+MONTH = DAY * 30
 
 SECRET_AUTH = os.environ.get("SECRET_AUTH")
 
