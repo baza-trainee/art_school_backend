@@ -4,36 +4,32 @@ from sqlalchemy import delete, insert, select, update
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.database import Base
-from src.achievements.schemas import (
-    CreateAchievementSchema,
-    PositionEnum,
-)
+from src.achievements.schemas import CreateAchievementSchema, UpdateAchievementSchema
+from src.achievements.models import Achievement
 from src.departments.models import SubDepartment
 from src.exceptions import (
     GALLERY_PINNED_EXISTS,
     INVALID_DEPARTMENT,
     NO_DATA_FOUND,
     NO_RECORD,
-    SERVER_ERROR,
     SUCCESS_DELETE,
 )
 from src.utils import save_photo
 
 
 async def get_all_achievements_by_filter(
-    model: Type[Base],
-    session: AsyncSession,
     is_pinned: bool,
+    session: AsyncSession,
 ):
     if is_pinned:
         query = (
-            select(model)
-            .filter(model.pinned_position.isnot(None))
-            .order_by(model.pinned_position)
+            select(Achievement)
+            .filter(Achievement.pinned_position.isnot(None))
+            .order_by(Achievement.pinned_position)
         )
     else:
-        query = select(model).order_by(model.created_at.desc())
+        query = select(Achievement).order_by(Achievement.created_at.desc())
+
     result = await session.execute(query)
     response = result.scalars().all()
     if not response:
@@ -41,120 +37,91 @@ async def get_all_achievements_by_filter(
     return response
 
 
-async def get_media_by_id(model: Type[Base], session: AsyncSession, id: int):
-    query = select(model).filter_by(id=id)
-    result = await session.execute(query)
-    response = result.scalars().one_or_none()
-    if not response:
+async def get_achievement_by_id(session: AsyncSession, id: int):
+    record = await session.get(Achievement, id)
+    if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    return response
+    return record
 
 
-async def create_photo(
-    pinned_position: PositionEnum,
-    sub_department: int,
-    gallery: CreateAchievementSchema,
-    model: Type[Base],
+async def create_achievement(
+    schema: CreateAchievementSchema,
     session: AsyncSession,
 ):
-    gallery.media = await save_photo(gallery.media, model)
-    schema_output = gallery.model_dump()
+    schema.media = await save_photo(schema.media, Achievement)
+    schema_output = schema.model_dump()
 
-    if sub_department:
-        query = select(SubDepartment).where(SubDepartment.id == sub_department)
+    if schema.sub_department:
+        query = select(SubDepartment).where(SubDepartment.id == schema.sub_department)
         result = await session.execute(query)
         record = result.scalars().first()
         if not record:
             raise HTTPException(
-                status_code=404, detail=INVALID_DEPARTMENT % sub_department
+                status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
             )
-        schema_output["sub_department"] = sub_department
+        schema_output["sub_department"] = schema.sub_department
 
-    if not pinned_position:
-        schema_output["pinned_position"] = None
-    else:
-        query = select(model).filter_by(pinned_position=pinned_position)
+    if schema.pinned_position:
+        query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
         record = await session.execute(query)
         instance = record.scalars().first()
         if instance:
             raise HTTPException(
                 status_code=400,
-                detail=GALLERY_PINNED_EXISTS % pinned_position.value,
+                detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
-        schema_output["pinned_position"] = pinned_position
 
-    query = insert(model).values(**schema_output).returning(model)
-    result = await session.execute(query)
-    gallery = result.scalars().first()
-    await session.commit()
-    return gallery
-
-
-async def update_photo(
-    id: int,
-    pinned_position: PositionEnum,
-    sub_department: int,
-    description: str,
-    media: Optional[UploadFile],
-    model: Type[Base],
-    session: AsyncSession,
-):
-    query = select(model).where(model.id == id)
+    query = insert(Achievement).values(**schema_output).returning(Achievement)
     result = await session.execute(query)
     record = result.scalars().first()
+    await session.commit()
+    return record
+
+
+async def update_achievement(
+    id: int,
+    media: UploadFile,
+    schema: UpdateAchievementSchema,
+    session: AsyncSession,
+):
+    record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_RECORD)
-
-    update_data = {
-        "description": description if description else record.description,
-    }
-    if not sub_department is None:
-        if sub_department == 0:
-            update_data["sub_department"] = None
-        else:
-            query = select(SubDepartment).where(SubDepartment.id == sub_department)
-            result = await session.execute(query)
-            record = result.scalars().first()
-            if not record:
-                raise HTTPException(
-                    status_code=404, detail=INVALID_DEPARTMENT % sub_department
-                )
-            update_data["sub_department"] = sub_department
-
-    if not pinned_position is None:
-        if pinned_position == 0:
-            update_data["pinned_position"] = None
-        else:
-            if pinned_position != record.pinned_position:
-                query = select(model).filter_by(pinned_position=pinned_position)
-                record = await session.execute(query)
-                instance = record.scalars().first()
-                if instance:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=GALLERY_PINNED_EXISTS % pinned_position.value,
-                    )
-            update_data["pinned_position"] = pinned_position
+    schema_output = schema.model_dump()
 
     if media:
-        update_data["media"] = await save_photo(media, model)
-    try:
-        query = (
-            update(model).where(model.id == id).values(**update_data).returning(model)
-        )
+        media = await save_photo(media, Achievement)
+        schema_output["media"] = media
+
+    if schema.sub_department and schema.sub_department != record.sub_department:
+        query = select(SubDepartment).filter_by(id=schema.sub_department)
         result = await session.execute(query)
-        await session.commit()
-        return result.scalars().first()
-    except:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
+        sub_department = result.scalars().first()
+        if not sub_department:
+            raise HTTPException(
+                status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
+            )
+
+    if schema.pinned_position and schema.pinned_position != record.pinned_position:
+        query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
+        result = await session.execute(query)
+        instance = result.scalars().one_or_none()
+        if instance:
+            raise HTTPException(
+                status_code=400,
+                detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
+            )
+
+    for field, value in schema_output.items():
+        setattr(record, field, value)
+    await session.commit()
+    return record
 
 
-async def delete_achievement_by_id(id: int, model: Type[Base], session: AsyncSession):
-    query = select(model).where(model.id == id)
-    result = await session.execute(query)
-    if not result.scalars().first():
-        raise HTTPException(status_code=404, detail=NO_RECORD)
-    query = delete(model).where(model.id == id)
-    await session.execute(query)
+async def delete_achievement_by_id(id: int, session: AsyncSession):
+    record = await session.get(Achievement, id)
+    if not record:
+        raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
+    await session.delete(record)
     await session.commit()
     return {"message": SUCCESS_DELETE % id}
