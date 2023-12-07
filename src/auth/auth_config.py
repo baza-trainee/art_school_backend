@@ -5,7 +5,7 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 
-from src.config import COOKIE_NAME, SECRET_AUTH
+from src.config import COOKIE_NAME, settings
 from .manager import get_user_manager
 from .models import User
 
@@ -16,7 +16,7 @@ cookie_transport = CookieTransport(cookie_name=COOKIE_NAME, cookie_max_age=lifet
 
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET_AUTH, lifetime_seconds=lifetime)
+    return JWTStrategy(secret=settings.SECRET_AUTH, lifetime_seconds=lifetime)
 
 
 auth_backend = AuthenticationBackend(

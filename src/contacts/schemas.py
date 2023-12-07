@@ -31,7 +31,7 @@ class ContactsSchema(BaseModel):
 class ContactsUpdateSchema(BaseModel):
     map_url: Optional[Union[AnyHttpUrl, str]] = None
     address: Optional[str] = None
-    phone: Optional[str] = None
+    phone: Optional[str] = "+380999999999"
     email: Optional[Union[EmailStr, str]] = None
     facebook_url: Optional[Union[AnyHttpUrl, str]] = None
     youtube_url: Optional[Union[AnyHttpUrl, str]] = None

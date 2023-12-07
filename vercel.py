@@ -1,4 +1,4 @@
-from src.config import ADMIN_PASSWORD, ADMIN_USERNAME
+from src.config import settings
 from src.contacts.utils import create_contacts
 from src.departments.utils import create_main_departments, create_sub_departments
 from src.slider_main.utils import create_slides
@@ -19,7 +19,9 @@ async def customlifespan():
     session = get_async_session()
     async for s in session:
         async with s.begin():
-            await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+            await create_user(
+                email=settings.ADMIN_USERNAME, password=settings.ADMIN_PASSWORD
+            )
             await create_main_departments(DEPARTMENTS)
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)

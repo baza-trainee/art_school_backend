@@ -12,7 +12,7 @@ from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 
 from src.slider_main.utils import create_slides
-from src.config import ADMIN_PASSWORD, ADMIN_USERNAME, IS_PROD
+from src.config import settings, IS_PROD
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -35,7 +35,9 @@ async def lifespan(app: FastAPI):
         async with s.begin():
             user_count = await s.execute(select(func.count()).select_from(User))
             if user_count.scalar() == 0:
-                await create_user(email=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+                await create_user(
+                    email=settings.ADMIN_USERNAME, password=settings.ADMIN_PASSWORD
+                )
                 await create_main_departments(DEPARTMENTS)
                 await create_sub_departments(SUB_DEPARTMENTS)
                 await create_contacts(**CONTACTS)

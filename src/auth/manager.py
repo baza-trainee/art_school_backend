@@ -7,7 +7,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import User
-from src.config import SECRET_AUTH
+from src.config import settings
 from src.database.database import get_async_session
 from src.auth.schemas import UserCreate
 from src.exceptions import (
@@ -32,8 +32,8 @@ def check_password_strength(password: str):
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-    reset_password_token_secret = SECRET_AUTH
-    verification_token_secret = SECRET_AUTH
+    reset_password_token_secret = settings.SECRET_AUTH
+    verification_token_secret = settings.SECRET_AUTH
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(AFTER_REGISTER % user.email)

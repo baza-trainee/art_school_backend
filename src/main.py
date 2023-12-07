@@ -21,11 +21,12 @@ from src.config import (
     API_PREFIX,
     ORIGINS,
     SWAGGER_PARAMETERS,
+    PROJECT_NAME,
 )
 
 app = FastAPI(
     swagger_ui_parameters=SWAGGER_PARAMETERS,
-    title="School",
+    title=PROJECT_NAME,
     lifespan=lifespan,
 )
 

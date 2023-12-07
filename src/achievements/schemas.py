@@ -5,7 +5,7 @@ from typing import Optional, Union
 from pydantic import AnyHttpUrl, BaseModel, validator, FilePath
 from fastapi import Form, UploadFile
 
-from src.config import BASE_URL
+from src.config import settings
 from src.exceptions import SUCCESS_DELETE
 
 
@@ -19,7 +19,7 @@ class GetAchievementSchema(BaseModel):
     # To save files locally
     # @validator("media", pre=True)
     # def add_base_url(cls, v, values):
-    #     return v if values['is_video'] else f"{BASE_URL}/{v}"
+    #     return v if values['is_video'] else f"{settings.BASE_URL}/{v}"
 
 
 class PositionEnum(int, Enum):
