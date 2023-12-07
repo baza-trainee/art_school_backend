@@ -54,6 +54,7 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = f"{round(process_time)} ms"
     return response
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGINS,
