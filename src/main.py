@@ -23,22 +23,11 @@ from src.config import (
     SWAGGER_PARAMETERS,
 )
 
-
 app = FastAPI(
     swagger_ui_parameters=SWAGGER_PARAMETERS,
     title="School",
     lifespan=lifespan,
 )
-
-
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = (time.time() - start_time) * 1000
-    response.headers["X-Process-Time"] = f"{round(process_time)} ms"
-    return response
-
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -53,7 +42,17 @@ api_routers = [
     departments,
     school_admin_router,
 ]
+
 [app.include_router(router, prefix=API_PREFIX) for router in api_routers]
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Process-Time"] = f"{round(process_time)} ms"
+    return response
 
 app.add_middleware(
     CORSMiddleware,
