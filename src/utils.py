@@ -11,9 +11,9 @@ from src.contacts.utils import create_contacts
 from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 
-from src.exceptions import INVALID_PHOTO
+from src.exceptions import INVALID_PHOTO, OVERSIZE_FILE
 from src.slider_main.utils import create_slides
-from src.config import PHOTO_FORMATS, settings, IS_PROD
+from src.config import PHOTO_FORMATS, settings, IS_PROD, MAX_FILE_SIZE
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -54,6 +54,10 @@ async def save_photo(file: UploadFile, model: Type[Base]) -> str:
         raise HTTPException(
             status_code=415, detail=INVALID_PHOTO % (file.content_type, PHOTO_FORMATS)
         )
+
+    if file.size > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail=OVERSIZE_FILE)
+
     folder_path = f"static/{model.__name__}"
     # os.makedirs(folder_path, exist_ok=True)
     # file_path = f"{folder_path}/{file.filename.replace(' ', '_')}"

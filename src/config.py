@@ -12,6 +12,8 @@ PHOTO_FORMATS = [
     "image/jpeg",
 ]
 
+MAX_FILE_SIZE = 3 * 1024 * 1024
+
 
 class Settings(BaseSettings):
     # BASE_URL: str
