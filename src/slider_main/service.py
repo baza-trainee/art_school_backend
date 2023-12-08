@@ -98,19 +98,14 @@ async def update_slide(
 
 
 async def delete_slide_by_id(model: Type[Base], session: AsyncSession, slide_id: int):
+    if slide_id == 1:
+        raise HTTPException(status_code=400, detail="Cannot delete slide with id 1")
+
     query = select(model).where(model.id == slide_id)
     result = await session.execute(query)
     if not result.scalars().first():
         raise HTTPException(status_code=404, detail=NO_RECORD)
 
-    try:
-        total_slides = await session.execute(select(func.count()).select_from(model))
-        total_count = total_slides.scalar()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=SERVER_ERROR)
-
-    if total_count == 1:
-        raise HTTPException(status_code=400, detail="Cannot delete last slide")
     try:
         query = delete(model).where(model.id == slide_id)
         await session.execute(query)
