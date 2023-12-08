@@ -1,14 +1,12 @@
 from typing import Optional
 from pydantic import BaseModel, Field, validator
-from src.config import settings
 from fastapi import Form, UploadFile
 from datetime import datetime
 
 
 class PosterSchema(BaseModel):
     id: int
-    title: Optional[str] = Field(..., max_length=300)
-    text: Optional[str] = Field(..., max_length=2000)
+    title: Optional[str] = Field(..., max_length=120)
     photo: Optional[str]
     created_at: datetime
 
@@ -21,27 +19,23 @@ class PosterSchema(BaseModel):
 
 class PosterCreateSchema(BaseModel):
     photo: UploadFile = Field(...)
-    title: str = Field(..., max_length=300)
-    text: str = Field(..., max_length=2000)
+    title: str = Field(..., max_length=120)
 
     @classmethod
     def as_form(
         cls,
         photo: UploadFile,
-        title: str = Form(max_length=300),
-        text: str = Form(max_length=2000),
+        title: str = Form(max_length=120),
     ):
-        return cls(photo=photo, title=title, text=text)
+        return cls(photo=photo, title=title)
 
 
 class PosterUpdateSchema(BaseModel):
-    title: Optional[str] = Field(None, max_length=300)
-    text: Optional[str] = Field(None, max_length=2000)
+    title: Optional[str] = Field(None, max_length=120)
 
     @classmethod
     def as_form(
         cls,
-        title: Optional[str] = Form(max_length=300, default=None),
-        text: Optional[str] = Form(max_length=2000, default=None),
+        title: Optional[str] = Form(max_length=120, default=None),
     ):
-        return cls(title=title, text=text)
+        return cls(title=title)
