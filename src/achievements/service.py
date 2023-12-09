@@ -1,10 +1,14 @@
 from typing import Optional, Type
 
 from sqlalchemy import delete, insert, select, update
-from fastapi import HTTPException, UploadFile
+from fastapi import HTTPException, UploadFile, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.achievements.schemas import CreateAchievementSchema, UpdateAchievementSchema
+from src.achievements.schemas import (
+    CreateAchievementSchema,
+    UpdateAchievementSchema,
+    GetByIdAchievementSchema,
+)
 from src.achievements.models import Achievement
 from src.departments.models import SubDepartment
 from src.exceptions import (
@@ -19,6 +23,7 @@ from src.utils import save_photo
 
 async def get_all_achievements_by_filter(
     is_pinned: bool,
+    reverse: bool,
     session: AsyncSession,
 ):
     if is_pinned:
@@ -28,7 +33,10 @@ async def get_all_achievements_by_filter(
             .order_by(Achievement.pinned_position)
         )
     else:
-        query = select(Achievement).order_by(Achievement.created_at.desc())
+        if reverse:
+            query = select(Achievement).order_by(Achievement.created_at.asc())
+        else:
+            query = select(Achievement).order_by(Achievement.created_at.desc())
 
     result = await session.execute(query)
     response = result.scalars().all()
@@ -41,7 +49,14 @@ async def get_achievement_by_id(session: AsyncSession, id: int):
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    return record
+    query = select(Achievement.pinned_position).filter(
+        Achievement.pinned_position.isnot(None)
+    )
+    result = await session.execute(query)
+    all_taken_positions = result.scalars().all()
+    schema = GetByIdAchievementSchema.model_validate(record, from_attributes=True)
+    schema.all_taken_positions = all_taken_positions
+    return schema
 
 
 async def create_achievement(
@@ -59,7 +74,6 @@ async def create_achievement(
             raise HTTPException(
                 status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
             )
-        schema_output["sub_department"] = schema.sub_department
 
     if schema.pinned_position:
         query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
@@ -114,8 +128,16 @@ async def update_achievement(
 
     for field, value in schema_output.items():
         setattr(record, field, value)
+    await session.flush()
+    query = select(Achievement.pinned_position).filter(
+        Achievement.pinned_position.isnot(None)
+    )
+    result = await session.execute(query)
+    all_taken_positions = result.scalars().all()
+    schema = GetByIdAchievementSchema.model_validate(record, from_attributes=True)
+    schema.all_taken_positions = all_taken_positions
     await session.commit()
-    return record
+    return schema
 
 
 async def delete_achievement_by_id(id: int, session: AsyncSession):

@@ -7,7 +7,6 @@ from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database.database import get_async_session
 
-# from src.database.redis import invalidate_cache
 from .models import Achievement
 from .service import (
     delete_achievement_by_id,
@@ -18,10 +17,13 @@ from .service import (
 )
 from .schemas import (
     GetAchievementSchema,
+    GetByIdAchievementSchema,
     CreateAchievementSchema,
     UpdateAchievementSchema,
     DeleteResponseSchema,
 )
+
+# from src.database.redis import invalidate_cache
 
 
 achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
@@ -31,13 +33,16 @@ achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
 async def get_all_achievements(
     is_pinned: bool = None,
     session: AsyncSession = Depends(get_async_session),
+    reverse: bool = None,
 ):
-    result = await get_all_achievements_by_filter(is_pinned=is_pinned, session=session)
+    result = await get_all_achievements_by_filter(
+        is_pinned=is_pinned, reverse=reverse, session=session
+    )
     disable_installed_extensions_check()
     return paginate(result)
 
 
-@achievements_router.get("/{id}", response_model=GetAchievementSchema)
+@achievements_router.get("/{id}", response_model=GetByIdAchievementSchema)
 async def get_achievement(
     id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -56,7 +61,7 @@ async def post_achievement(
     return await create_achievement(schema=schema, session=session)
 
 
-@achievements_router.put("/{id}", response_model=GetAchievementSchema)
+@achievements_router.put("/{id}", response_model=GetByIdAchievementSchema)
 async def patch_achievement(
     id: int,
     media: UploadFile = None,
@@ -78,7 +83,7 @@ async def delete_media(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # media: Achievement = await get_media_by_id(Achievement, session, id)
-    # await session.commit()
+    # media: Achievement = await get_achievement_by_id(Achievement, session, id)
+    # await session.commit() # TODO
     # await invalidate_cache("get_achievement_for_sub_department", media.sub_department)
     return await delete_achievement_by_id(id, session)
