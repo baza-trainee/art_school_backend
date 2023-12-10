@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional, Union
 
-from pydantic import AnyHttpUrl, BaseModel, conint, validator, FilePath, constr
+from pydantic import BaseModel, AnyHttpUrl, FilePath, conint, constr, validator
 from fastapi import UploadFile
 
-from src.config import settings
+from src.config import IS_PROD, settings
 from src.exceptions import SUCCESS_DELETE
 
 
@@ -15,10 +15,18 @@ class GetAchievementSchema(BaseModel):
     sub_department: Optional[int]
     description: Optional[str]
     created_at: datetime
-    # To save files locally
-    # @validator("media", pre=True)
-    # def add_base_url(cls, v, values):
-    #     return v if values['is_video'] else f"{settings.BASE_URL}/{v}"
+
+    @validator("media", pre=True)
+    def add_base_url(cls, v, values):
+        if IS_PROD:
+            return f"{settings.BASE_URL}/{v}"
+        else:
+            return v
+
+
+class GetTakenPositionsSchema(BaseModel):
+    taken_positions: Optional[list[int]] = None
+    free_positions: Optional[list[int]] = None
 
 
 class CreateAchievementSchema(BaseModel):

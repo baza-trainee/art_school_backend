@@ -1,11 +1,10 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional, Union
 
-from pydantic import AnyHttpUrl, BaseModel, validator, FilePath
-from fastapi import Form, UploadFile
+from pydantic import BaseModel, AnyHttpUrl, FilePath, conint, constr, validator
+from fastapi import UploadFile
 
-from src.config import settings
+from src.config import IS_PROD, settings
 from src.exceptions import SUCCESS_DELETE
 
 
@@ -13,13 +12,21 @@ class GetPhotoSchema(BaseModel):
     id: int
     media: Union[AnyHttpUrl, FilePath]
     pinned_position: Optional[int]
-    description: Optional[str]
     sub_department: Optional[int]
+    description: Optional[str]
     created_at: datetime
-    # To save files locally
-    # @validator("media", pre=True)
-    # def add_base_url(cls, v, values):
-    #     return v if values['is_video'] else f"{settings.BASE_URL}/{v}"
+
+    @validator("media", pre=True)
+    def add_base_url(cls, v, values):
+        if IS_PROD:
+            return f"{settings.BASE_URL}/{v}"
+        else:
+            return v
+
+
+class GetTakenPositionsSchema(BaseModel):
+    taken_positions: Optional[list[int]] = None
+    free_positions: Optional[list[int]] = None
 
 
 class GetVideoSchema(BaseModel):
@@ -28,40 +35,21 @@ class GetVideoSchema(BaseModel):
     created_at: datetime
 
 
-class PositionEnum(int, Enum):
-    default_position = 0
-    position_1 = 1
-    position_2 = 2
-    position_3 = 3
-    position_4 = 4
-    position_5 = 5
-    position_6 = 6
-    position_7 = 7
-    position_8 = 8
-
-
 class CreatePhotoSchema(BaseModel):
     media: UploadFile
-    description: Optional[str] = Form(default=None, max_length=300)
-
-    @classmethod
-    def as_form(
-        cls,
-        media: UploadFile,
-        description: Optional[str] = Form(default=None, max_length=300),
-    ):
-        return cls(media=media, description=description)
+    pinned_position: Optional[conint(ge=1, le=7)] = None
+    sub_department: Optional[int] = None
+    description: Optional[constr(max_length=300)] = None
 
 
 class CreateVideoSchema(BaseModel):
     media: AnyHttpUrl
 
-    @classmethod
-    def as_form(
-        cls,
-        media: AnyHttpUrl = Form(),
-    ):
-        return cls(media=media)
+
+class UpdatePhotoSchema(BaseModel):
+    pinned_position: Optional[conint(ge=1, le=7)] = None
+    sub_department: Optional[int] = None
+    description: Optional[constr(max_length=300)] = None
 
 
 class DeleteResponseSchema(BaseModel):

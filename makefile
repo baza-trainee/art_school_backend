@@ -13,7 +13,7 @@ start:
 	uvicorn vercel:app --reload
 
 build: down
-	docker compose up -d
+	docker compose up -d --build
 
 open-redis:
 	docker exec -it fastapi-redis redis-cli

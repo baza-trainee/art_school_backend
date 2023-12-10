@@ -13,7 +13,7 @@ get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 
 async def create_slide(title: str, description: str):
     async with get_async_session_context() as session:
-        photo_filename = "Test_photo_main_slider.png"
+        photo_filename = "first_slide.png"
         photo_path = os.path.join("static", "slider_main", photo_filename)
 
         query = select(SliderMain).where(SliderMain.title == title)

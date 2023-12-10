@@ -1,7 +1,7 @@
+from typing import Optional
 import cloudinary
 from fastapi_mail import ConnectionConfig
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
 
 IS_PROD = False
 
@@ -16,7 +16,6 @@ MAX_FILE_SIZE = 3 * 1024 * 1024
 
 
 class Settings(BaseSettings):
-    # BASE_URL: str
     CLOUD_NAME: str
     API_KEY: str
     API_SECRET: str
@@ -31,9 +30,9 @@ class Settings(BaseSettings):
     EMAIL_PASSWORD: str
     ADMIN_USERNAME: str
     ADMIN_PASSWORD: str
-    # REDIS_HOST: str
-    # REDIS_PORT: str
-
+    BASE_URL: Optional[str] = None  # IS_PROD
+    REDIS_HOST: Optional[str] = None  # IS_PROD
+    REDIS_PORT: Optional[str] = None  # IS_PROD
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
@@ -50,6 +49,17 @@ cloudinary.config(
     api_secret=settings.API_SECRET,
 )
 
+if IS_PROD:
+    settings.DB_HOST = "postgres"
+    settings.REDIS_HOST = "redis"
+
+REDIS_URL = f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}"
+CACHE_PREFIX = "fastapi-cache"
+
+HOUR = 3600
+DAY = HOUR * 24
+HALF_DAY = HOUR * 12
+MONTH = DAY * 30
 mail_config = ConnectionConfig(
     MAIL_USERNAME=settings.EMAIL_USER,
     MAIL_PASSWORD=settings.EMAIL_PASSWORD,
@@ -63,18 +73,6 @@ mail_config = ConnectionConfig(
     VALIDATE_CERTS=True,
 )
 
-if IS_PROD:
-    DB_HOST = "postgres"
-    REDIS_HOST = "redis"
-    REDIS_PORT = settings.REDIS_PORT
-    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
-    CACHE_PREFIX = "fastapi-cache"
-
-HOUR = 3600
-DAY = HOUR * 24
-HALF_DAY = HOUR * 12
-MONTH = DAY * 30
-
 ALLOW_METHODS = ["GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"]
 ALLOW_HEADERS = [
     "Content-Type",
@@ -84,6 +82,7 @@ ALLOW_HEADERS = [
     "Authorization",
 ]
 ORIGINS = ["*"]
+
 SWAGGER_PARAMETERS = {
     "syntaxHighlight.theme": "obsidian",
     "tryItOutEnabled": True,

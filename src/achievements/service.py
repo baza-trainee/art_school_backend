@@ -1,10 +1,12 @@
-from typing import Optional, Type
-
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import insert, select
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.achievements.schemas import CreateAchievementSchema, UpdateAchievementSchema
+from src.achievements.schemas import (
+    CreateAchievementSchema,
+    UpdateAchievementSchema,
+    GetTakenPositionsSchema,
+)
 from src.achievements.models import Achievement
 from src.departments.models import SubDepartment
 from src.exceptions import (
@@ -12,6 +14,7 @@ from src.exceptions import (
     INVALID_DEPARTMENT,
     NO_DATA_FOUND,
     NO_RECORD,
+    SERVER_ERROR,
     SUCCESS_DELETE,
 )
 from src.utils import save_photo
@@ -19,6 +22,7 @@ from src.utils import save_photo
 
 async def get_all_achievements_by_filter(
     is_pinned: bool,
+    reverse: bool,
     session: AsyncSession,
 ):
     if is_pinned:
@@ -28,7 +32,10 @@ async def get_all_achievements_by_filter(
             .order_by(Achievement.pinned_position)
         )
     else:
-        query = select(Achievement).order_by(Achievement.created_at.desc())
+        if reverse:
+            query = select(Achievement).order_by(Achievement.created_at.asc())
+        else:
+            query = select(Achievement).order_by(Achievement.created_at.desc())
 
     result = await session.execute(query)
     response = result.scalars().all()
@@ -42,6 +49,20 @@ async def get_achievement_by_id(session: AsyncSession, id: int):
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     return record
+
+
+async def get_positions_status(session: AsyncSession):
+    query = select(Achievement.pinned_position).filter(
+        Achievement.pinned_position.isnot(None)
+    )
+    result = await session.execute(query)
+    taken_positions = result.scalars().all()
+    all_positions = set(range(1, 13))
+    free_positions = all_positions - set(taken_positions)
+    shema = GetTakenPositionsSchema(
+        taken_positions=taken_positions, free_positions=free_positions
+    )
+    return shema
 
 
 async def create_achievement(
@@ -59,7 +80,6 @@ async def create_achievement(
             raise HTTPException(
                 status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
             )
-        schema_output["sub_department"] = schema.sub_department
 
     if schema.pinned_position:
         query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
@@ -70,12 +90,14 @@ async def create_achievement(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
-
-    query = insert(Achievement).values(**schema_output).returning(Achievement)
-    result = await session.execute(query)
-    record = result.scalars().first()
-    await session.commit()
-    return record
+    try:
+        query = insert(Achievement).values(**schema_output).returning(Achievement)
+        result = await session.execute(query)
+        record = result.scalars().first()
+        await session.commit()
+        return record
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
 async def update_achievement(
@@ -111,17 +133,22 @@ async def update_achievement(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
-
-    for field, value in schema_output.items():
-        setattr(record, field, value)
-    await session.commit()
-    return record
+    try:
+        for field, value in schema_output.items():
+            setattr(record, field, value)
+        await session.commit()
+        return record
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
 async def delete_achievement_by_id(id: int, session: AsyncSession):
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    await session.delete(record)
-    await session.commit()
-    return {"message": SUCCESS_DELETE % id}
+    try:
+        await session.delete(record)
+        await session.commit()
+        return {"message": SUCCESS_DELETE % id}
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
