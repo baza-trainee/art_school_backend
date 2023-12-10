@@ -4,8 +4,8 @@ from typing import Optional, Union
 from pydantic import BaseModel, AnyHttpUrl, FilePath, conint, constr, validator
 from fastapi import UploadFile
 
-from src.exceptions import SUCCESS_DELETE
 from src.config import IS_PROD, settings
+from src.exceptions import SUCCESS_DELETE
 
 
 class GetAchievementSchema(BaseModel):
@@ -24,8 +24,9 @@ class GetAchievementSchema(BaseModel):
             return v
 
 
-class GetByIdAchievementSchema(GetAchievementSchema):
-    all_taken_positions: Optional[list] = None
+class GetTakenPositionsSchema(BaseModel):
+    taken_positions: Optional[list[int]] = None
+    free_positions: Optional[list[int]] = None
 
 
 class CreateAchievementSchema(BaseModel):

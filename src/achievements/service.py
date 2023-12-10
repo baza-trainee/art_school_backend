@@ -1,13 +1,11 @@
-from typing import Optional, Type
-
-from sqlalchemy import delete, insert, select, update
-from fastapi import HTTPException, UploadFile, Request
+from sqlalchemy import insert, select
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.achievements.schemas import (
     CreateAchievementSchema,
     UpdateAchievementSchema,
-    GetByIdAchievementSchema,
+    GetTakenPositionsSchema,
 )
 from src.achievements.models import Achievement
 from src.departments.models import SubDepartment
@@ -16,6 +14,7 @@ from src.exceptions import (
     INVALID_DEPARTMENT,
     NO_DATA_FOUND,
     NO_RECORD,
+    SERVER_ERROR,
     SUCCESS_DELETE,
 )
 from src.utils import save_photo
@@ -49,14 +48,21 @@ async def get_achievement_by_id(session: AsyncSession, id: int):
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
+    return record
+
+
+async def get_positions_status(session: AsyncSession):
     query = select(Achievement.pinned_position).filter(
         Achievement.pinned_position.isnot(None)
     )
     result = await session.execute(query)
-    all_taken_positions = result.scalars().all()
-    schema = GetByIdAchievementSchema.model_validate(record, from_attributes=True)
-    schema.all_taken_positions = all_taken_positions
-    return schema
+    taken_positions = result.scalars().all()
+    all_positions = set(range(1, 13))
+    free_positions = all_positions - set(taken_positions)
+    shema = GetTakenPositionsSchema(
+        taken_positions=taken_positions, free_positions=free_positions
+    )
+    return shema
 
 
 async def create_achievement(
@@ -84,12 +90,14 @@ async def create_achievement(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
-
-    query = insert(Achievement).values(**schema_output).returning(Achievement)
-    result = await session.execute(query)
-    record = result.scalars().first()
-    await session.commit()
-    return record
+    try:
+        query = insert(Achievement).values(**schema_output).returning(Achievement)
+        result = await session.execute(query)
+        record = result.scalars().first()
+        await session.commit()
+        return record
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
 async def update_achievement(
@@ -125,25 +133,22 @@ async def update_achievement(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
-
-    for field, value in schema_output.items():
-        setattr(record, field, value)
-    await session.flush()
-    query = select(Achievement.pinned_position).filter(
-        Achievement.pinned_position.isnot(None)
-    )
-    result = await session.execute(query)
-    all_taken_positions = result.scalars().all()
-    schema = GetByIdAchievementSchema.model_validate(record, from_attributes=True)
-    schema.all_taken_positions = all_taken_positions
-    await session.commit()
-    return schema
+    try:
+        for field, value in schema_output.items():
+            setattr(record, field, value)
+        await session.commit()
+        return record
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
 async def delete_achievement_by_id(id: int, session: AsyncSession):
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
-    await session.delete(record)
-    await session.commit()
-    return {"message": SUCCESS_DELETE % id}
+    try:
+        await session.delete(record)
+        await session.commit()
+        return {"message": SUCCESS_DELETE % id}
+    except:
+        raise HTTPException(status_code=500, detail=SERVER_ERROR)
