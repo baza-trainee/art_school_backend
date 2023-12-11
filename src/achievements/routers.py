@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -72,13 +72,18 @@ async def post_achievement(
 @achievements_router.put("/{id}", response_model=GetAchievementSchema)
 async def put_achievement(
     id: int,
+    background_tasks: BackgroundTasks,
     media: UploadFile = None,
     schema: UpdateAchievementSchema = Depends(UpdateAchievementSchema),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     record: Achievement = await update_achievement(
-        id=id, media=media, schema=schema, session=session
+        id=id,
+        media=media,
+        schema=schema,
+        session=session,
+        background_tasks=background_tasks,
     )
     # if record.sub_department:
     #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
@@ -88,10 +93,13 @@ async def put_achievement(
 @achievements_router.delete("/{id}", response_model=DeleteResponseSchema)
 async def delete_achivement(
     id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # record: Achievement = await get_achievement_by_id(Achievement, session, id)
     # if record.sub_department:
     #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
-    return await delete_achievement_by_id(id=id, session=session)
+    return await delete_achievement_by_id(
+        id=id, background_tasks=background_tasks, session=session
+    )

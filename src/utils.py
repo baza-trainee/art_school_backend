@@ -1,9 +1,10 @@
+import asyncio
 import os
 from uuid import uuid4
 from typing import Type
 
 import aiofiles
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile, BackgroundTasks
 from sqlalchemy import func, select
 from cloudinary import uploader
 
@@ -59,11 +60,11 @@ async def save_photo(file: UploadFile, model: Type[Base]) -> str:
     if file.size > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail=OVERSIZE_FILE)
 
-    folder_path = os.path.join("static", model.__name__)
+    folder_path = os.path.join("static", model.__tablename__.lower().replace(" ", "_"))
     if IS_PROD:
         os.makedirs(folder_path, exist_ok=True)
 
-        file_name = f'{uuid4().hex[:16]}.{file.filename.split(".")[-1]}'
+        file_name = f'{uuid4().hex}.{file.filename.split(".")[-1]}'
         file_path = os.path.join(folder_path, file_name)
         async with aiofiles.open(file_path, "wb") as buffer:
             await buffer.write(await file.read())
@@ -71,3 +72,22 @@ async def save_photo(file: UploadFile, model: Type[Base]) -> str:
     else:
         upload_result = uploader.upload(file.file, folder=folder_path)
         return upload_result["url"]
+
+
+async def delete_photo(path: str) -> str:
+    path_exists = os.path.exists(path)
+    if path_exists:
+        os.remove(path)
+    return path_exists
+
+
+async def update_photo(
+    file: UploadFile,
+    record: Type[Base],
+    field_name: str,
+    background_tasks: BackgroundTasks,
+) -> str:
+    old_photo = getattr(record, field_name, None)
+    if old_photo:
+        background_tasks.add_task(delete_photo, old_photo)
+    return await save_photo(file, record)

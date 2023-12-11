@@ -1,10 +1,10 @@
 from sqlalchemy import insert, select
-from fastapi import HTTPException, UploadFile
+from fastapi import BackgroundTasks, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.departments.models import SubDepartment
 from src.gallery.models import Gallery
-from src.utils import save_photo
+from src.utils import delete_photo, save_photo, update_photo
 from src.gallery.schemas import (
     CreatePhotoSchema,
     CreateVideoSchema,
@@ -139,11 +139,12 @@ async def create_video(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def update_photo(
+async def update_photo_by_id(
     id: int,
     media: UploadFile,
     schema: UpdatePhotoSchema,
     session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ):
     record = await session.get(Gallery, id)
     if not record:
@@ -153,7 +154,12 @@ async def update_photo(
     schema_output = schema.model_dump()
 
     if media:
-        media = await save_photo(media, Gallery)
+        media = await update_photo(
+            file=media,
+            record=record,
+            field_name="media",
+            background_tasks=background_tasks,
+        )
         schema_output["media"] = media
 
     if schema.sub_department and schema.sub_department != record.sub_department:
@@ -184,7 +190,7 @@ async def update_photo(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def update_video(
+async def update_video_by_id(
     id: int,
     schema: CreateVideoSchema,
     session: AsyncSession,
@@ -206,11 +212,14 @@ async def update_video(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def delete_media_by_id(id: int, session: AsyncSession):
+async def delete_media_by_id(
+    id: int, session: AsyncSession, background_tasks: BackgroundTasks
+):
     record = await session.get(Gallery, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     try:
+        background_tasks.add_task(delete_photo, record.media)
         await session.delete(record)
         await session.commit()
         return {"message": SUCCESS_DELETE % id}

@@ -1,5 +1,6 @@
+import asyncio
 from sqlalchemy import insert, select
-from fastapi import HTTPException, UploadFile
+from fastapi import BackgroundTasks, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.achievements.schemas import (
@@ -17,7 +18,7 @@ from src.exceptions import (
     SERVER_ERROR,
     SUCCESS_DELETE,
 )
-from src.utils import save_photo
+from src.utils import save_photo, update_photo, delete_photo
 
 
 async def get_all_achievements_by_filter(
@@ -105,6 +106,7 @@ async def update_achievement(
     media: UploadFile,
     schema: UpdateAchievementSchema,
     session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ):
     record = await session.get(Achievement, id)
     if not record:
@@ -112,7 +114,12 @@ async def update_achievement(
     schema_output = schema.model_dump()
 
     if media:
-        media = await save_photo(media, Achievement)
+        media = await update_photo(
+            file=media,
+            record=record,
+            field_name="media",
+            background_tasks=background_tasks,
+        )
         schema_output["media"] = media
 
     if schema.sub_department and schema.sub_department != record.sub_department:
@@ -142,11 +149,14 @@ async def update_achievement(
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def delete_achievement_by_id(id: int, session: AsyncSession):
+async def delete_achievement_by_id(
+    id: int, session: AsyncSession, background_tasks: BackgroundTasks
+):
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     try:
+        background_tasks.add_task(delete_photo, record.media)
         await session.delete(record)
         await session.commit()
         return {"message": SUCCESS_DELETE % id}
