@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 
-from pydantic import BaseModel, AnyHttpUrl, FilePath, conint, constr, validator
+from pydantic import BaseModel, conint, constr, validator
 from fastapi import UploadFile
 
 from src.config import IS_PROD, settings
@@ -10,7 +10,7 @@ from src.exceptions import SUCCESS_DELETE
 
 class GetAchievementSchema(BaseModel):
     id: int
-    media: Union[AnyHttpUrl, FilePath]
+    media: str
     pinned_position: Optional[int]
     sub_department: Optional[int]
     description: Optional[str]

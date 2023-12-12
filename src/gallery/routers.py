@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,8 +15,8 @@ from .service import (
     get_photo_by_id,
     get_positions_status,
     get_video_by_id,
-    update_photo,
-    update_video,
+    update_photo_by_id,
+    update_video_by_id,
 )
 from .schemas import (
     GetPhotoSchema,
@@ -106,13 +106,18 @@ async def post_video(
 @gallery_router.put("/photo/{id}", response_model=GetPhotoSchema)
 async def put_photo(
     id: int,
+    background_tasks: BackgroundTasks,
     media: UploadFile = None,
     schema: UpdatePhotoSchema = Depends(UpdatePhotoSchema),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record: Gallery = await update_photo(
-        id=id, media=media, schema=schema, session=session
+    record: Gallery = await update_photo_by_id(
+        id=id,
+        media=media,
+        schema=schema,
+        session=session,
+        background_tasks=background_tasks,
     )
     # if record.sub_department:
     #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
@@ -126,16 +131,19 @@ async def put_video(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await update_video(id=id, schema=schema, session=session)
+    return await update_video_by_id(id=id, schema=schema, session=session)
 
 
 @gallery_router.delete("/{id}", response_model=DeleteResponseSchema)
 async def delete_media(
     id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # record: Gallery = await session.get(Gallery, id)
     # if record.sub_department:
     #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
-    return await delete_media_by_id(id=id, session=session)
+    return await delete_media_by_id(
+        id=id, background_tasks=background_tasks, session=session
+    )
