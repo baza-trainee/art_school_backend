@@ -60,6 +60,15 @@ async def get_one_sub_dep(id: int, model: Type[Base], session: AsyncSession):
     return sub_department
 
 
+async def get_main_dep(id: int, model: Type[Base], session: AsyncSession):
+    query = select(model).where(model.id == id)
+    result = await session.execute(query)
+    department = result.scalars().first()
+    if not department:
+        raise HTTPException(status_code=404, detail=NO_RECORD)
+    return department
+
+
 async def get_galery_list(id: int, model: Type[Base], session: AsyncSession):
     query = (
         select(model).where(model.sub_department == id).order_by(desc(model.created_at))

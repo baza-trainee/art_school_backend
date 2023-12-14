@@ -13,6 +13,7 @@ from src.auth.schemas import UserCreate
 from src.exceptions import (
     AFTER_LOGIN,
     AFTER_REGISTER,
+    EMAIL_BODY,
     PASSWORD_CHANGE_SUCCESS,
     PASSWORD_LEN_ERROR,
     PASSWORD_STRENGTH_ERROR,
@@ -73,7 +74,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
         # background_tasks.add_task(await send_reset_email(user.email, token))  #  Uncomment this for production
         raise HTTPException(
-            status_code=200, detail={"status": "success", "message": f"{token}"}
+            status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}
         )
 
     async def on_after_reset_password(

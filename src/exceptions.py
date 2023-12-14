@@ -15,6 +15,7 @@ CREATE_MAIN = "Successfully created Main Department: %s."
 EXISTS_MAIN = "Main Department `%s` already exists."
 NO_SUB_DEPARTMENT = "No sub-departments found for this department."
 NO_MEDIA = "Media for this sub-department not found."
+DELETE_ERROR = "Cannot delete the last sub-department of a main department."
 
 # CONTACTS
 CONTACTS_SUCCESS_CREATE = "Contacts have been created successfully."
@@ -22,7 +23,19 @@ CONTACTS_ALREADY_EXISTS = "Contacts already exists."
 INVALID_FIELD = "Invalid field name."
 
 # USER
-EMAIL_BODY = "Here is your password reset link: https://art-school-frontend.vercel.app/admin/reset?token=%s"
+EMAIL_BODY = """
+Вітаємо!
+
+Ви отримали цього листа, тому що зробили запит на відновлення паролю для вашого облікового запису в панелі керування Art School.
+
+Для відновлення паролю, будь ласка, перейдіть за наступним посиланням:
+https://art-school-frontend.vercel.app/admin/reset?token=%s
+
+Якщо ви не робили запит на відновлення паролю, просто проігноруйте це повідомлення.
+
+З повагою,
+Команда Art School
+"""
 USER_EXISTS = "User %s already exists."
 AFTER_REGISTER = "User %s has registered."
 AFTER_LOGIN = "You have successfully logged in."
