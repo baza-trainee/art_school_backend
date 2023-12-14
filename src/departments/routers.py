@@ -1,6 +1,7 @@
 from typing import Any, List, Union
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # from fastapi_cache.decorator import cache
@@ -12,11 +13,13 @@ from src.departments.service import (
     get_achievement_list,
     get_dep,
     get_galery_list,
+    get_main_dep,
     get_one_sub_dep,
     get_sub_dep_list,
     update_sub_dep,
 )
 from src.database.database import get_async_session
+from src.exceptions import DELETE_ERROR
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
 
@@ -116,8 +119,13 @@ async def delete_sub_department_by_id(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    # sub_dep: SubDepartment = await get_one_sub_dep(id, SubDepartment, session)
-    # await session.commit()
+    sub_dep: SubDepartment = await get_one_sub_dep(id, SubDepartment, session)
+    main_dep: MainDepartment = await get_main_dep(
+        sub_dep.main_department_id, MainDepartment, session
+    )
+    if len(main_dep.sub_departments) <= 1:
+        raise HTTPException(status_code=400, detail=DELETE_ERROR)
+    await session.commit()
     # await invalidate_cache(
     #     "get_sub_departments_by_department_id",
     #     sub_dep.main_department_id,

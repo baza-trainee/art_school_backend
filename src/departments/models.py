@@ -11,7 +11,9 @@ class MainDepartment(Base):
     department_name = Column(String(300))
 
     # Вказуємо, що це зовнішній ключ для SubDepartment
-    sub_departments = relationship("SubDepartment", back_populates="main_department")
+    sub_departments = relationship(
+        "SubDepartment", back_populates="main_department", lazy="selectin"
+    )
 
 
 class SubDepartment(Base):
