@@ -25,7 +25,7 @@ def check_password_strength(password: str):
     Checks if password is a combination of
     lowercase, uppercase, number and special symbol.
     """
-    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]*$"
+    regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!?]*$"
     if not search(regex, password):
         return False
     return True
