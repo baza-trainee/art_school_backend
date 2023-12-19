@@ -55,13 +55,12 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = f"{round(process_time)} ms"
     return response
 
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=ALLOW_METHODS,
-    allow_headers=ALLOW_HEADERS,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 add_pagination(app)

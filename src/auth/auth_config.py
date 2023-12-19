@@ -2,6 +2,7 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
     CookieTransport,
+    BearerTransport,
     JWTStrategy,
 )
 
@@ -12,8 +13,8 @@ from .models import User
 
 lifetime = 60 * 60 * 24 * 15  # 15 days
 
-cookie_transport = CookieTransport(cookie_name=COOKIE_NAME, cookie_max_age=lifetime, cookie_secure=False, cookie_httponly=False, cookie_samesite='none')
-
+# cookie_transport = CookieTransport(cookie_name=COOKIE_NAME, cookie_max_age=lifetime, cookie_secure=False, cookie_samesite='none', cookie_httponly=False)
+bearer_transport = BearerTransport(tokenUrl="auth/login")
 
 def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(secret=settings.SECRET_AUTH, lifetime_seconds=lifetime)
@@ -21,7 +22,7 @@ def get_jwt_strategy() -> JWTStrategy:
 
 auth_backend = AuthenticationBackend(
     name="jwt",
-    transport=cookie_transport,
+    transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
 
