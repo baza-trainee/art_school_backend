@@ -91,4 +91,5 @@ SWAGGER_PARAMETERS = {
     "requestSnippets": True,
     "defaultModelsExpandDepth": -1,
     "docExpansion": "none",
+    "persistAuthorization": True,
 }
