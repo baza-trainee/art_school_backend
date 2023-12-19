@@ -14,7 +14,7 @@ from .models import User
 lifetime = 60 * 60 * 24 * 15  # 15 days
 
 # cookie_transport = CookieTransport(cookie_name=COOKIE_NAME, cookie_max_age=lifetime, cookie_secure=False, cookie_samesite='none', cookie_httponly=False)
-bearer_transport = BearerTransport(tokenUrl="auth/login")
+bearer_transport = BearerTransport(tokenUrl="api/v1/auth/login")
 
 def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(secret=settings.SECRET_AUTH, lifetime_seconds=lifetime)
