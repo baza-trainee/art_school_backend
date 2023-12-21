@@ -33,6 +33,7 @@ class SubDepartmentCreateSchema(BaseModel):
 
 
 class SubDepartmentUpdateSchema(BaseModel):
+    sub_department_name: Optional[str] = Field(None, max_length=300)
     description: Optional[str] = Field(None, max_length=2000)
 
 
