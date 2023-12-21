@@ -40,7 +40,7 @@ async def send_reset_email(email: str, token: str):
         subject="Password Reset Request",
         recipients=[email],
         body=EMAIL_BODY % token,
-        subtype="plain",
+        subtype="html",
     )
     fm = FastMail(mail_config)
     await fm.send_message(message)

@@ -1,3 +1,4 @@
+import asyncio
 from re import search
 from typing import Optional, Union
 
@@ -42,11 +43,10 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def validate_password(
         self, password: str, user: Union[UserCreate, User]
     ) -> None:
-        if len(password) < 8:
+        if not (8 <= len(password) <= 64):
             raise InvalidPasswordException(reason=PASSWORD_LEN_ERROR)
-        if user.email in password:
+        if user.email.lower().split('@')[0] in password.lower():
             raise InvalidPasswordException(reason=PASSWORD_UNIQUE_ERROR)
-
         if not check_password_strength(password):
             raise InvalidPasswordException(reason=PASSWORD_STRENGTH_ERROR)
 
@@ -68,11 +68,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         user: User,
         token: str,
         request: Optional[Request] = None,
-        background_tasks: BackgroundTasks = BackgroundTasks(),
     ):
         from src.auth.utils import send_reset_email
-
-        # background_tasks.add_task(await send_reset_email(user.email, token))  #  Uncomment this for production
+        # asyncio.create_task(send_reset_email(user.email, token))
         raise HTTPException(
             status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}
         )
