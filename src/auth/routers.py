@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi_users import InvalidPasswordException
 from fastapi_users.password import PasswordHelper
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update
@@ -9,7 +10,6 @@ from src.exceptions import (
     OLD_PASS_INCORRECT,
     PASSWORD_CHANGE_SUCCESS,
     PASSWORD_NOT_MATCH,
-    PASSWORD_STRENGTH_ERROR,
 )
 from src.auth.models import User
 from src.database.database import get_async_session
@@ -30,8 +30,8 @@ async def change_password(
 ):
     try:
         await user_manager.validate_password(password=new_password_confirm, user=user)
-    except:
-        raise HTTPException(status_code=400, detail=PASSWORD_STRENGTH_ERROR)
+    except InvalidPasswordException as ex:
+        raise HTTPException(status_code=400, detail=ex.reason)
     password_helper = PasswordHelper()
     if new_password != new_password_confirm:
         raise HTTPException(status_code=400, detail=PASSWORD_NOT_MATCH)
