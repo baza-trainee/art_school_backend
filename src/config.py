@@ -3,7 +3,7 @@ import cloudinary
 from fastapi_mail import ConnectionConfig
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-IS_PROD = True
+IS_PROD = False
 
 PHOTO_FORMATS = [
     "application/pdf",
