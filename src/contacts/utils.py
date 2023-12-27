@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 from src.contacts.models import Contacts
 from src.database.database import get_async_session
-from src.exceptions import CONTACTS_ALREADY_EXISTS, CONTACTS_SUCCESS_CREATE
+from .exceptions import CONTACTS_ALREADY_EXISTS, CONTACTS_SUCCESS_CREATE
 
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)

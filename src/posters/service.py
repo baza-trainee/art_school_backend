@@ -13,6 +13,7 @@ from .exceptions import (
     SERVER_ERROR,
     NO_RECORD,
     NO_DATA_LIST_FOUND,
+    SUCCESS_DELETE,
 )
 
 
@@ -99,7 +100,7 @@ async def delete_poster_by_id(poster_id: int, model: Type[Base], session: AsyncS
         query = delete(model).where(model.id == poster_id)
         await session.execute(query)
         await session.commit()
-        return {"message": "Record with id `%s`was successfully deleted." % poster_id}
+        return {"message": SUCCESS_DELETE % poster_id}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)

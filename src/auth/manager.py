@@ -2,7 +2,7 @@ import asyncio
 from re import search
 from typing import Optional, Union
 
-from fastapi import BackgroundTasks, Depends, HTTPException, Request, Response, status
+from fastapi import Depends, HTTPException, Request, Response, status
 from fastapi_users import BaseUserManager, IntegerIDMixin, InvalidPasswordException
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from .models import User
 from src.config import settings
 from src.database.database import get_async_session
 from src.auth.schemas import UserCreate
-from src.exceptions import (
+from .exceptions import (
     AFTER_LOGIN,
     AFTER_REGISTER,
     EMAIL_BODY,
@@ -45,7 +45,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ) -> None:
         if not (8 <= len(password) <= 64):
             raise InvalidPasswordException(reason=PASSWORD_LEN_ERROR)
-        if user.email.lower().split('@')[0] in password.lower():
+        if user.email.lower().split("@")[0] in password.lower():
             raise InvalidPasswordException(reason=PASSWORD_UNIQUE_ERROR)
         if not check_password_strength(password):
             raise InvalidPasswordException(reason=PASSWORD_STRENGTH_ERROR)
@@ -70,6 +70,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         request: Optional[Request] = None,
     ):
         from src.auth.utils import send_reset_email
+
         # asyncio.create_task(send_reset_email(user.email, token))
         raise HTTPException(
             status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}

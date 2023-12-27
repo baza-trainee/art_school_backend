@@ -4,6 +4,7 @@ from fastapi import HTTPException, Response, UploadFile
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .exceptions import PERSON_EXISTS
 from .models import SchoolAdministration
 from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
 from src.utils import save_photo
@@ -11,7 +12,6 @@ from src.database.database import Base
 from src.exceptions import (
     NO_DATA_FOUND,
     NO_RECORD,
-    PERSON_EXISTS,
     SERVER_ERROR,
     SUCCESS_DELETE,
 )

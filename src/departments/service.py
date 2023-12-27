@@ -6,13 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.achievements.models import Achievement
 from src.database.database import Base
+from src.exceptions import NO_DATA_FOUND, NO_RECORD
 from src.gallery.models import Gallery
-from src.exceptions import (
-    NO_DATA_FOUND,
+from .exceptions import (
     NO_MEDIA,
-    NO_RECORD,
     NO_SUB_DEPARTMENT,
     SUB_DEP_EXISTS,
+    SUCCESS_DELETE,
 )
 
 
@@ -129,4 +129,4 @@ async def delete_sub_dep(id, model: Type[Base], session: AsyncSession):
         result = await session.execute(query)
         if not result.rowcount:
             raise HTTPException(status_code=404, detail=NO_RECORD)
-    return {"detail": "SubDepartment deleted successfully"}
+    return {"detail": SUCCESS_DELETE}

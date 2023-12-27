@@ -19,11 +19,11 @@ from src.departments.service import (
     update_sub_dep,
 )
 from src.database.database import get_async_session
-from src.exceptions import DELETE_ERROR
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
 
 # from src.database.redis import invalidate_cache, my_key_builder
+from .exceptions import DELETE_ERROR
 from .models import MainDepartment, SubDepartment
 from .schemas import (
     DepartmentEnum,
