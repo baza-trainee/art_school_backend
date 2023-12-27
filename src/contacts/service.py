@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.database import Base
 from src.exceptions import (
-    INVALID_FIELD,
     NO_RECORD,
     SERVER_ERROR,
 )
+from .exceptions import INVALID_FIELD
 from .schemas import ContactField, ContactsUpdateSchema
 
 

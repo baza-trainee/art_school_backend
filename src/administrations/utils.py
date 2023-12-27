@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from src.administrations.models import SchoolAdministration
 from src.database.database import get_async_session
-from src.exceptions import PERSON_EXISTS, SUCCESS
+from .exceptions import PERSON_EXISTS, SUCCESS
 
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)

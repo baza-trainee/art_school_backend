@@ -5,7 +5,7 @@ from fastapi_mail import FastMail, MessageSchema
 
 from src.database.database import get_async_session
 from src.config import mail_config
-from src.exceptions import EMAIL_BODY, USER_EXISTS
+from .exceptions import EMAIL_BODY, USER_EXISTS
 from .manager import get_user_db, get_user_manager
 from .schemas import UserCreate
 

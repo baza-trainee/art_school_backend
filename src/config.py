@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     BASE_URL: Optional[str] = None  # IS_PROD
     REDIS_HOST: Optional[str] = None  # IS_PROD
     REDIS_PORT: Optional[str] = None  # IS_PROD
+    REDIS_PASS: Optional[str] = None  # IS_PROD
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
@@ -53,7 +54,9 @@ if IS_PROD:
     settings.DB_HOST = "postgres"
     settings.REDIS_HOST = "redis"
 
-REDIS_URL = f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}"
+REDIS_URL = (
+    f"redis://default:{settings.REDIS_PASS}@{settings.REDIS_HOST}:{settings.REDIS_PORT}"
+)
 CACHE_PREFIX = "fastapi-cache"
 
 HOUR = 3600

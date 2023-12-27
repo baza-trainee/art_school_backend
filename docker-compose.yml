@@ -1,37 +1,65 @@
-version: '3'
+version: '3.7'
 
 services:
 
   postgres:
     image: postgres:latest
     container_name: postgres_db
+    restart: always
     ports:
       - ${DB_PORT}:${DB_PORT}
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - postgres-data-school:/data
+    networks:
+      - backend-school
 
   redis:
     container_name: fastapi-redis
     image: redis:7.2.3
-    restart: on-failure
+    restart: always
     env_file:
       - .env
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
     expose:
       - ${REDIS_PORT}
+    command:
+      - redis-server
+      - --port ${REDIS_PORT}
+      - --requirepass ${REDIS_PASS}
+      - --maxmemory 150mb
+    networks:
+      - backend-school
 
   app:
-    build:
-      context: .
+    image: art_school
+    container_name: fastapi_app
+    build: .
+    restart: always
+    command: [ "bash", "scripts/app.sh" ]
     env_file:
       - .env
-    container_name: fastapi_app
-    command: ["bash", "app.sh"]
     ports:
       - 8000:8000
     depends_on:
       - postgres
       - redis
+    volumes:
+      - app-data:/data
+    networks:
+      - backend-school
+
+networks:
+  backend-school:
+    driver: bridge
+
+volumes:
+  postgres-data-school:
+  app-data:
+  redis-data:

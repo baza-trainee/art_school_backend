@@ -1,6 +1,6 @@
-from typing import Annotated, Optional
+from typing import Optional
 
-from fastapi import Body, Form, UploadFile
+from fastapi import Form, UploadFile
 from pydantic import BaseModel, Field
 
 from src.exceptions import SUCCESS_DELETE

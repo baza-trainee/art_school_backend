@@ -8,6 +8,7 @@ from src.database.database import Base
 from src.utils import save_photo
 from .schemas import SliderCreateSchema, SliderMainUpdateSchema
 from .exceptions import (
+    ERROR_DELETE,
     NO_DATA_FOUND,
     NO_RECORD,
     SERVER_ERROR,
@@ -99,7 +100,7 @@ async def update_slide(
 
 async def delete_slide_by_id(model: Type[Base], session: AsyncSession, slide_id: int):
     if slide_id == 1:
-        raise HTTPException(status_code=400, detail="Cannot delete slide with id 1")
+        raise HTTPException(status_code=400, detail=ERROR_DELETE)
 
     query = select(model).where(model.id == slide_id)
     result = await session.execute(query)

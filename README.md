@@ -107,6 +107,7 @@ To run the project, you will need [Docker-compose](https://www.digitalocean.com/
 
     <b class="variable-name">REDIS_HOST</b>=<span class="variable-value">localhost</span><br>
     <b class="variable-name">REDIS_PORT</b>=<span class="variable-value">6379</span><br>
+    <b class="variable-name">REDIS_PASS</b>=<span class="variable-value">password</span><br>
     </details>
 
 <h2 align="center" style="color: #B5E5E8;">USAGE</h2>

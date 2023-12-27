@@ -1,7 +1,9 @@
-import json
 from typing import Optional
+
 from pydantic import BaseModel, Field
 from fastapi import Body, Form, UploadFile
+
+from src.slider_main.exceptions import SCHEMA_DESC
 
 
 class SliderMainSchema(BaseModel):
@@ -36,12 +38,12 @@ class SliderMainUpdateSchema(BaseModel):
         title: Optional[str] = Body(
             max_length=120,
             default=None,
-            description="Залиште поле пустим, щоб видалити дані",
+            description=SCHEMA_DESC,
         ),
         description: Optional[str] = Body(
             max_length=200,
             default=None,
-            description="Залиште поле пустим, щоб видалити дані",
+            description=SCHEMA_DESC,
         ),
     ):
         return cls(title=title, description=description)

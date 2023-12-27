@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from src.departments.models import MainDepartment, SubDepartment
 from src.database.database import get_async_session
-from src.exceptions import (
+from .exceptions import (
     CREATE_MAIN,
     EXISTS_MAIN,
     SUB_DEP_EXISTS,

@@ -6,7 +6,7 @@ from sqlalchemy import update
 
 from src.auth.auth_config import CURRENT_SUPERUSER, fastapi_users, auth_backend
 from src.database.database import get_async_session
-from src.exceptions import (
+from .exceptions import (
     OLD_PASS_INCORRECT,
     PASSWORD_CHANGE_SUCCESS,
     PASSWORD_NOT_MATCH,

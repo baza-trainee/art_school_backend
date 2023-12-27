@@ -3,6 +3,7 @@ import os
 from typing import List
 
 from sqlalchemy import select
+from .exceptions import SLIDE_EXISTS, SUCCESS_CREATE
 
 from src.slider_main.models import SliderMain
 from src.database.database import get_async_session
@@ -23,9 +24,9 @@ async def create_slide(title: str, description: str):
             slide = SliderMain(title=title, description=description, photo=photo_path)
             session.add(slide)
             await session.commit()
-            print(f"Slide {slide.id} have been created successfully.")
+            print(SUCCESS_CREATE % slide.id)
         else:
-            print(f"Slide with title:'{slide.title}' already exists")
+            print(SLIDE_EXISTS % slide.title)
 
 
 async def create_slides(slides_list: List[dict]):
