@@ -6,6 +6,7 @@ from pydantic import (
     BaseModel,
     EmailStr,
     AnyHttpUrl,
+    Field,
     field_validator,
     ValidationInfo,
 )
@@ -31,7 +32,7 @@ class ContactsSchema(BaseModel):
 class ContactsUpdateSchema(BaseModel):
     map_url: Optional[Union[AnyHttpUrl, str]] = None
     address: Optional[str] = None
-    phone: Optional[str] = "+380999999999"
+    phone: Optional[str] = None
     email: Optional[Union[EmailStr, str]] = None
     facebook_url: Optional[Union[AnyHttpUrl, str]] = None
     youtube_url: Optional[Union[AnyHttpUrl, str]] = None
