@@ -58,7 +58,7 @@ class ContactsUpdateSchema(BaseModel):
             if info.field_name == "email":
                 return EmailStr._validate(value)
             elif info.field_name == "phone":
-                if not (match(r"^[\d\+\-\(\)]{10,20}$", value)):
+                if not (match(r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$", value)):
                     raise ValueError(INVALID_PHONE)
                 else:
                     return value
