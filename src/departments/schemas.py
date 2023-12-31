@@ -27,14 +27,14 @@ class SubDepartmentSchema(BaseModel):
 
 
 class SubDepartmentCreateSchema(BaseModel):
-    sub_department_name: str
-    description: str = Field(..., max_length=2000)
+    sub_department_name: str = Field(..., min_length=2, max_length=120)
+    description: str = Field(..., min_length=2, max_length=2000)
     main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentUpdateSchema(BaseModel):
-    sub_department_name: Optional[str] = Field(None, max_length=300)
-    description: Optional[str] = Field(None, max_length=2000)
+    sub_department_name: str = Field(None, min_length=2, max_length=120)
+    description: str = Field(None, min_length=2, max_length=2000)
 
 
 class SubDepartmentGallerySchema(BaseModel):
