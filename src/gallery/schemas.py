@@ -6,6 +6,10 @@ from fastapi import UploadFile
 
 from src.config import IS_PROD, settings
 from src.exceptions import SUCCESS_DELETE
+from .models import Gallery
+
+
+DESC_LEN = Gallery.description.type.length
 
 
 class GetPhotoSchema(BaseModel):
@@ -39,7 +43,7 @@ class CreatePhotoSchema(BaseModel):
     media: UploadFile
     pinned_position: Optional[conint(ge=1, le=7)] = None
     sub_department: Optional[int] = None
-    description: Optional[constr(max_length=300)] = None
+    description: Optional[constr(max_length=DESC_LEN)] = None
 
 
 class CreateVideoSchema(BaseModel):
@@ -49,7 +53,7 @@ class CreateVideoSchema(BaseModel):
 class UpdatePhotoSchema(BaseModel):
     pinned_position: Optional[conint(ge=1, le=7)] = None
     sub_department: Optional[int] = None
-    description: Optional[constr(max_length=300)] = None
+    description: Optional[constr(max_length=DESC_LEN)] = None
 
 
 class DeleteResponseSchema(BaseModel):

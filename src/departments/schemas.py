@@ -4,6 +4,16 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from src.achievements.models import Achievement
+from .models import SubDepartment, MainDepartment
+
+
+SUB_DEP_NAME_LEN = SubDepartment.sub_department_name.type.length
+SUB_DEP_DESC_LEN = SubDepartment.description.type.length
+DEP_NAME_LEN = MainDepartment.department_name.type.length
+ACHI_DESC_LEN = Achievement.description.type.length
+ACHI_MEDIA_LEN = Achievement.media.type.length
+
 
 class DepartmentEnum(int, Enum):
     music = 1
@@ -15,42 +25,42 @@ class DepartmentEnum(int, Enum):
 
 
 class DepartmentSchema(BaseModel):
-    id: Optional[int]
-    department_name: Optional[str]
+    id: int = Field(..., ge=1, le=6)
+    department_name: str = Field(..., max_length=DEP_NAME_LEN)
 
 
 class SubDepartmentSchema(BaseModel):
-    id: Optional[int]
-    sub_department_name: Optional[str]
-    description: Optional[str]
-    main_department_id: Optional[int]
+    id: int = Field(..., ge=1)
+    sub_department_name: str = Field(..., min_length=2, max_length=SUB_DEP_NAME_LEN)
+    description: str = Field(..., min_length=2, max_length=SUB_DEP_DESC_LEN)
+    main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentCreateSchema(BaseModel):
-    sub_department_name: str = Field(..., min_length=2, max_length=120)
-    description: str = Field(..., min_length=2, max_length=2000)
+    sub_department_name: str = Field(..., min_length=2, max_length=SUB_DEP_NAME_LEN)
+    description: str = Field(..., min_length=2, max_length=SUB_DEP_DESC_LEN)
     main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentUpdateSchema(BaseModel):
-    sub_department_name: str = Field(None, min_length=2, max_length=120)
-    description: str = Field(None, min_length=2, max_length=2000)
+    sub_department_name: str = Field(None, min_length=2, max_length=SUB_DEP_NAME_LEN)
+    description: str = Field(None, min_length=2, max_length=SUB_DEP_DESC_LEN)
 
 
 class SubDepartmentGallerySchema(BaseModel):
     id: int
-    media: str
+    media: str = Field(..., max_length=ACHI_MEDIA_LEN)
     is_video: bool
-    description: Optional[str]
-    sub_department: Optional[int]
-    pinned_position: Optional[int]
+    description: Optional[str] = Field(None, min_length=0, max_length=ACHI_DESC_LEN)
+    sub_department: int = Field(..., ge=1)
+    pinned_position: Optional[int] = Field(None, ge=1, le=12)
     created_at: datetime
 
 
 class SubDepartmentAchievementSchema(BaseModel):
     id: int
-    media: str
-    description: Optional[str]
-    sub_department: Optional[int]
-    pinned_position: Optional[int]
+    media: str = Field(..., max_length=ACHI_MEDIA_LEN)
+    description: Optional[str] = Field(None, min_length=0, max_length=ACHI_DESC_LEN)
+    sub_department: int = Field(..., ge=1)
+    pinned_position: Optional[int] = Field(..., ge=1, le=12)
     created_at: datetime

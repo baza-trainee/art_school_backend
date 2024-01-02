@@ -9,4 +9,4 @@ class SchoolAdministration(Base):
     id = Column(Integer, primary_key=True)
     full_name = Column(String(length=150))
     position = Column(String(length=2000))
-    photo = Column(String)
+    photo = Column(String(length=300))

@@ -9,9 +9,9 @@ class Achievement(Base):
     __tablename__ = "achievements"
 
     id: int = Column(Integer, primary_key=True)
-    media: str = Column(String, nullable=False)
+    media: str = Column(String(length=300), nullable=False)
     pinned_position: int = Column(Integer, nullable=True)
-    description: str = Column(String, nullable=True)
+    description: str = Column(String(length=150), nullable=True)
     sub_department: int = Column(
         Integer, ForeignKey("sub_departments.id"), nullable=True
     )
