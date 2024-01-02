@@ -7,6 +7,7 @@ from pydantic import (
     EmailStr,
     AnyHttpUrl,
     Field,
+    constr,
     field_validator,
     ValidationInfo,
 )
@@ -32,7 +33,12 @@ class ContactsSchema(BaseModel):
 class ContactsUpdateSchema(BaseModel):
     map_url: Optional[Union[AnyHttpUrl, str]] = None
     address: Optional[str] = None
-    phone: Optional[str] = None
+    phone: Optional[
+        constr(
+            max_length=50,
+            pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$",
+        )
+    ] = None
     email: Optional[Union[EmailStr, str]] = None
     facebook_url: Optional[Union[AnyHttpUrl, str]] = None
     youtube_url: Optional[Union[AnyHttpUrl, str]] = None
@@ -58,7 +64,11 @@ class ContactsUpdateSchema(BaseModel):
             if info.field_name == "email":
                 return EmailStr._validate(value)
             elif info.field_name == "phone":
-                if not (match(r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$", value)):
+                if not (
+                    match(
+                        r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$", value
+                    )
+                ):
                     raise ValueError(INVALID_PHONE)
                 else:
                     return value

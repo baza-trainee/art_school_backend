@@ -1,4 +1,3 @@
-import asyncio
 from sqlalchemy import insert, select
 from fastapi import BackgroundTasks, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
