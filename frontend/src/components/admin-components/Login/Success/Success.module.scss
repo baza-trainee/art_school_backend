@@ -1,0 +1,30 @@
+.successStyle {
+   width: 273px;
+   display: flex;
+   flex-direction: column;
+   row-gap: 48px;
+   align-items: center;
+}
+
+.headingStyle {
+  color: var(--admin-text-main, #152340);
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.link {
+  width: 100%;
+  height: 46px;
+  background: $admin-accent;
+  color: #fff;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+}

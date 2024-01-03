@@ -1,0 +1,41 @@
+.layout {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  gap: 20px;
+  align-self: stretch;
+  border-radius: 6px;
+  border: 1px solid #daddf1;
+  padding: 1.25rem;
+
+  .inputWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+  }
+  .button {
+    width: 100%;
+  }
+
+  & label {
+    top: 30px;
+  }
+}
+
+.header {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  margin-top: 12px;
+  margin-bottom: 20px;
+  color: $admin-gray-text;
+  font-family: 'Montserrat';
+  font-size: 12px;
+
+  font-weight: 400;
+}

@@ -1,0 +1,17 @@
+.headingWrap{
+   display: flex;
+   padding-bottom: 5px;
+   align-items: center; 
+   align-self: stretch;
+
+   border-bottom: 1px solid var(--admin-purple, #C4B9FD);
+}
+
+.headingText{
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 26px;
+   font-style: normal;
+   font-weight: 500;
+   line-height: normal;
+}

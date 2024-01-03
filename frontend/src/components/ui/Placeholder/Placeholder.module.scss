@@ -1,0 +1,14 @@
+.placeholder {
+  text-align: center;
+  margin: 2rem;
+  padding: 1rem;
+  background-color: rgba($accent, 0.1);
+  border: 1px solid $accent;
+  border-radius: 4px;
+
+  p {
+    margin: 0;
+    color: $accent;
+    font-size: 1.1rem;
+  }
+}

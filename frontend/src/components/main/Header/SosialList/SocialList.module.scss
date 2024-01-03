@@ -1,0 +1,29 @@
+.social {
+  @extend%aligncenter;
+  gap: 24px;
+  list-style: none;
+  @media screen and (min-width: 1280px) {
+    gap: 8px;
+  }
+}
+
+.social li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //   padding-top: 10px;
+  //   padding-bottom: 10px;
+}
+
+.socialLink {
+  @extend%aligncenter;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  &:focus svg {
+    fill: $lightblue;
+  }
+  @media screen and (min-width: 1280px) {
+    padding: 0;
+  }
+}

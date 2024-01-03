@@ -1,0 +1,378 @@
+.history_wrapper {
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 44px;
+
+  h2 {
+    align-self: flex-start;
+  }
+  @include desktop {
+    gap: 30px;
+    padding: 80px 16px 120px;
+  }
+}
+
+.history_contentWrapper {
+  position: relative;
+
+  // padding: 8px 0 44px;
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 16px;
+
+  @include desktop {
+    flex-direction: row;
+    gap: 75px;
+    // padding: 80px 0 120px;
+  }
+}
+.history_textWrapper {
+  @extend%aligncenter;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+
+  @include desktop {
+    gap: 30px;
+  }
+}
+.history_content_img {
+  width: 100%;
+  height: 220px;
+  border-radius: 5px;
+  @include tablet {
+    height: 360px;
+  }
+
+  @include desktop {
+    width: 590px;
+    height: 319px;
+  }
+}
+.history_content_text {
+  display: -webkit-box;
+  -webkit-line-clamp: 11;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @include font(14px, 400, 1.42);
+  align-self: flex-start;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  @include tablet {
+    height: 100px;
+    @include font(18px, 400, 1.42);
+
+    -webkit-line-clamp: 4;
+  }
+  @include desktop {
+    width: 515px;
+    height: 154px;
+    -webkit-line-clamp: 6;
+  }
+}
+
+.readMoreButton {
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  background-color: $accent;
+  color: $white;
+  border-radius: 0.3125rem;
+  text-align: center;
+  @include desktop {
+    width: 280px;
+  }
+}
+.readMoreButton:hover {
+  box-shadow: 0px 4px 15px 0px rgba(18, 0, 0, 0.15);
+}
+
+// about us
+.aboutUs {
+  scroll-margin-top: 102px;
+  @include tablet {
+    scroll-margin-top: 137px;
+  }
+}
+.aboutUs_wrapper {
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 10px;
+
+  h2 {
+    align-self: flex-start;
+  }
+
+  @include tablet {
+    gap: 20px;
+  }
+  @include tablet {
+    gap: 32px;
+  }
+}
+
+.aboutUs_contentWrapper {
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 36px;
+
+  @include tablet {
+    gap: 50px;
+  }
+  @include tablet {
+    gap: 120px;
+  }
+}
+.content {
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+
+  @include tablet {
+    flex-direction: row;
+    gap: 24px;
+  }
+  @include desktop {
+    gap: 94px;
+    margin-top: 5px;
+  }
+}
+
+.aboutUs_img {
+  width: 100%;
+  height: 220px;
+  border-radius: 5px;
+  @include tablet {
+    width: 345px;
+    height: 250px;
+  }
+  @include desktop {
+    width: 502px;
+    height: 300px;
+  }
+}
+
+.aboutUs_text {
+  @include font(14px, 400, 1.42);
+  text-align: center;
+  @include tablet {
+    width: 359px;
+  }
+  @include desktop {
+    width: 524px;
+    @include font(18px, 400, 1.42);
+    text-align: center;
+  }
+}
+
+.benefits {
+  @extend%aligncenter;
+  flex-direction: column;
+
+  gap: 10px;
+
+  @include tablet {
+    flex-direction: row;
+    gap: 24px;
+  }
+  @include desktop {
+    flex-direction: row;
+    gap: 88px;
+  }
+}
+.benefits_list {
+  @extend%aligncenter;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 19px;
+  @include desktop {
+    gap: 40px;
+  }
+}
+.benefits_list .benefits_listItem:nth-child(1) {
+  background-color: #feb003;
+}
+.benefits_list .benefits_listItem:nth-child(2) {
+  background-color: #cfff0f;
+
+  margin-left: 14px;
+  @include tablet {
+    margin-left: 32px;
+  }
+  @include desktop {
+    margin-left: 61px;
+  }
+}
+.benefits_list .benefits_listItem:nth-child(3) {
+  background-color: #fdd428;
+
+  margin-left: 28px;
+  @include tablet {
+    margin-left: 65px;
+  }
+  @include desktop {
+    margin-left: 161px;
+  }
+}
+.benefits_list .benefits_listItem:nth-child(4) {
+  background-color: #9ca6f4;
+
+  margin-left: 14px;
+  @include tablet {
+    margin-left: 32px;
+  }
+}
+.benefits_list .benefits_listItem:nth-child(5) {
+  background-color: #f68827;
+}
+.benefits_listItem {
+  width: 260px;
+  height: 32px;
+  @extend%aligncenter;
+  border-radius: 5px;
+
+  @include desktop {
+    width: 361px;
+    height: 45px;
+  }
+}
+.benefits_listItem_text {
+  @include font(14px, 400, 1.85);
+
+  @include desktop {
+    @include font(18px, 400, 1.85);
+  }
+}
+
+// museum
+.museum {
+  scroll-margin-top: 102px;
+  @include tablet {
+    scroll-margin-top: 137px;
+  }
+}
+.museum_contentWrapper {
+  padding: 40px 0;
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 10px;
+  h2 {
+    align-self: flex-start;
+  }
+
+  @include tablet {
+    gap: 20px;
+  }
+  @include desktop {
+    padding: 120px 0;
+    gap: 32px;
+  }
+}
+
+.slidersContainer {
+  width: 100%;
+  height: 100%;
+
+  .slider {
+    --add-bottom: 48px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding-bottom: var(--add-bottom);
+    & [class^='swiper-button-'] {
+      top: calc(50% - var(--add-bottom) / 2);
+    }
+    .slideContent {
+      width: 100%;
+      height: 100%;
+      .slidePhoto {
+        width: 100%;
+        height: 459px;
+
+        @extend%aligncenter;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        border-radius: 5px;
+        overflow: hidden;
+        img {
+          height: 230px;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 5px;
+        }
+
+        @include tablet {
+          flex-direction: row-reverse;
+          height: 250px;
+          gap: 24px;
+
+          img {
+            height: 100%;
+            width: 354px;
+          }
+        }
+      }
+      .slideText {
+        height: 100%;
+        @include font(14px, 400, 1.42);
+        text-align: center;
+        overflow-y: auto;
+        @include tablet {
+          width: 358px;
+          padding: 5px;
+        }
+      }
+    }
+  }
+}
+
+//museum list desktop only
+
+.museumList {
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.museumList_item {
+  width: 100%;
+}
+
+.museumList_item:nth-child(even) {
+  .museum_content {
+    flex-direction: row-reverse;
+  }
+}
+.museum_content {
+  @extend%aligncenter;
+  gap: 60px;
+}
+
+.museum_content_img {
+  width: 600px;
+  height: 430px;
+  border-radius: 5px;
+}
+.museum_content_text {
+  width: 520px;
+  height: 430px;
+  overflow-y: auto;
+  @include font(18px, 400, 1.85);
+  text-align: center;
+}
+
+.administration {
+  scroll-margin-top: 102px;
+  @include tablet {
+    scroll-margin-top: 137px;
+  }
+}

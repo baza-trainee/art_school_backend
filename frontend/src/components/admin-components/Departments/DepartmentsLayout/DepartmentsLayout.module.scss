@@ -1,0 +1,11 @@
+.contentWrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  gap: 1rem;
+  min-width: 296px;
+  border-radius: 8px;
+  border: 1px solid $admin-purple;
+  overflow: hidden;
+  padding: 1rem;
+}

@@ -1,0 +1,17 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+.link {
+  color: $admin-accent;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: -1.5rem;
+  text-decoration: underline;
+}
+// .button {
+//   margin-top: 2rem;
+// }

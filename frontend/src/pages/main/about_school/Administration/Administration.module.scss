@@ -1,0 +1,105 @@
+.administration_contentWrapper {
+  padding: 0 0 50px;
+  @extend%aligncenter;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+
+  @include tablet {
+    align-items: flex-start;
+    gap: 20px;
+  }
+  @include desktop {
+    gap: 32px;
+  }
+}
+
+.slidersContainer {
+  width: 100%;
+  .slider {
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+    .slideContent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 2rem;
+      .slidePhoto {
+        width: 100%;
+        height: 420px;
+        border-radius: 5px;
+        overflow: hidden;
+        img {
+          height: 100%;
+          min-height: 100%;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 5px;
+        }
+      }
+      .slideText_name {
+        font-size: 20px !important;
+        text-align: center;
+      }
+      .slideText_position {
+        font-size: 18px !important;
+        text-align: center;
+      }
+    }
+  }
+}
+.errorData {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .slidersContainer {
+    .slider {
+      .slideContent {
+        .slideText {
+          padding: 1rem 0;
+          font-size: 1rem;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1280px) {
+  .slidersContainer {
+    position: relative;
+    .slider {
+      width: 86%;
+      .slideContent {
+        width: 350px !important;
+        .slidePhoto {
+          height: 420px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 5px;
+          overflow: hidden;
+          img {
+            height: auto;
+          }
+        }
+        .slideText_name {
+          @include font(24px, 700, 1.42);
+          text-align: center;
+        }
+        .slideText_position {
+          @include font(24px, 600, 1.42);
+          text-align: center;
+        }
+      }
+    }
+  }
+}

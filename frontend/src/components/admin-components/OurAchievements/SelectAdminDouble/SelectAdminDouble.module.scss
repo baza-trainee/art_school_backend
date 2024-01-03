@@ -1,0 +1,106 @@
+.selectContainer {
+  width: 17rem;
+  position: relative;
+  font-family: Montserrat;
+  img {
+    svg {
+      color: currentColor;
+    }
+  }
+  .selectButton {
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    padding: 0.5rem 0.62rem 0.5rem 2.2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: $white;
+    border: 1px solid $white;
+    color: $admin-text-main;
+    border-radius: 0.3125rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    span::before {
+      content: '';
+      background: url('/icons/filter.svg');
+      position: absolute;
+      left: 0.62rem;
+      display: block;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+  .selectButton.active {
+    background-color: #e5e9fd;
+    border: 1px solid $admin-purple;
+    transition: all linear 0.3s;
+    padding: 0.5rem 0.62rem 0.5rem .8rem;
+    img {
+      transform: rotate(-180deg);
+    }
+    span::before {
+      display: none;
+    }
+  }
+
+  .optionsContainer {
+    width: 100%;
+    position: absolute;
+    z-index: 11;
+    top: calc(100%);
+    border: 1px solid $admin-purple;
+    background-color: aqua;
+    border-radius: 0.3125rem;
+    overflow: hidden;
+    .option {
+      background-color: $white;
+      border-bottom: 1px solid $admin-purple;
+      padding: 0 .3rem .3rem;
+      cursor: pointer;
+      > .button {
+        font-weight: 500;
+        font-size: 0.75rem;
+        width: 100%;
+        padding-bottom: 0.8rem;
+        padding-left: .5rem;
+        text-align: left;
+        top: .5rem;
+        position: relative;
+        img{
+          position: absolute;
+          right: .3rem;
+          top: .4rem;
+        }
+      }
+    }
+    .option.active {
+      background-color: #F2F4F7;
+      button {
+        border-bottom: 1px solid $admin-purple;
+      }
+      button:last-child {
+        border-bottom: none;
+      }
+      img {
+        transform: rotate(-180deg);
+      }
+    }
+  }
+  .secondOptionsContainer {
+   // background-color: #e5e9fd;
+    .secondOption {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 0.3125rem;
+      > button {
+        width: 100%;
+        padding: 0.2rem 0.5rem;
+        text-align: left;
+      }
+    }
+    .secondOption:hover {
+      background-color: #CCD4E0;
+    }
+  }
+}

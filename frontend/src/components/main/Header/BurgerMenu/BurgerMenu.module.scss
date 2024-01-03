@@ -1,0 +1,47 @@
+//---burgerMenu---
+
+.burgerMenuWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  padding: 76px 16px;
+
+  background: $burgerMenuBG;
+
+  opacity: 1;
+  pointer-events: all;
+  transition: $transition;
+}
+
+.burgerMenuWrapper.hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+.burgerMenuContent {
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 16px;
+}
+
+.burgerMenuCloseButton {
+  position: absolute;
+  top: 40px;
+  right: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(18, 0, 0, 0.05);
+  &:hover,
+  &:focus {
+    background: rgba(214, 102, 0, 0.2);
+  }
+}

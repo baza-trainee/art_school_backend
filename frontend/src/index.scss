@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&family=Mulish:wght@200;300;400;500;600;700;800;900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 320px;
+  font-family: 'Mulish', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+img {
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: currentColor;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+iframe {
+  border: none;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background-color: $white;
+  border: 1px solid $lightblue;
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  width: 9px;
+  height: 9px;
+  color: $accent;
+  background: $accent;
+  border: none;
+}
+
+.sectionTitle {
+  color: $black;
+  font-size: 1.125rem; //18px
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+  @media screen and (min-width: 768px) {
+    font-size: 2rem; //32px
+  }
+}
+
+.errorMessage {
+  font-size: 1.2rem;
+  color: $admin-red;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+#header-bar {
+  min-height: 10px;
+}
+#pdf-page-wrapper {
+  margin: 0;
+}
+#pdf-controls {
+  background-color: $accent;
+}

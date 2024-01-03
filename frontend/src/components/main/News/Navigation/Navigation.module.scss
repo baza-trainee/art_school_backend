@@ -1,0 +1,26 @@
+.prevSlide,
+.nextSlide {
+  position: absolute;
+  top: 200px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  svg {
+    width: 2rem;
+    height: 2rem;
+    fill: $lightgray;
+    transition: all linear 0.25s;
+    &:hover {
+      fill: $accent;
+    }
+  }
+}
+.prevSlide {
+  left: 1rem;
+}
+.nextSlide {
+  transform: rotate(180deg);
+  right: 1rem;
+}

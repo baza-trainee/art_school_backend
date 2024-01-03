@@ -31,3 +31,8 @@ backup:
 restore:
 	chmod +x scripts/restore.sh
 	./scripts/restore.sh
+
+deploy: down
+	npm --prefix ./frontend i
+	npm --prefix ./frontend run build
+	docker compose up -d --build

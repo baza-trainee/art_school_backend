@@ -1,0 +1,24 @@
+.contentWrapper {
+  min-height: 40vh;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  @media screen and (min-width: 768px) {
+    gap: 16px;
+  }
+  @media screen and (min-width: 1240px) {
+    gap: 30px;
+  }
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  @media screen and (min-width: 768px) {
+    gap: 24px;
+  }
+  @media screen and (min-width: 1240px) {
+    gap: 120px;
+  }
+}

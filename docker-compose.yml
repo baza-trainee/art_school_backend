@@ -40,7 +40,9 @@ services:
   app:
     image: art_school
     container_name: fastapi_app
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     restart: always
     command: [ "bash", "scripts/app.sh" ]
     env_file:
@@ -55,6 +57,22 @@ services:
     networks:
       - backend-school
 
+
+  frontend:
+    container_name: frontend_app
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    volumes:
+      - front-data:/data
+    networks:
+      - backend-school
+
 networks:
   backend-school:
     driver: bridge
@@ -63,3 +81,4 @@ volumes:
   postgres-data-school:
   app-data:
   redis-data:
+  front-data:

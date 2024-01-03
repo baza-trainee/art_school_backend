@@ -1,0 +1,280 @@
+.footer {
+  @extend%aligncenter;
+  flex-direction: column;
+  background-color: $black;
+  width: 100%;
+}
+
+.footerWrap {
+  display: flex;
+  flex-direction: column;
+  background-color: $black;
+  color: $white;
+  width: 288px;
+  padding: 16px 0 40px 0;
+  gap: 16px;
+}
+
+.footerContentWrap {
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
+}
+
+.footerLinksSectionWrap {
+  display: flex;
+  flex-direction: column-reverse;
+  row-gap: 32px;
+  column-gap: 60px;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  position: relative;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.social,
+.socialAdaptive {
+  display: flex;
+  gap: 8px;
+}
+
+.socialAdaptive {
+  justify-content: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-top: 1px solid rgba(102, 99, 99, 0.5);
+  border-bottom: 1px solid rgba(102, 99, 99, 0.5);
+}
+
+.social {
+  display: none;
+}
+
+.footerLinksRulesWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: #ababab;
+  transition: color 0.3s;
+}
+
+.footerLinksRules {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.footerLinksRulesWrap a:hover {
+  text-decoration: underline;
+}
+
+.footerLinksSection {
+  display: flex;
+  gap: 91px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+.footerLinksColumn,
+.footerLinksColumnDepartment {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: color 0.3s;
+}
+
+.footerLinksColumnDepartment {
+  width: 136px;
+}
+
+.footerLinksColumn a:hover,
+.footerLinksColumnDepartment a:hover {
+  text-decoration: underline;
+}
+
+.contactsListWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contactsList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+.contactsListItem {
+  display: flex;
+  gap: 8px;
+}
+
+.contactsListItem_PhoneWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.contactsListItem a:hover {
+  color: $accent;
+}
+
+.footerSecurity {
+  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.footerButton {
+  display: none;
+}
+
+.footerButtonAdaptive {
+  display: block;
+}
+
+.footerContent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -16px;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: rgba(102, 99, 99, 0.5);
+}
+
+@media (min-width: 768px) {
+  .footerWrap {
+    width: 736px;
+    padding: 40px 0;
+    gap: 24px;
+  }
+
+  .footerContentWrap {
+    align-self: stretch;
+    row-gap: 48px;
+  }
+
+  .footerLinksSection {
+    gap: 60px;
+    font-size: 18px;
+  }
+
+  .contactsListWrap {
+    gap: 47px;
+  }
+
+  .contactsList {
+    font-size: 18px;
+  }
+
+  .footerLinksColumnDepartment {
+    width: 228px;
+  }
+
+  .footerLinksSectionWrap {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .footerLinksRulesWrap {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .footerLinksRules {
+    flex-direction: row;
+    align-items: start;
+  }
+  .footerContent::after {
+    bottom: -24px;
+  }
+  .socialAdaptive {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .footerWrap {
+    width: 1180px;
+    padding: 30px 0;
+    gap: 50px;
+  }
+
+  .footerContentWrap {
+    flex-direction: row;
+    gap: 109px;
+  }
+
+  .footerLinksColumnDepartment {
+    width: 100%;
+  }
+
+  .footerLinksSectionWrap {
+    column-gap: 109px;
+  }
+
+  .footerLinksSection {
+    gap: 109px;
+    font-size: 16px;
+  }
+
+  .contactsList {
+    font-size: 16px;
+  }
+
+  .footerLinksRulesWrap {
+    align-items: start;
+  }
+
+  .socialAdaptive {
+    display: none;
+  }
+
+  .social {
+    display: flex;
+  }
+
+  .footerButton {
+    display: block;
+  }
+
+  .footerButtonAdaptive {
+    display: none;
+  }
+
+  .footerLinksRulesWrap {
+    color: $white;
+  }
+  .footerContent::after {
+    display: none;
+  }
+}

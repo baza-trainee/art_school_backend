@@ -1,0 +1,13 @@
+.layout {
+  outline: 1px solid red;
+  
+  height: 249px;
+  display: flex;
+  @extend%aligncenter;
+  padding: 20px;
+
+  gap: 33px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #daddf1;
+}

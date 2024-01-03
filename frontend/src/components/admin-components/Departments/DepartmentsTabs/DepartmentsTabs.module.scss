@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.item {
+  min-width: 162px;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid $admin-gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  &_active {
+    font-size: 14px;
+    padding: 0.5rem 1rem;
+    color: $admin-accent;
+    border-bottom: 2px solid $admin-accent;
+  }
+}

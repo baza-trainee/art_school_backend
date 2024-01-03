@@ -1,0 +1,29 @@
+.youtubeLink {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 24px 0;
+
+  p {
+    font-size: 18px;
+    @media screen and (min-width: 768px) {
+      font-size: 24px;
+    }
+    a {
+      display: inline-block;
+
+      img {
+        width: 50px;
+        height: 20px;
+        display: inline;
+        margin-bottom: -5px;
+        margin-left: 9px;
+        @media screen and (min-width: 768px) {
+          width: 79px;
+          height: 32px;
+        }
+      }
+    }
+  }
+}

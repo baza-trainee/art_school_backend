@@ -1,0 +1,24 @@
+.mainWrapper {
+  display: flex;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0 auto;
+  background-color:$admin-background;
+}
+.adminBackdrop {
+  display: flex;
+  justify-content: center;
+  margin: 12px;
+  align-self: stretch;
+  gap: 12px;
+}
+.rightContent {
+  position: relative;
+  display: flex;
+  width: calc(100% - 215px);
+  flex-direction: column;
+  flex: 1 0 0;
+  align-self: stretch;
+}

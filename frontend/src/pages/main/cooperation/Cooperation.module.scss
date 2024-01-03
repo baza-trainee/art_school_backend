@@ -1,0 +1,133 @@
+.Cooperation {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+  .wrapper {
+    padding: 0 105px 20px;
+    width: 1280px;
+    @media screen and (max-width: 1280px) {
+      width: 100%;
+      max-width: 768px;
+      padding: 0 20px 20px;
+    }
+    @media screen and (max-width: 678px) {
+      padding: 0 0 20px;
+    }
+    p {
+      line-height: 200%;
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    .container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      margin: 50px 0;
+      @media screen and (max-width: 1024px) {
+        margin: 20px 0;
+      }
+
+      .images {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 2.5rem;
+
+        img {
+          width: 510px;
+          @media screen and (max-width: 1280px) {
+            width: 70vw;
+          }
+          @media screen and (max-width: 768px) {
+            width: 90vw;
+          }
+        }
+      }
+      .mobile_images {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        img {
+          width: 100%;
+        }
+      }
+      h2 {
+        margin-bottom: 24px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+      .contacts {
+        list-style: none;
+        padding: 0;
+        li {
+          position: relative;
+          margin-bottom: 1.25rem;
+          padding-left: 1.75rem;
+          &:hover {
+            color: $accent;
+          }
+        }
+        li::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          display: block;
+          width: 1.25rem;
+          height: 1.25rem;
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        li:nth-child(1)::before {
+          background-image: url('/icons/location.png');
+          left: 2px;
+        }
+        li:nth-child(2)::before {
+          background-image: url('/icons/phone.png');
+        }
+      }
+      .Slider {
+        position: relative;
+        width: 100%;
+        max-height: 380px;
+        background-color: $white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        @media screen and (max-width: 1024px) {
+          height: 450px;
+          margin-bottom: 1rem;
+        }
+
+        .Slide {
+          width: 500px;
+          height: 330px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+
+          @media screen and (max-width: 450px) {
+            width: 80vw;
+          }
+
+          img {
+            width: 100%;
+            height: 330px;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+  }
+}

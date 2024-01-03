@@ -1,0 +1,14 @@
+.Gallery {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 16px;
+  .galleryHeading {
+    width: 100%;
+    h1 {
+      font-size: 35px;
+      font-weight: 700;
+    }
+  }
+}

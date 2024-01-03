@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src",
+    "src/hooks",
+    "src/HomePage.jsx",
+    "src/hooks/hooks.js",
+    "App.jsx"
+  ]
+}

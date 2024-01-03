@@ -1,0 +1,48 @@
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  width: 578px;
+  height: 578px;
+  padding: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: $admin-white;
+}
+
+.contentWrapper {
+  width: 272px;
+  @extend%aligncenter;
+  flex-direction: column;
+  gap: 48px;
+
+  p {
+    color: $admin-text-main;
+    text-align: center;
+    font-family: 'Montserra';
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+  svg {
+    width: 90px;
+    height: 90px;
+  }
+
+  button {
+    display: flex;
+    width: 273px;
+    padding: 14px 10px;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 6px;
+    border: 1px solid var(--admin-accent, #0047ff);
+    background: var(--admin-accent, #0047ff);
+    color: white;
+  }
+}

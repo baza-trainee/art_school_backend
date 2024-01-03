@@ -1,0 +1,35 @@
+.Map {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0 1rem;
+  max-width: 1280px;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    @media screen and (max-width: 678px) {
+      font-size: 20px;
+      margin-bottom: 1rem;
+    }
+  }
+  .MapContainer {
+    position: relative;
+    height: 22rem;
+    width: 90vw;
+    max-width: 1280px;
+    flex: 1 0 auto;
+    margin: 0 auto;
+    z-index: 0;
+    @media screen and (max-width: 768px) {
+      width: 90vw;
+    }
+    @media screen and (max-width: 320px) {
+      width: 80vw;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+.prevSlide,
+.nextSlide {
+  position: absolute;
+  top: 50%;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: $graylight;
+    transition: all linear 0.25s;
+  }
+}
+.prevSlide {
+  transform: translateY(-150%);
+  left: 0;
+}
+.nextSlide {
+  transform: rotate(180deg) translateY(150%);
+  right: 0;
+}
+.prevSlide:hover svg,
+.nextSlide:hover svg {
+  fill: $accent;
+}

@@ -1,0 +1,86 @@
+.textAreaWrapper {
+   display: inline-flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: flex-start;
+   gap: 10px;
+}
+
+.inputLabel {
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 14px;
+   font-style: normal;
+   font-weight: 500;
+   line-height: normal;
+}
+
+.textArea {
+   display: flex;
+   width: 478px;
+   height: 197px;
+   padding: 10px;
+   align-items: flex-start;
+   border-radius: 6px;
+   border: 1px solid var(--admin-input-outline, #D5D9F2);
+   background: var(--admin-white, #FFF);
+
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 15px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: normal;
+}
+
+.commentsWrapper {
+   display: flex;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   gap: 10px;
+   align-self: stretch;
+}
+
+.counterMessage {
+   color: var(--admin-gray-text, var(--admin-green, #707E8C));
+   text-align: right;
+   font-family: Montserrat;
+   font-size: 12px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: normal;
+}
+
+.errorWrap {
+   width: 422px;
+}
+
+.errorMessage {
+   color: var(--admin-red, #FF3232);
+   font-family: Montserrat;
+   font-size: 12px;
+   font-style: normal;
+   font-weight: 500;
+   line-height: normal;
+}
+
+.redBorder {
+   border: 1px solid var(--admin-red, #FF3232);
+}
+
+.greenBorder {
+   border: 1px solid var(--admin-green, #00BF13);
+}
+
+.blueBorder {
+   border: 1px solid var(--admin-accent, #0047FF);
+}
+
+.grayBorder {
+   border: 1px solid var(--admin-input-outline, #D5D9F2);
+}
+
+
+.redText {
+   color: var(--admin-red, #FF3232);
+}

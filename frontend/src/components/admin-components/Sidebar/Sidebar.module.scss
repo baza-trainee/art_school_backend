@@ -1,0 +1,31 @@
+.sidebarWrapper{
+   display: flex;
+   width: 215px;
+   min-height: 100vh;
+   padding: 10px 0px 5px 0px;
+   flex-direction: column;
+   justify-content: space-between;   
+   border-radius: 0px 10px 10px 0px;
+   border: 1px solid var(--admin-purple, #C4B9FD);
+   background: #E5E9FD;
+}
+
+.sidebarContent{
+   display: flex;
+   flex-direction: column;      
+   gap: 34px;
+}
+
+.copyright{
+   display: flex;
+   padding: 10px;
+   justify-content: center;
+   align-items: flex-start;     
+   align-self: stretch;
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 9px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: normal;
+}

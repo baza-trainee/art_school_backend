@@ -1,0 +1,12 @@
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 183px;
+  height: 205px;
+  padding: 6px 13px;
+  gap: 10px;
+  border: 2px solid $admin-gray;
+  border-radius: 8px;
+}

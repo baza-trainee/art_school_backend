@@ -1,0 +1,16 @@
+.basicContainerLoginWrap{
+   margin: 0 auto;
+   // margin-top: auto;
+   // margin-bottom: auto;
+   display: flex;
+   padding: 48px;
+   width: 574px;
+   flex-direction: column;
+   align-items: center;
+   gap: 50px;
+
+   border-radius: 10px;
+   border: 1px solid var(--admin-purple, #C4B9FD);
+   background: #FFF;
+   
+}

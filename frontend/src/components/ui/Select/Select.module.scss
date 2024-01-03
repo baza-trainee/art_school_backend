@@ -1,0 +1,54 @@
+.selectContainer {
+  width: 100%;
+  position: relative;
+  margin-top: 0.5rem;
+
+  .selectButton {
+    width: 100%;
+    padding: 0.6rem 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    background-color: $accent;
+    color: $white;
+    border-radius: 0.3125rem;
+  }
+  .selectButton:hover {
+    box-shadow: 0px 4px 15px 0px rgba(18, 0, 0, 0.15);
+  }
+
+  .optionsContainer {
+    width: 100%;
+    position: absolute;
+    z-index: 11;
+    top: calc(100% + 0.5rem);
+    border-radius: 0.3125rem;
+    overflow: hidden;
+
+    .option {
+      padding: 0.62rem;
+      text-align: center;
+      background-color: $accent;
+      color: $white;
+      border-bottom: 1px solid $white;
+      cursor: pointer;
+    }
+    .option:last-child {
+      border-bottom: none;
+    }
+    .option:hover {
+      box-shadow: 0px 4px 15px 0px rgba(18, 0, 0, 0.15);
+    }
+  }
+}
+@media (min-width: 1280px) {
+  .selectContainer {
+    width: 280px;
+    margin-left: calc(100% - 280px);
+    margin-top: 0;
+  }
+}
+
+.isSelected {
+  background-color: white;
+}

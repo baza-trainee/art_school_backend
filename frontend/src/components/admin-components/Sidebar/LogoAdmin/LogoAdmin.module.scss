@@ -1,0 +1,24 @@
+.logoWrapper{
+   display: flex;
+   // width: 204px;
+   padding-left: 10px;
+   align-items: center;
+   gap: 10px;
+
+}
+
+.logoIcon {
+   width: 42px;
+   height: 42px;
+}
+
+
+.logoText{
+   color: var(--admin-accent, #0047FF);
+   font-family: Mulish;
+   font-size: 11px;
+   font-style: normal;
+   font-weight: 800;
+   line-height: normal;
+
+}

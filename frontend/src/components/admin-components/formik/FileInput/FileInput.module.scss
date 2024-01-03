@@ -1,0 +1,75 @@
+.wrapper {
+  width: 48%;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+
+  .inputLabel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: $admin-text-main;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Montserrat';
+  }
+  .section{
+    width: 100%;
+  }
+  .dropzone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    //width: 478px;
+    width: 100%;
+    height: 197px;
+    border: 2px dashed $admin-blue;
+    margin: 0 auto;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    .innerWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      .icon {
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: gray;
+      }
+      p {
+        width: 153px;
+        color: gray;
+        font-size: 11px;
+      }
+    }
+    .imagePreview {
+      padding: .5rem;
+      width: 100%;
+      height: 197px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+  .errorWrap {
+    width: 422px;
+    margin-bottom: 2rem;
+  }
+
+  .errorMessage {
+    color: $admin-red;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+.borderGreen {
+  border: 2px dashed $admin-green;
+}

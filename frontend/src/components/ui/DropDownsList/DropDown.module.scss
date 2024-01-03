@@ -1,0 +1,30 @@
+.dropdown {
+  padding: 14px 24px;
+  border-bottom: 1px solid #d66600;
+
+  &Head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  &Name {
+    font-size: 24px;
+    font-weight: 700;
+    width: 70%;
+    @media screen and (max-width: 678px) {
+      font-size: 18px;
+    }
+  }
+
+  &Content {
+    margin-top: 15px;
+  }
+  .icon{
+    transition: all linear .2s;
+  }
+  .rotateIcon {
+    transition: all linear .2s;
+    transform: rotate(-90deg);
+  }
+}

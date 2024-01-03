@@ -1,0 +1,17 @@
+.title{
+    width: 100%;
+    border-radius: 0.3125rem;
+    background: $admin-light-purple;
+    text-align: center;
+    padding: 0.62rem;
+    color: $admin-accent;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .title.fixed {
+    width: 23rem;
+  }
+ 

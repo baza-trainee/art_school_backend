@@ -1,0 +1,86 @@
+.adminWrapperError {
+   height: 100vh;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   background: var(--admin-background, #F6F7FF);
+   padding: 18px;
+}
+
+.adminErrorContent {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   height: 100vh;
+}
+
+.adminErrorTitle {
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 100px;
+   font-style: normal;
+   font-weight: 500;
+   line-height: normal;
+   margin-top: 20px;
+
+   @media screen and (min-width: 768px) {
+      font-size: 200px;
+   }
+}
+
+.adminErrorTextWarning {
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 23px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: normal;
+   text-align: center;
+   margin-top: 20px;
+   margin-bottom: 22px;
+
+   @media screen and (min-width: 768px) {
+      font-size: 40px;
+   }
+}
+
+.adminErrorText {
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 17px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: normal;
+   text-align: center;
+
+   @media screen and (min-width: 768px) {
+      font-size: 20px;
+   }
+}
+
+.adminErrorBtn {
+   display: flex;
+      width: 273px;
+      padding: 14px 10px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      border: 1px solid var(--admin-accent, #0047FF);
+      background: var(--admin-accent, #0047FF);
+      color: var(--admin-white, #FFF);
+      font-family: Montserrat;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal; 
+      margin-bottom: 30px;
+      margin-top: 10px;
+
+   @media screen and (min-width: 768px) {
+      margin-bottom: 60px;
+      margin-top: 40px;
+      font-size: 20px;
+   }
+}

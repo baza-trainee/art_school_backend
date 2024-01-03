@@ -1,0 +1,24 @@
+.youtubeIcon {
+  fill: $white;
+  transition: fill 0.3s;
+
+  &:hover {
+    fill: $lightblue;
+  }
+  &:focus {
+    fill: $lightblue;
+  }
+}
+
+.facebookIcon {
+  fill: $white;
+  transition: fill 0.3s;
+
+  &:hover {
+    fill: $lightblue;
+  }
+}
+.burgerMenuIcon {
+  fill: $accent;
+  transition: fill 0.3s;
+}

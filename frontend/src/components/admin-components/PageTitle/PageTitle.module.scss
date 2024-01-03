@@ -1,0 +1,75 @@
+.pageTitle{
+   margin-bottom: 20px;
+   display: flex;
+   padding: 6px 10px;
+   justify-content: space-between;
+   align-items: center;
+   row-gap: 10px;
+   flex-wrap: wrap;
+   border: 1px solid var(--admin-purple, #C4B9FD);
+   border-radius: 6px;
+   background: var(--admin-white, #FFF);
+   width: 100%;
+   
+   }
+.titleWrap{
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+.backButton{
+   display: flex;
+   width: 32px;
+   height: 32px;
+   justify-content: center;
+   align-items: center;
+
+   border-radius: 5px;   
+   background: var(--admin-background, #F6F7FF);
+   &:hover{
+      background: var(--admin-light-purple, #ECEFFF);
+   }
+}
+
+.headerTitle{
+   display: flex;
+   padding: 10px;
+   align-items: flex-start;
+   
+   color: var(--admin-text-main, #152340);
+   font-family: Montserrat;
+   font-size: 16px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: normal;
+
+}
+
+.actionButton {
+   display: flex;
+   padding: 9px 23px 9px 15px;
+   align-items: center;
+   justify-content: center;
+   gap: 8px;
+   border-radius: 3px;
+   border: 1px solid var(--admin-accent, #0047FF);
+   background: var(--admin-accent, #0047FF);
+   color: var(--admin-white, #FFF);
+   font-family: Montserrat;
+   font-size: 11px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: normal;
+   text-transform: capitalize;
+
+   &:not(:disabled):hover {
+      border: 1px solid var(--admin-dark-purle, #7574FC);
+      background: var(--admin-dark-purle, #7574FC);
+   }
+}
+
+.disabled {
+   border: 1px solid #CECFD2;
+   background: var(--admin-gray, #BBBCBE);
+   pointer-events: none;
+}

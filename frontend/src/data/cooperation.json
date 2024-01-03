@@ -1,0 +1,32 @@
+{
+  "concertHallImages": [
+    {
+      "url": "/cooperation/concert1.webp",
+      "alt": "Загальний вигляд концертної зали"
+    },
+    {
+      "url": "/cooperation/concert2.webp",
+      "alt": "Концертна зала. Вигляд з апаратної"
+    }
+  ],
+  "soundRecordImages": [
+    {
+      "url": "/cooperation/studio1.webp",
+      "alt": "Апаратна студії звукозапису"
+    },
+    {
+      "url": "/cooperation/studio2.webp",
+      "alt": "Загальний вигляд студії звукозапису"
+    }
+  ],
+  "expoHallImages": [
+    {
+      "url": "/cooperation/expo1.webp",
+      "alt": "Загальний вигляд виставкової зали"
+    },
+    {
+      "url": "/cooperation/expo2.webp",
+      "alt": "Загальний вигляд виставкової зали"
+    }
+  ]
+}

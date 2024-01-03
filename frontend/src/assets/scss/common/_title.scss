@@ -1,0 +1,23 @@
+.department_title {
+  color: #000000;
+
+  @include font(24px, 700, 1);
+
+  @include tablet {
+  }
+  @include desktop {
+    @include font(32px, 700, 1);
+    // margin-bottom: 12px;
+  }
+}
+.department_text {
+  color: #000000;
+
+  @include font(18px, 400, 1.44);
+
+  @include tablet {
+  }
+  @include desktop {
+    @include font(24px, 400, 1);
+  }
+}
