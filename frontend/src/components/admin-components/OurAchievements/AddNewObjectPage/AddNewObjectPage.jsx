@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { achievementsValidation } from '@/components/admin-components/OurAchievements/validationSchema';
+import {
+  achievementsValidation,
+  galleryValidation,
+} from '@/components/admin-components/OurAchievements/achievementsValidationSchema';
 import useServicesStore from '@/store/serviseStore';
 import PageTitle from '@/components/admin-components/PageTitle/PageTitle';
 import TextArea from '@/components/admin-components/formik/TextArea/TextArea';
@@ -26,6 +29,7 @@ const AddNewObjectPage = ({
   selectTitle,
   achievementPositionsTitle,
   url,
+  maxSymbols,
 }) => {
   const navigate = useNavigate();
   const { addAchievement, getAchievementsPositions } = useServicesStore();
@@ -56,9 +60,9 @@ const AddNewObjectPage = ({
       setIsProcessing(true);
       await addAchievement(url, formData);
       setIsProcessing(false);
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate(`/admin/${url}`);
-      }, 2000)
+      }, 2000);
     } catch (error) {
       console.log(error);
     }
@@ -85,7 +89,9 @@ const AddNewObjectPage = ({
       />
       <Formik
         initialValues={initialValues}
-        validationSchema={achievementsValidation}
+        validationSchema={
+          url === 'achievements' ? achievementsValidation : galleryValidation
+        }
         onSubmit={onSubmit}
       >
         {formik => (
@@ -103,21 +109,25 @@ const AddNewObjectPage = ({
             </div>
 
             <div className={s.form}>
-              <div className={s.fieldSection}>
+              <div
+                className={`${s.fieldSection} ${
+                  url !== 'achievements' && s.reverse
+                }`}
+              >
                 <Field
                   name="description"
                   id="description"
                   component={TextArea}
-                  maxLength={200}
+                  maxLength={maxSymbols}
                   showCharacterCount={true}
                   label="Опис"
                 />
                 <Field
-                    name="image"
-                    id="image"
-                    component={FileInput}
-                    label="Фото"
-                  />
+                  name="image"
+                  id="image"
+                  component={FileInput}
+                  label="Фото"
+                />
               </div>
 
               <Field

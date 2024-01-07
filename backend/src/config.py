@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     CLOUD_NAME: str
     API_KEY: str
     API_SECRET: str
-    DB_HOST: str
+    DB_HOST: str = "postgres"
     DB_PORT: str
     DB_NAME: str
     DB_USER: str
@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     ADMIN_USERNAME: str
     ADMIN_PASSWORD: str
     BASE_URL: Optional[str] = None  # IS_PROD
-    REDIS_HOST: Optional[str] = None  # IS_PROD
+    REDIS_HOST: Optional[str] = "redis"  # IS_PROD
     REDIS_PORT: Optional[str] = None  # IS_PROD
     REDIS_PASS: Optional[str] = None  # IS_PROD
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -49,9 +49,6 @@ cloudinary.config(
     api_secret=settings.API_SECRET,
 )
 
-# if IS_PROD:
-#     settings.DB_HOST = "postgres"
-#     settings.REDIS_HOST = "redis"
 
 REDIS_URL = (
     f"redis://default:{settings.REDIS_PASS}@{settings.REDIS_HOST}:{settings.REDIS_PORT}"

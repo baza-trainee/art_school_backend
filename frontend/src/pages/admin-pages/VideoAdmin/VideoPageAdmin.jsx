@@ -12,6 +12,7 @@ const breadcrumbs = ['Відеогалерея'];
 const VideoPageAdmin = () => {
   const { getAllVideo } = useVideoStore();
   const videos = useVideoStore(state => state.videos);
+  const loading = useVideoStore(state => state.loading);
   const [loadingState, setLoadingState] = useState('loading');
 
   useEffect(() => {
@@ -39,15 +40,21 @@ const VideoPageAdmin = () => {
         isActionButtonDisabled={false}
         actionButtonLabel="Додати відео"
       />
-      {loadingState === 'success' && videos?.length > 0 && (
-        <VideoTable videos={videos} url="video" />
+      {loading ? (
+        <SpinnerAdmin />
+      ) : (
+        <>
+          {loadingState === 'success' && videos?.length > 0 && (
+            <VideoTable videos={videos} url="video" />
+          )}
+          {loadingState === 'loading' && (
+            <div className={s.errorData}>
+              <SpinnerAdmin />
+            </div>
+          )}
+          {loadingState === 'error' && <PlaceholderAdmin />}
+        </>
       )}
-      {loadingState === 'loading' && (
-        <div className={s.errorData}>
-          <SpinnerAdmin />
-        </div>
-      )}
-      {loadingState === 'error' && <PlaceholderAdmin />}
     </div>
   );
 };

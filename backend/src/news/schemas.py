@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, validator
 from fastapi import Form, UploadFile
+
+from src.config import settings
 from .models import News
 
 
@@ -18,11 +20,9 @@ class NewsSchema(BaseModel):
     photo: str = Field(..., max_length=PHOTO_LEN)
     created_at: datetime
 
-    # @validator("photo", pre=True)
-    # def add_base_url(cls, v):
-    #     return (
-    #         f"{BASE_URL if BASE_URL else 'https://art-school-backend.vercel.app'}/{v}"
-    #     )
+    @validator("photo", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"
 
 
 class NewsCreateSchema(BaseModel):

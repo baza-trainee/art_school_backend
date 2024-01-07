@@ -1,9 +1,8 @@
 .wrapper {
   margin: 0px 16px 40px;
-    min-height: 40vh;
+  min-height: 40vh;
   @media screen and (min-width: 1280px) {
-    margin: 24px 90px 82px; //110px - 20 px Container
-    //padding-top: 10px;
+    margin: 24px 90px 82px;
   }
 
   .title {

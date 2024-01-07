@@ -8,8 +8,6 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styles from './Hero.module.scss';
 
-console.log(Data.length);
-
 const Hero = () => {
   const swiperRef = useRef();
 

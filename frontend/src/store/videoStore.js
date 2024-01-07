@@ -8,15 +8,15 @@ const useVideoStore = create((set, get) => ({
   media: {},
 
   getAllVideo: async () => {
-    const response = await axios.get(
-      `/gallery/video?reverse=true&page=1&size=50`
-    );
     try {
       set(() => {
         return {
           loading: true,
         };
       });
+      const response = await axios.get(
+        `/gallery/video?reverse=true&page=1&size=50`
+      );
       set(() => {
         return {
           videos: response.data.items,
@@ -86,13 +86,29 @@ const useVideoStore = create((set, get) => ({
     }
   },
   deleteVideo: async id => {
-    const response = await axios.delete(`/gallery/${id}`);
-    set(() => {
-      return {
-        videos: get().videos.filter(video => video.id !== id),
-      };
-    });
-    return response;
+    if (id) {
+      try {
+        set(() => {
+          return {
+            loading: true,
+          };
+        });
+        const response = await axios.delete(`/gallery/${id}`);
+        set(() => {
+          return {
+            videos: get().videos.filter(video => video.id !== id),
+          };
+        });
+        set(() => {
+          return {
+            loading: false,
+          };
+        });
+        return response;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
   },
 }));
 

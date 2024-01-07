@@ -8,6 +8,7 @@ const AddGalleryPage = () => {
       achievementPositionsTitle='Закріпити в галерею на головній сторінці'
       url="gallery"
       selectTitle='Всі фото'
+      maxSymbols={150}
     />
   );
 };

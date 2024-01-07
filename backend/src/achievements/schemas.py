@@ -22,7 +22,7 @@ class GetAchievementSchema(BaseModel):
 
     @validator("media", pre=True)
     def add_base_url(cls, v, values):
-        return v
+        return f"{settings.BASE_URL}/{v}"
 
 
 class GetTakenPositionsSchema(BaseModel):

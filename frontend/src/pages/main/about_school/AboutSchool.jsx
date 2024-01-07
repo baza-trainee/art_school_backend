@@ -6,7 +6,7 @@ import Container from '@/components/Container/Container';
 import Administration from '@/pages/main/about_school/Administration/Administration';
 import Museum from './Museum';
 
-import aboutUsData from '@/data/about/about.json';
+
 import historyData from '@/data/about/history.json';
 import museumData from '@/data/about/museum.json';
 
@@ -58,43 +58,7 @@ const AboutSchool = () => {
           </div>
         </Container>
       </section>
-      <section className={styles.aboutUs} id="about_us">
-        <Container>
-          <div className={styles.aboutUs_wrapper}>
-            <h2 className="department_title">Про нас </h2>
-
-            <div className={styles.aboutUs_contentWrapper}>
-              <div className={styles.content}>
-                <p className={styles.aboutUs_text}>
-                  {aboutUsData.description1}
-                  hello
-                </p>
-                <img
-                  className={styles.aboutUs_img}
-                  src={aboutUsData.media}
-                  alt=""
-                />
-              </div>
-
-              <div className={styles.benefits}>
-                <ul className={styles.benefits_list}>
-                  {aboutUsData.benefits.map((benefit, index) => (
-                    <li key={index} className={styles.benefits_listItem}>
-                      <p className={styles.benefits_listItem_text}>
-                        {' '}
-                        {benefit}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                <p className={styles.aboutUs_text}>
-                  {aboutUsData.description2}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
+    
       <section className={styles.museum} id="museum">
         <Container>
           <div className={styles.museum_contentWrapper}>

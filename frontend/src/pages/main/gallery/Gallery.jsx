@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import useVideoStore from '@/store/videoStore';
-import useServicesStore from '@/store/serviseStore';
+import useGalleryStore from '@/store/galleryStore';
 import Container from '@/components/Container/Container';
 import GalleryVideo from '@/components/gallery_page/GalleryVideo/GalleryVideo';
 import YoutubeLink from '@/components/gallery_page/YoutubeLink/YoutubeLink';
@@ -11,9 +11,9 @@ import styles from './Gallery.module.scss';
 
 const Gallery = () => {
   const { getAllVideo } = useVideoStore();
-  const { getAllAchievements } = useServicesStore();
+  const { getAllImages } = useGalleryStore();
   const videos = useVideoStore(state => state.videos);
-  const gallery = useServicesStore(state => state.gallery);
+  const images = useGalleryStore(state => state.images);
   const loading = useVideoStore(state => state.loading);
 
   useEffect(() => {
@@ -24,13 +24,13 @@ const Gallery = () => {
     const fetchVideo = async () => {
       try {
         await getAllVideo();
-        await getAllAchievements('gallery');
+        await getAllImages();
       } catch (error) {
         console.log(error);
       }
     };
     fetchVideo();
-  }, [getAllVideo, getAllAchievements]);
+  }, [getAllVideo, getAllImages]);
 
   return (
     <Container>
@@ -42,7 +42,7 @@ const Gallery = () => {
         ) : (
           <>
             <GalleryVideo videos={videos} />
-            <GalleryImages images={gallery} />
+            <GalleryImages images={images} />
           </>
         )}
       </section>

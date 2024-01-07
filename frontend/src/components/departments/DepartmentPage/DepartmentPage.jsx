@@ -18,8 +18,6 @@ const DepartmentPage = ({ id, title, showSelect, articles }) => {
   }, []);
 
   const changeDepartment = url => {
-    console.log('url: ', url);
-
     setDepartmentId(url);
   };
 
@@ -41,6 +39,8 @@ const DepartmentPage = ({ id, title, showSelect, articles }) => {
   useEffect(() => {
     changeDepartment(departmentId);
   }, [departmentId]);
+
+  console.log(subDepartments);
 
   return (
     <Container>

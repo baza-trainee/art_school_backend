@@ -5,7 +5,6 @@ from typing import Type
 import aiofiles
 from fastapi import FastAPI, HTTPException, UploadFile, BackgroundTasks
 from sqlalchemy import func, select
-from cloudinary import uploader
 
 from src.administrations.utils import create_administrations
 from src.auth.models import User
@@ -16,6 +15,7 @@ from src.departments.utils import create_main_departments, create_sub_department
 from src.exceptions import INVALID_PHOTO, OVERSIZE_FILE
 from src.slider_main.utils import create_slides
 from src.config import PHOTO_FORMATS, settings, MAX_FILE_SIZE
+from src.database.redis import init_redis, redis
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -24,7 +24,6 @@ from src.database.fake_data import (
     ADMINISTRATIONS,
 )
 
-from src.database.redis import init_redis, redis
 
 lock = redis.lock("my_lock")
 
@@ -64,9 +63,6 @@ async def save_photo(file: UploadFile, model: Type[Base]) -> str:
     async with aiofiles.open(file_path, "wb") as buffer:
         await buffer.write(await file.read())
     return file_path
-    # else:
-    #     upload_result = uploader.upload(file.file, folder=folder_path)
-    #     return upload_result["url"]
 
 
 async def delete_photo(path: str) -> str:

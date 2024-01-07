@@ -5,7 +5,7 @@ import ViewButton from '@/components/ui/Buttons/ViewButton/ViewButton';
 import styles from './GalleryImages.module.scss';
 
 const GalleryImages = ({ images }) => {
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 6;
   const [isHovered, setIsHovered] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE);
   const [sorting, setSorting] = useState(false);

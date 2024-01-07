@@ -11,7 +11,7 @@ const ViewButton = ({ isMaxAmount, viewMore, viewLess }) => {
       onMouseLeave={() => setIsHovered(false)}
       onClick={!isMaxAmount ? viewMore : viewLess}
     >
-      {!isMaxAmount ? 'Дивитися Більше' : 'Дивитися Менше'}
+      {!isMaxAmount ? 'Дивитися більше' : 'Дивитися менше'}
       {!isMaxAmount ? (
         <Arrow isHovered={isHovered} direction="down" />
       ) : (

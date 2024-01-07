@@ -1,5 +1,6 @@
 // DropDown.jsx
-import arrowIcon from '../../../assets/icons/bottom-arrow.svg';
+import { Markup } from 'interweave';
+import arrowIcon from '@/assets/icons/bottom-arrow.svg';
 import s from './DropDown.module.scss';
 
 const DropDown = ({ subDep, isOpen, onDropDownClick }) => {
@@ -11,7 +12,11 @@ const DropDown = ({ subDep, isOpen, onDropDownClick }) => {
           <img src={arrowIcon} alt="Arrow Icon" />
         </button>
       </div>
-      {isOpen && <p className={s.dropdownContent}>{subDep.description}</p>}
+      {isOpen && (
+        <div className={s.dropdownContent}>
+          <Markup content={subDep.description} />
+        </div>
+      )}
     </div>
   );
 };

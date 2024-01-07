@@ -2,9 +2,10 @@ from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from fastapi_cache.decorator import cache
 
+from src.auth.auth_config import CURRENT_SUPERUSER
+from src.auth.models import User
 from src.config import HOUR, MONTH
 from src.departments.service import (
     create_sub_dep,
@@ -20,7 +21,6 @@ from src.departments.service import (
 from src.database.database import get_async_session
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
-
 from src.database.redis import invalidate_cache, my_key_builder
 from .exceptions import DELETE_ERROR
 from .models import MainDepartment, SubDepartment
@@ -59,6 +59,7 @@ async def get_sub_departments_by_department_id(
 async def create_sub_department(
     data: SubDepartmentCreateSchema,
     session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
 ):
     await invalidate_cache(
         "get_sub_departments_by_department_id", data.main_department_id
@@ -103,6 +104,7 @@ async def update_sub_department_by_id(
     id: int,
     department_data: SubDepartmentUpdateSchema = Body(None),
     session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
 ):
     response: SubDepartment = await update_sub_dep(
         id, department_data, SubDepartment, session
@@ -117,6 +119,7 @@ async def update_sub_department_by_id(
 async def delete_sub_department_by_id(
     id: int,
     session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(CURRENT_SUPERUSER),
 ) -> dict:
     sub_dep: SubDepartment = await get_one_sub_dep(id, SubDepartment, session)
     main_dep: MainDepartment = await get_main_dep(

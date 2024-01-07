@@ -4,9 +4,9 @@ import historyData from '@/data/about/history.json';
 import styles from './SchoolHistory.module.scss';
 const SchoolHistory = () => {
   useEffect(() => {
-    console.log('historyData: ', historyData);
     window.scrollTo(0, 0);
   }, []);
+
   return (
     <section>
       <Container>

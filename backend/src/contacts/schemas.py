@@ -6,7 +6,6 @@ from pydantic import (
     BaseModel,
     EmailStr,
     AnyHttpUrl,
-    Field,
     constr,
     field_validator,
     ValidationInfo,

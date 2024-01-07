@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database.database import get_async_session
+from src.database.redis import invalidate_cache
 from .models import Gallery
 from .service import (
     delete_media_by_id,
@@ -28,7 +29,6 @@ from .schemas import (
     DeleteResponseSchema,
 )
 
-from src.database.redis import invalidate_cache
 
 gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
 
@@ -89,7 +89,7 @@ async def post_photo(
 ):
     record = await create_photo(schema=schema, session=session)
     if record.sub_department:
-       await invalidate_cache("get_gallery_for_sub_department", record.sub_department)
+        await invalidate_cache("get_gallery_for_sub_department", record.sub_department)
 
     return record
 
@@ -120,7 +120,9 @@ async def put_photo(
         background_tasks=background_tasks,
     )
     if record.sub_department:
-        await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
+        await invalidate_cache(
+            "get_achievement_for_sub_department", record.sub_department
+        )
     return record
 
 
@@ -143,7 +145,9 @@ async def delete_media(
 ):
     record: Gallery = await session.get(Gallery, id)
     if record.sub_department:
-        await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
+        await invalidate_cache(
+            "get_achievement_for_sub_department", record.sub_department
+        )
     return await delete_media_by_id(
         id=id, background_tasks=background_tasks, session=session
     )

@@ -31,11 +31,11 @@ const FileInput = ({
     };
   };
 
-  const onDrop = async files => {
-    setFieldValue('image', files);
-    const file = files[0];
-    setFileToBase64(file);
-  };
+    const onDrop = async files => {
+      setFieldValue('image', files);
+      const file = files[0];
+      setFileToBase64(file);
+    };
 
   return (
     <div className={styles.wrapper}>

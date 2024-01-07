@@ -15,9 +15,13 @@ const AchievementPositions = ({
     achievementPositions?.taken_positions?.length;
 
   useEffect(() => {
-    if (!activePosition) return;
-    setFieldValue(`${name}`, activePosition);
-    setIsActivePosition(activePosition);
+    if (!activePosition) {
+      setFieldValue(`${name}`, '');
+      setIsActivePosition('');
+    } else {
+      setFieldValue(`${name}`, activePosition);
+      setIsActivePosition(activePosition);
+    }
   }, [setFieldValue, activePosition, name]);
 
   const renderRadios = () => {

@@ -16,7 +16,6 @@
   img {
     width: 100%;
     border-radius: 5px;
-    // height: 307px;
   }
 
   @include desktop {
@@ -29,11 +28,11 @@
   }
 }
 .text {
-  @include font(16px, 400, 1.44);
-  margin: 10px 0;
+  @include font(16px, 400, 1.66);
+  margin: 20px 0;
 
   @include desktop {
-    @include font(18px, 400, 1.44);
+    @include font(18px, 400, 1.66);
   }
 }
 .text_bold {

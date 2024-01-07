@@ -1,29 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useServicesStore from '@/store/serviseStore';
+import useVideoStore from '@/store/videoStore';
 import { useModal } from '@/store/modalStore';
 import { useConfirmDelete } from '@/store/confirmDelete';
 import ConfirmDeleteModal from '@/components/admin-components/modals/ConfirmDeleteModal/ConfirmDeleteModal';
 import sprite from '@/assets/icons/sprite-admin.svg';
 import s from './VideoTable.module.scss';
 
-const VideoTable = ({ url, videos }) => {
+const VideoTable = ({ videos }) => {
   const navigate = useNavigate();
-  const { deleteAchievement } = useServicesStore();
   const { isDeleteConfirm } = useConfirmDelete();
+  const { deleteVideo } = useVideoStore();
   const { isModalOpen, openModal, closeModal } = useModal();
   const [currentId, setCurrentId] = useState('');
+
   const replaceUrl = videoUrl => {
     return videoUrl.replace('watch?v=', 'embed/');
   };
 
-  useEffect(() => {}, [videos, currentId]);
   const removePost = async () => {
     if (isDeleteConfirm) {
       try {
         console.log(currentId);
-        await deleteAchievement(url, currentId);
-        navigate(`/admin/${url}`);
+        await deleteVideo(currentId);
+        navigate(`/admin/video`);
       } catch (error) {
         console.log(error);
       }
@@ -49,10 +49,8 @@ const VideoTable = ({ url, videos }) => {
               <div className={s.action}>
                 <Link to={`edit/${item.id}`}>
                   <button className={s.edit}>
-                  <svg>
-                      <use
-                        href={`${sprite}#icon-edit`}
-                      />
+                    <svg>
+                      <use href={`${sprite}#icon-edit`} />
                     </svg>
                   </button>
                 </Link>
@@ -63,11 +61,9 @@ const VideoTable = ({ url, videos }) => {
                     openModal();
                   }}
                 >
-                  <svg
-                  onClick={() => setCurrentId(item.id)}
-                >
-                  <use href={`${sprite}#icon-trash`}/>
-                </svg>
+                  <svg onClick={() => setCurrentId(item.id)}>
+                    <use href={`${sprite}#icon-trash`} />
+                  </svg>
                 </button>
               </div>
             </div>
