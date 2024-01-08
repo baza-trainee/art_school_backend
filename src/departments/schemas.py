@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 
 from pydantic import BaseModel, Field
@@ -32,19 +32,19 @@ class DepartmentSchema(BaseModel):
 class SubDepartmentSchema(BaseModel):
     id: int = Field(..., ge=1)
     sub_department_name: str = Field(..., min_length=2, max_length=SUB_DEP_NAME_LEN)
-    description: str = Field(..., min_length=2, max_length=SUB_DEP_DESC_LEN)
+    description: Union[str, None] = Field(..., max_length=SUB_DEP_DESC_LEN)
     main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentCreateSchema(BaseModel):
     sub_department_name: str = Field(..., min_length=2, max_length=SUB_DEP_NAME_LEN)
-    description: str = Field(..., min_length=2, max_length=SUB_DEP_DESC_LEN)
+    description: str = Field(None, max_length=SUB_DEP_DESC_LEN)
     main_department_id: int = Field(..., ge=1, le=6)
 
 
 class SubDepartmentUpdateSchema(BaseModel):
     sub_department_name: str = Field(None, min_length=2, max_length=SUB_DEP_NAME_LEN)
-    description: str = Field(None, min_length=2, max_length=SUB_DEP_DESC_LEN)
+    description: str = Field(None, max_length=SUB_DEP_DESC_LEN)
 
 
 class SubDepartmentGallerySchema(BaseModel):
