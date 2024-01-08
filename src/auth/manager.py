@@ -71,10 +71,10 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ):
         from src.auth.utils import send_reset_email
 
-        # asyncio.create_task(send_reset_email(user.email, token))
-        raise HTTPException(
-            status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}
-        )
+        asyncio.create_task(send_reset_email("art_school_qa@tutanota.com", token))
+        # raise HTTPException(
+        #     status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}
+        # )
 
     async def on_after_reset_password(
         self, user: User, request: Optional[Request] = None
