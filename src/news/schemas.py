@@ -26,7 +26,7 @@ class NewsSchema(BaseModel):
 
 
 class NewsCreateSchema(BaseModel):
-    photo: UploadFile = Field(..., max_length=PHOTO_LEN)
+    photo: UploadFile
     title: str = Field(..., max_length=TITLE_LEN)
     text: str = Field(..., max_length=TEXT_LEN)
 
