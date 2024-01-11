@@ -13,9 +13,9 @@ from src.auth.utils import create_user
 from src.contacts.utils import create_contacts
 from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
-from src.exceptions import INVALID_PHOTO, OVERSIZE_FILE
+from src.exceptions import INVALID_FILE, INVALID_PHOTO, OVERSIZE_FILE
 from src.slider_main.utils import create_slides
-from src.config import PHOTO_FORMATS, settings, IS_PROD, MAX_FILE_SIZE
+from src.config import FILE_FORMATS, PHOTO_FORMATS, settings, IS_PROD, MAX_FILE_SIZE
 from src.database.fake_data import (
     CONTACTS,
     DEPARTMENTS,
@@ -51,13 +51,17 @@ async def lifespan(app: FastAPI):
     yield
 
 
-async def save_photo(file: UploadFile, model: Type[Base]) -> str:
-    if not file.content_type in PHOTO_FORMATS:
+async def save_photo(file: UploadFile, model: Type[Base], is_file=False) -> str:
+    if not is_file and not file.content_type in PHOTO_FORMATS:
         raise HTTPException(
             status_code=415, detail=INVALID_PHOTO % (file.content_type, PHOTO_FORMATS)
         )
     if file.size > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail=OVERSIZE_FILE)
+    if is_file and not file.content_type in FILE_FORMATS:
+        raise HTTPException(
+            status_code=415, detail=INVALID_FILE % (file.content_type, FILE_FORMATS)
+        )
 
     folder_path = os.path.join("static", model.__tablename__.lower().replace(" ", "_"))
     if IS_PROD:
@@ -69,8 +73,16 @@ async def save_photo(file: UploadFile, model: Type[Base]) -> str:
             await buffer.write(await file.read())
         return file_path
     else:
-        upload_result = uploader.upload(file.file, folder=folder_path)
-        return upload_result["url"]
+        if is_file:
+            upload_result = uploader.upload_resource(
+                file.file,
+                folder=folder_path,
+                resource_type="raw",
+                # format="pdf",
+            ).url
+        else:
+            upload_result = uploader.upload(file.file, folder=folder_path)["url"]
+        return upload_result
 
 
 async def delete_photo(path: str) -> str:
@@ -85,8 +97,9 @@ async def update_photo(
     record: Type[Base],
     field_name: str,
     background_tasks: BackgroundTasks,
+    is_file=False,
 ) -> str:
     old_photo = getattr(record, field_name, None)
     if old_photo:
         background_tasks.add_task(delete_photo, old_photo)
-    return await save_photo(file, record)
+    return await save_photo(file, record, is_file)

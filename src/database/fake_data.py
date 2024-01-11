@@ -169,7 +169,14 @@ SUB_DEPARTMENTS = [
         "main_department_id": 6,
     },
 ]
-CONTACTS = {"address": "вул.Бульварно-Кудрявська, 2", "phone": "+38(097)290-79-40"}
+CONTACTS = {
+    "map_url": "https://maps.app.goo.gl/4rCFRFuS1VcWtKU4A",
+    "address": "вул.Бульварно-Кудрявська, 2",
+    "phone": "+38(097)290-79-40",
+    "email": "example@gmail.com",
+    "facebook_url": "https://www.facebook.com/KyivArtsSchool",
+    "youtube_url": "https://www.youtube.com/c/ArtSchoolVerykivskogo",
+}
 
 SLIDES = [
     {
