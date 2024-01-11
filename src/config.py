@@ -12,6 +12,10 @@ PHOTO_FORMATS = [
     "image/jpeg",
 ]
 
+FILE_FORMATS = [
+    "application/pdf",
+]
+
 MAX_FILE_SIZE = 3 * 1024 * 1024
 
 

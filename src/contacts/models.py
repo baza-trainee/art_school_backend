@@ -13,6 +13,5 @@ class Contacts(Base):
     email = Column(String(length=50))
     facebook_url = Column(String)
     youtube_url = Column(String)
-    admission_info_url = Column(String)
-    statute_url = Column(String)
-    legal_info_url = Column(String)
+    statement_for_admission = Column(String)
+    official_info = Column(String)

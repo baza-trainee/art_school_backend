@@ -103,11 +103,16 @@ async def update_sub_dep(
         return Response(status_code=204)
 
     if "sub_department_name" in update_data:
-        query = select(model).where(model.sub_department_name == update_data["sub_department_name"])
+        query = select(model).where(
+            model.sub_department_name == update_data["sub_department_name"]
+        )
         result = await session.execute(query)
         record = result.scalars().first()
         if record and record.id != id:
-            raise HTTPException(status_code=400, detail=EXISTS_SUB_NAME % update_data["sub_department_name"])
+            raise HTTPException(
+                status_code=400,
+                detail=EXISTS_SUB_NAME % update_data["sub_department_name"],
+            )
 
     query = select(model).where(model.id == id)
     result = await session.execute(query)

@@ -10,6 +10,7 @@ from .models import SliderMain
 TITLE_LEN = SliderMain.title.type.length
 DESCR_LEN = SliderMain.description.type.length
 
+
 class SliderMainSchema(BaseModel):
     id: int
     title: Optional[str] = Field(..., max_length=TITLE_LEN)

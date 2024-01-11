@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Form, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # from fastapi_cache.decorator import cache
@@ -6,11 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 # from src.config import HOUR, MONTH
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
-from src.contacts.service import delete_record, get_record, update_record
+from src.contacts.service import get_record, update_record
 from src.database.database import get_async_session
 
 # from src.database.redis import invalidate_cache, my_key_builder
-from .schemas import ContactField, ContactsSchema, ContactsUpdateSchema
+from .schemas import ContactsSchema, ContactsUpdateSchema
 from .models import Contacts
 
 
@@ -27,19 +27,12 @@ async def get_contacts(
 
 @router.patch("", response_model=ContactsSchema)
 async def update_contacts(
-    contacts_update: ContactsUpdateSchema,
+    background_tasks: BackgroundTasks,
+    contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_contacts")
-    return await update_record(contacts_update, Contacts, session)
-
-
-@router.delete("/{field}", response_model=ContactsSchema)
-async def clear_field(
-    field: ContactField,
-    session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(CURRENT_SUPERUSER),
-):
-    # await invalidate_cache("get_contacts")
-    return await delete_record(field, Contacts, session)
+    return await update_record(
+        schema=contacts_update, session=session, background_tasks=background_tasks
+    )
