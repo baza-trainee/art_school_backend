@@ -8,8 +8,6 @@ from pydantic import (
     constr,
 )
 
-from src.exceptions import INVALID_PHONE
-
 
 class ContactsSchema(BaseModel):
     map_url: Union[AnyHttpUrl, str]
@@ -22,7 +20,7 @@ class ContactsSchema(BaseModel):
     official_info: Optional[str]
 
 
-class ContactsUpdateSchema(ContactsSchema):
+class ContactsUpdateSchema(BaseModel):
     map_url: Optional[Union[AnyHttpUrl, str]]
     address: Optional[str]
     phone: Optional[str]

@@ -78,7 +78,7 @@ async def save_photo(file: UploadFile, model: Type[Base], is_file=False) -> str:
                 file.file,
                 folder=folder_path,
                 resource_type="raw",
-                # format="pdf",
+                format="pdf",
             ).url
         else:
             upload_result = uploader.upload(file.file, folder=folder_path)["url"]
