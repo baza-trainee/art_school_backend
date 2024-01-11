@@ -27,27 +27,27 @@ class NewsSchema(BaseModel):
 
 class NewsCreateSchema(BaseModel):
     photo: UploadFile
-    title: str = Field(..., max_length=TITLE_LEN)
-    text: str = Field(..., max_length=TEXT_LEN)
+    title: str
+    text: Optional[str] = None
 
     @classmethod
     def as_form(
         cls,
         photo: UploadFile,
         title: str = Form(max_length=TITLE_LEN),
-        text: str = Form(max_length=TEXT_LEN),
+        text: str = Form(None, max_length=TEXT_LEN),
     ):
         return cls(photo=photo, title=title, text=text)
 
 
 class NewsUpdateSchema(BaseModel):
-    title: Optional[str] = Field(None, max_length=TITLE_LEN)
-    text: Optional[str] = Field(None, max_length=TEXT_LEN)
+    title: Optional[str] = None
+    text: Optional[str] = None
 
     @classmethod
     def as_form(
         cls,
-        title: Optional[str] = Form(max_length=TITLE_LEN, default=None),
-        text: Optional[str] = Form(max_length=TEXT_LEN, default=None),
+        title: str = Form(None, max_length=TITLE_LEN),
+        text: str = Form(None, max_length=TEXT_LEN),
     ):
         return cls(title=title, text=text)

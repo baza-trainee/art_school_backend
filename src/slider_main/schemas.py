@@ -19,33 +19,33 @@ class SliderMainSchema(BaseModel):
 
 
 class SliderCreateSchema(BaseModel):
-    photo: UploadFile = Field(...)
-    title: Optional[str] = Field(None, max_length=TITLE_LEN)
-    description: Optional[str] = Field(None, max_length=DESCR_LEN)
+    photo: UploadFile
+    title: Optional[str]
+    description: Optional[str]
 
     @classmethod
     def as_form(
         cls,
         photo: UploadFile,
-        title: Optional[str] = Form(max_length=TITLE_LEN, default=None),
-        description: Optional[str] = Form(max_length=DESCR_LEN, default=None),
+        title: str = Form(None, max_length=TITLE_LEN),
+        description: str = Form(None, max_length=DESCR_LEN),
     ):
         return cls(photo=photo, title=title, description=description)
 
 
 class SliderMainUpdateSchema(BaseModel):
-    title: Optional[str] = (Body(max_length=TITLE_LEN, default=None),)
-    description: Optional[str] = (Body(max_length=DESCR_LEN, default=None),)
+    title: Optional[str]
+    description: Optional[str]
 
     @classmethod
     def as_form(
         cls,
-        title: Optional[str] = Body(
+        title: str = Body(
             max_length=TITLE_LEN,
             default=None,
             description=SCHEMA_DESC,
         ),
-        description: Optional[str] = Body(
+        description: str = Body(
             max_length=DESCR_LEN,
             default=None,
             description=SCHEMA_DESC,

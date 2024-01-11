@@ -20,29 +20,29 @@ class AdministratorSchema(BaseModel):
 
 
 class AdministratorCreateSchema(BaseModel):
-    photo: UploadFile = Field(..., max_length=PHOTO_LEN)
-    full_name: str = Field(..., max_length=FULL_NAME_LEN)
-    position: str = Field(..., max_length=POSITION_LEN)
+    photo: UploadFile
+    full_name: str
+    position: str
 
     @classmethod
     def as_form(
         cls,
         photo: UploadFile,
-        full_name: str = Form(...),
-        position: str = Form(...),
+        full_name: str = Form(..., max_length=FULL_NAME_LEN),
+        position: str = Form(..., max_length=POSITION_LEN),
     ):
         return cls(photo=photo, full_name=full_name, position=position)
 
 
 class AdministratorUpdateSchema(BaseModel):
-    full_name: Optional[str] = Field(None, max_length=FULL_NAME_LEN)
-    position: Optional[str] = Field(None, max_length=POSITION_LEN)
+    full_name: Optional[str] = None
+    position: Optional[str] = None
 
     @classmethod
     def as_form(
         cls,
-        full_name: str = Form(None),
-        position: str = Form(None),
+        full_name: str = Form(None, max_length=FULL_NAME_LEN),
+        position: str = Form(None, max_length=POSITION_LEN),
     ):
         return cls(full_name=full_name, position=position)
 

@@ -22,8 +22,8 @@ class PosterSchema(BaseModel):
 
 
 class PosterCreateSchema(BaseModel):
-    photo: UploadFile = Field(...)
-    title: str = Field(..., max_length=TITLE_LEN)
+    photo: UploadFile
+    title: str
 
     @classmethod
     def as_form(
@@ -35,11 +35,11 @@ class PosterCreateSchema(BaseModel):
 
 
 class PosterUpdateSchema(BaseModel):
-    title: Optional[str] = Field(None, max_length=TITLE_LEN)
+    title: Optional[str] = None
 
     @classmethod
     def as_form(
         cls,
-        title: Optional[str] = Form(max_length=TITLE_LEN, default=None),
+        title: str = Form(None, max_length=TITLE_LEN),
     ):
         return cls(title=title)
