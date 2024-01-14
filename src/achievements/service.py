@@ -1,5 +1,6 @@
+import asyncio
 from sqlalchemy import insert, select
-from fastapi import BackgroundTasks, HTTPException, UploadFile
+from fastapi import BackgroundTasks, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.achievements.schemas import (
@@ -68,27 +69,39 @@ async def create_achievement(
     schema: CreateAchievementSchema,
     session: AsyncSession,
 ):
-    schema.media = await save_photo(schema.media, Achievement)
+    async def check_department():
+        if schema.sub_department:
+            query = select(SubDepartment).where(
+                SubDepartment.id == schema.sub_department
+            )
+            result = await session.execute(query)
+            record = result.scalars().first()
+            if not record:
+                raise HTTPException(
+                    status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
+                )
+
+    async def check_pinned_position():
+        if schema.pinned_position:
+            query = select(Achievement).filter_by(
+                pinned_position=schema.pinned_position
+            )
+            record = await session.execute(query)
+            instance = record.scalars().first()
+            if instance:
+                raise HTTPException(
+                    status_code=400,
+                    detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
+                )
+
+    result = await asyncio.gather(
+        save_photo(schema.media, Achievement),
+        check_department(),
+        check_pinned_position(),
+    )
     schema_output = schema.model_dump()
+    schema_output["media"] = result[0]
 
-    if schema.sub_department:
-        query = select(SubDepartment).where(SubDepartment.id == schema.sub_department)
-        result = await session.execute(query)
-        record = result.scalars().first()
-        if not record:
-            raise HTTPException(
-                status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
-            )
-
-    if schema.pinned_position:
-        query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
-        record = await session.execute(query)
-        instance = record.scalars().first()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
-            )
     try:
         query = insert(Achievement).values(**schema_output).returning(Achievement)
         result = await session.execute(query)
@@ -101,7 +114,6 @@ async def create_achievement(
 
 async def update_achievement(
     id: int,
-    media: UploadFile,
     schema: UpdateAchievementSchema,
     session: AsyncSession,
     background_tasks: BackgroundTasks,
@@ -109,16 +121,6 @@ async def update_achievement(
     record = await session.get(Achievement, id)
     if not record:
         raise HTTPException(status_code=404, detail=NO_RECORD)
-    schema_output = schema.model_dump()
-
-    if media:
-        media = await update_photo(
-            file=media,
-            record=record,
-            field_name="media",
-            background_tasks=background_tasks,
-        )
-        schema_output["media"] = media
 
     if schema.sub_department and schema.sub_department != record.sub_department:
         query = select(SubDepartment).filter_by(id=schema.sub_department)
@@ -138,6 +140,21 @@ async def update_achievement(
                 status_code=400,
                 detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
             )
+
+    schema_output = schema.model_dump()
+
+    media = schema_output.get("media", None)
+    if media:
+        media = await update_photo(
+            file=media,
+            record=record,
+            field_name="media",
+            background_tasks=background_tasks,
+        )
+        schema_output["media"] = media
+    else:
+        del schema_output["media"]
+
     try:
         for field, value in schema_output.items():
             setattr(record, field, value)

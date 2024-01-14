@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -59,7 +59,7 @@ async def get_achievement(
 
 @achievements_router.post("", response_model=GetAchievementSchema)
 async def post_achievement(
-    schema: CreateAchievementSchema = Depends(CreateAchievementSchema),
+    schema: CreateAchievementSchema = Depends(CreateAchievementSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -73,14 +73,12 @@ async def post_achievement(
 async def put_achievement(
     id: int,
     background_tasks: BackgroundTasks,
-    media: UploadFile = None,
-    schema: UpdateAchievementSchema = Depends(UpdateAchievementSchema),
+    schema: UpdateAchievementSchema = Depends(UpdateAchievementSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     record: Achievement = await update_achievement(
         id=id,
-        media=media,
         schema=schema,
         session=session,
         background_tasks=background_tasks,
