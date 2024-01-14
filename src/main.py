@@ -15,6 +15,7 @@ from src.gallery.routers import gallery_router
 from src.achievements.routers import achievements_router
 from src.auth.routers import auth_router
 from src.departments.routers import departments
+from src.documents.routers import docs_router
 from src.config import (
     ALLOW_HEADERS,
     ALLOW_METHODS,
@@ -42,6 +43,7 @@ api_routers = [
     slider_main_router,
     departments,
     school_admin_router,
+    docs_router,
 ]
 
 [app.include_router(router, prefix=API_PREFIX) for router in api_routers]
