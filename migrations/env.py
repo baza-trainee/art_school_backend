@@ -15,6 +15,7 @@ from src.gallery.models import *
 from src.departments.models import *
 from src.achievements.models import *
 from src.slider_main.models import *
+from src.documents.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
