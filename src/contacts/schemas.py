@@ -1,23 +1,41 @@
-from typing import Optional, Union
-from fastapi import Form, UploadFile
+from re import match
+from typing import Annotated, Optional, Union
 
+from fastapi import Form, UploadFile
 from pydantic import (
     BaseModel,
     EmailStr,
     AnyHttpUrl,
+    Field,
+    FilePath,
+    ValidationInfo,
     constr,
+    field_validator,
 )
+
+from src.exceptions import INVALID_PHONE
+
+from .models import Contacts
+
+
+PHONE_LEN = Contacts.phone.type.length
+MAIL_LEN = Contacts.email.type.length
+ADDRESS_LEN = Contacts.address.type.length
+URL_LEN = Contacts.map_url.type.length
 
 
 class ContactsSchema(BaseModel):
-    map_url: Union[AnyHttpUrl, str]
-    address: str
-    phone: str
-    email: str
-    facebook_url: Union[AnyHttpUrl, str]
-    youtube_url: Union[AnyHttpUrl, str]
-    statement_for_admission: Optional[str]
-    official_info: Optional[str]
+    map_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
+    address: constr(max_length=ADDRESS_LEN)
+    phone: constr(
+        max_length=PHONE_LEN,
+        pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$",
+    )
+    email: Annotated[EmailStr, Field(max_length=MAIL_LEN)]
+    facebook_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
+    youtube_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
+    statement_for_admission: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
+    official_info: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
 
 
 class ContactsUpdateSchema(BaseModel):
@@ -33,20 +51,12 @@ class ContactsUpdateSchema(BaseModel):
     @classmethod
     def as_form(
         cls,
-        map_url: Optional[Union[AnyHttpUrl, constr(pattern=r"^$")]] = Form(None),
-        address: Optional[str] = Form(None),
-        phone: Optional[
-            Union[
-                constr(
-                    max_length=50,
-                    pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$",
-                ),
-                constr(pattern=r"^$"),
-            ]
-        ] = Form(None),
-        email: Optional[Union[EmailStr, constr(pattern=r"^$")]] = Form(None),
-        facebook_url: Optional[Union[AnyHttpUrl, constr(pattern=r"^$")]] = Form(None),
-        youtube_url: Optional[Union[AnyHttpUrl, constr(pattern=r"^$")]] = Form(None),
+        map_url: AnyHttpUrl = Form(None),
+        address: str = Form(None, max_length=ADDRESS_LEN),
+        phone: str = Form(None, max_length=PHONE_LEN, pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$"),
+        email: EmailStr = Form(None, max_length=MAIL_LEN),
+        facebook_url: AnyHttpUrl = Form(None),
+        youtube_url: AnyHttpUrl = Form(None),
         statement_for_admission: UploadFile = None,
         official_info: UploadFile = None,
     ):
