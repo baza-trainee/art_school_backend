@@ -1,4 +1,3 @@
-from re import match
 from typing import Annotated, Optional, Union
 
 from fastapi import Form, UploadFile
@@ -8,13 +7,10 @@ from pydantic import (
     AnyHttpUrl,
     Field,
     FilePath,
-    ValidationInfo,
     constr,
-    field_validator,
 )
 
 from src.exceptions import INVALID_PHONE
-
 from .models import Contacts
 
 
@@ -51,12 +47,12 @@ class ContactsUpdateSchema(BaseModel):
     @classmethod
     def as_form(
         cls,
-        map_url: AnyHttpUrl = Form(None),
+        map_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
         address: str = Form(None, max_length=ADDRESS_LEN),
         phone: str = Form(None, max_length=PHONE_LEN, pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$"),
         email: EmailStr = Form(None, max_length=MAIL_LEN),
-        facebook_url: AnyHttpUrl = Form(None),
-        youtube_url: AnyHttpUrl = Form(None),
+        facebook_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
+        youtube_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
         statement_for_admission: UploadFile = None,
         official_info: UploadFile = None,
     ):
