@@ -31,15 +31,15 @@ async def change_password(
     try:
         await user_manager.validate_password(password=new_password_confirm, user=user)
     except InvalidPasswordException as ex:
-        raise HTTPException(status_code=400, detail=ex.reason)
+        raise HTTPException(status_code=422, detail=ex.reason)
     password_helper = PasswordHelper()
     if new_password != new_password_confirm:
-        raise HTTPException(status_code=400, detail=PASSWORD_NOT_MATCH)
+        raise HTTPException(status_code=422, detail=PASSWORD_NOT_MATCH)
     verified, updated = password_helper.verify_and_update(
         old_password, user.hashed_password
     )
     if not verified:
-        raise HTTPException(status_code=400, detail=OLD_PASS_INCORRECT)
+        raise HTTPException(status_code=422, detail=OLD_PASS_INCORRECT)
     query = (
         update(User)
         .where(User.id == user.id)
