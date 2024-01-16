@@ -13,5 +13,3 @@ class Contacts(Base):
     email = Column(String(length=50))
     facebook_url = Column(String(length=1000))
     youtube_url = Column(String(length=1000))
-    statement_for_admission = Column(String(length=1000))
-    official_info = Column(String(length=1000))

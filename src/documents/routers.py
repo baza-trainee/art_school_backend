@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,9 +27,10 @@ docs_router = APIRouter(prefix="/documents", tags=["Documents"])
 @docs_router.get("", response_model=List[DocumentSchema])
 # @cache(expire=HALF_DAY, key_builder=my_key_builder)
 async def get_documents_list(
+    is_pinned: bool = None,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await get_docs_list(Documents, session)
+    return await get_docs_list(Documents, session, is_pinned)
 
 
 @docs_router.get("/{id}", response_model=DocumentSchema)

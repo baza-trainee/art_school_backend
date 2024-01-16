@@ -1,13 +1,14 @@
+from re import match
 from typing import Annotated, Optional, Union
 
-from fastapi import Form, UploadFile
 from pydantic import (
     BaseModel,
     EmailStr,
     AnyHttpUrl,
     Field,
-    FilePath,
+    ValidationInfo,
     constr,
+    field_validator,
 )
 
 from src.exceptions import INVALID_PHONE
@@ -30,39 +31,49 @@ class ContactsSchema(BaseModel):
     email: Annotated[EmailStr, Field(max_length=MAIL_LEN)]
     facebook_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
     youtube_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
-    statement_for_admission: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
-    official_info: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
 
 
 class ContactsUpdateSchema(BaseModel):
-    map_url: Optional[Union[AnyHttpUrl, str]]
-    address: Optional[str]
-    phone: Optional[str]
-    email: Optional[str]
-    facebook_url: Optional[Union[AnyHttpUrl, str]]
-    youtube_url: Optional[Union[AnyHttpUrl, str]]
-    statement_for_admission: Optional[UploadFile] = None
-    official_info: Optional[UploadFile] = None
-
-    @classmethod
-    def as_form(
-        cls,
-        map_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
-        address: str = Form(None, max_length=ADDRESS_LEN),
-        phone: str = Form(None, max_length=PHONE_LEN, pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$"),
-        email: EmailStr = Form(None, max_length=MAIL_LEN),
-        facebook_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
-        youtube_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
-        statement_for_admission: UploadFile = None,
-        official_info: UploadFile = None,
-    ):
-        return cls(
-            map_url=map_url,
-            address=address,
-            phone=phone,
-            email=email,
-            facebook_url=facebook_url,
-            youtube_url=youtube_url,
-            statement_for_admission=statement_for_admission,
-            official_info=official_info,
+    map_url: Optional[
+        Union[AnyHttpUrl, constr(max_length=URL_LEN, pattern=r"^$")]
+    ] = None
+    address: constr(max_length=ADDRESS_LEN) = None
+    phone: Optional[
+        constr(
+            max_length=50,
+            pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$",
         )
+    ] = None
+    email: Optional[Union[EmailStr, constr(max_length=MAIL_LEN, pattern=r"^$")]] = None
+    facebook_url: Optional[
+        Union[AnyHttpUrl, constr(max_length=URL_LEN, pattern=r"^$")]
+    ] = None
+    youtube_url: Optional[
+        Union[AnyHttpUrl, constr(max_length=URL_LEN, pattern=r"^$")]
+    ] = None
+
+    @field_validator(
+        "map_url",
+        "facebook_url",
+        "youtube_url",
+        "email",
+        "phone",
+    )
+    @classmethod
+    def validate(cls, value: str, info: ValidationInfo) -> str:
+        if not value:
+            return ""
+        else:
+            if info.field_name == "email":
+                return EmailStr._validate(value)
+            elif info.field_name == "phone":
+                if not (
+                    match(
+                        r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$", value
+                    )
+                ):
+                    raise ValueError(INVALID_PHONE)
+                else:
+                    return value
+            else:
+                return AnyHttpUrl(value)

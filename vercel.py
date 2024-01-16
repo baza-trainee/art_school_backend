@@ -5,12 +5,14 @@ from src.slider_main.utils import create_slides
 from src.administrations.utils import create_administrations
 from src.database.database import get_async_session
 from src.auth.utils import create_user
+from src.documents.utils import create_docs
 from src.database.fake_data import (
     ADMINISTRATIONS,
     CONTACTS,
     DEPARTMENTS,
     SUB_DEPARTMENTS,
     SLIDES,
+    DOCUMENT
 )
 
 
@@ -25,6 +27,7 @@ async def customlifespan():
             await create_main_departments(DEPARTMENTS)
             await create_sub_departments(SUB_DEPARTMENTS)
             await create_contacts(**CONTACTS)
+            await create_docs(**DOCUMENT)
             await create_slides(SLIDES)
             await create_administrations(ADMINISTRATIONS)
 
