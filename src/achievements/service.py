@@ -1,5 +1,4 @@
-from types import NoneType
-from typing import Union
+from typing import Optional
 
 from sqlalchemy import insert, select
 from fastapi import BackgroundTasks, HTTPException
@@ -23,7 +22,7 @@ from src.exceptions import (
 
 
 async def _check_department(
-    sub_department: Union[int, NoneType], session: AsyncSession
+    sub_department: Optional[int], session: AsyncSession
 ) -> None:
     query = select(SubDepartment).where(SubDepartment.id == sub_department)
     async with session as ses:
@@ -36,7 +35,7 @@ async def _check_department(
 
 
 async def _check_pinned_position(
-    pinned_position: Union[int, NoneType], session: AsyncSession
+    pinned_position: Optional[int], session: AsyncSession
 ) -> None:
     query = select(Achievement).filter_by(pinned_position=pinned_position)
     async with session as ses:

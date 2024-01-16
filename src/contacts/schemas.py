@@ -30,7 +30,9 @@ class ContactsSchema(BaseModel):
     email: Annotated[EmailStr, Field(max_length=MAIL_LEN)]
     facebook_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
     youtube_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
-    statement_for_admission: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
+    statement_for_admission: Optional[Union[AnyHttpUrl, FilePath]] = Field(
+        max_length=URL_LEN
+    )
     official_info: Optional[Union[AnyHttpUrl, FilePath]] = Field(max_length=URL_LEN)
 
 
@@ -49,7 +51,11 @@ class ContactsUpdateSchema(BaseModel):
         cls,
         map_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
         address: str = Form(None, max_length=ADDRESS_LEN),
-        phone: str = Form(None, max_length=PHONE_LEN, pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$"),
+        phone: str = Form(
+            None,
+            max_length=PHONE_LEN,
+            pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$",
+        ),
         email: EmailStr = Form(None, max_length=MAIL_LEN),
         facebook_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
         youtube_url: AnyHttpUrl = Form(None, max_length=URL_LEN),
