@@ -1,18 +1,8 @@
 from datetime import datetime
-from typing import Annotated, Optional, Union
+from typing import Optional
 
-from pydantic import (
-    AnyHttpUrl,
-    Field,
-    BaseModel,
-    FilePath,
-    UrlConstraints,
-    conint,
-    constr,
-    validator,
-)
+from pydantic import AnyHttpUrl, Field, BaseModel, conint, constr, validator
 from fastapi import Form, UploadFile
-from pydantic_core import Url
 
 from src.config import IS_PROD, settings
 from src.exceptions import SUCCESS_DELETE

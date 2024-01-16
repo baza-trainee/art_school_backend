@@ -1,7 +1,8 @@
 from types import NoneType
 from typing import Union
+
 from sqlalchemy import insert, select
-from fastapi import BackgroundTasks, HTTPException, UploadFile
+from fastapi import BackgroundTasks, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.departments.models import SubDepartment
