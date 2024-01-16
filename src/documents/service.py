@@ -9,6 +9,7 @@ from sqlalchemy import delete, insert, select, update, func
 from src.database.database import Base
 from src.utils import save_photo, update_photo
 from .exceptions import (
+    DELETE_ERROR,
     DOCS_EXISTS,
     NO_DATA_FOUND,
     NO_DOC_FOUND,
@@ -20,10 +21,14 @@ from .exceptions import (
 async def get_docs_list(
     model: Type[Base],
     session: AsyncSession,
+    is_pinned: bool = None,
 ):
-    query = select(model).order_by("id")
-    news = await session.execute(query)
-    response = news.scalars().all()
+    if is_pinned:
+        query = select(model).where(model.is_pinned == True)
+    else:
+        query = select(model).order_by("id")
+    doc = await session.execute(query)
+    response = doc.scalars().all()
     if not response:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     return response
@@ -100,8 +105,11 @@ async def update_document(
 async def delete_record(id: int, model: Type[Base], session: AsyncSession) -> dict:
     query = select(model).where(model.id == id)
     result = await session.execute(query)
-    if not result.scalars().first():
+    record = result.scalars().first()
+    if not record:
         raise HTTPException(status_code=404, detail=NO_DOC_FOUND)
+    if record.is_pinned:
+        raise HTTPException(status_code=400, detail=DELETE_ERROR)
     query = delete(model).where(model.id == id)
     await session.execute(query)
     await session.commit()

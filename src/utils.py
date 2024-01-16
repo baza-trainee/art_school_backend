@@ -11,6 +11,7 @@ from src.administrations.utils import create_administrations
 from src.auth.models import User
 from src.auth.utils import create_user
 from src.contacts.utils import create_contacts
+from src.documents.utils import create_docs
 from src.database.database import Base, get_async_session
 from src.departments.utils import create_main_departments, create_sub_departments
 from src.exceptions import INVALID_FILE, INVALID_PHOTO, OVERSIZE_FILE
@@ -22,6 +23,7 @@ from src.database.fake_data import (
     SUB_DEPARTMENTS,
     SLIDES,
     ADMINISTRATIONS,
+    DOCUMENT
 )
 
 if IS_PROD:
@@ -44,6 +46,7 @@ async def lifespan(app: FastAPI):
                 await create_main_departments(DEPARTMENTS)
                 await create_sub_departments(SUB_DEPARTMENTS)
                 await create_contacts(**CONTACTS)
+                await create_docs(**DOCUMENT)
                 await create_slides(SLIDES)
                 await create_administrations(ADMINISTRATIONS)
     if IS_PROD:

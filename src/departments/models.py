@@ -21,7 +21,7 @@ class SubDepartment(Base):
 
     id = Column(Integer, primary_key=True)
     sub_department_name = Column(String(120), unique=True)
-    description = Column(String(2000))
+    description = Column(String(10000))
 
     main_department_id = Column(Integer, ForeignKey("main_departments.id"))
     main_department = relationship("MainDepartment", back_populates="sub_departments")

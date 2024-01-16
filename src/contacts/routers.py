@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, Form, UploadFile
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # from fastapi_cache.decorator import cache
@@ -27,12 +27,9 @@ async def get_contacts(
 
 @router.patch("", response_model=ContactsSchema)
 async def update_contacts(
-    background_tasks: BackgroundTasks,
-    contacts_update: ContactsUpdateSchema = Depends(ContactsUpdateSchema.as_form),
+    contacts_update: ContactsUpdateSchema,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_contacts")
-    return await update_record(
-        schema=contacts_update, session=session, background_tasks=background_tasks
-    )
+    return await update_record(contacts_update, Contacts, session)
