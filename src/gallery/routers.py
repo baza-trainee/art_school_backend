@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Form
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 from pydantic import AnyHttpUrl
@@ -20,6 +20,7 @@ from .service import (
     update_video_by_id,
 )
 from .schemas import (
+    MEDIA_LEN,
     GetPhotoSchema,
     GetTakenPositionsSchema,
     GetVideoSchema,
@@ -96,7 +97,7 @@ async def post_photo(
 
 @gallery_router.post("/video", response_model=GetVideoSchema)
 async def post_video(
-    media: AnyHttpUrl,
+    media: AnyHttpUrl = Form(max_length=MEDIA_LEN),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -125,7 +126,7 @@ async def put_photo(
 @gallery_router.put("/video/{id}", response_model=GetVideoSchema)
 async def put_video(
     id: int,
-    media: AnyHttpUrl,
+    media: AnyHttpUrl = Form(max_length=MEDIA_LEN),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
