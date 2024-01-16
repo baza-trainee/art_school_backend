@@ -1,4 +1,6 @@
-import asyncio
+from types import NoneType
+from typing import Union
+
 from sqlalchemy import insert, select
 from fastapi import BackgroundTasks, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,6 +20,32 @@ from src.exceptions import (
     SERVER_ERROR,
     SUCCESS_DELETE,
 )
+
+
+async def _check_department(
+    sub_department: Union[int, NoneType], session: AsyncSession
+) -> None:
+    query = select(SubDepartment).where(SubDepartment.id == sub_department)
+    async with session as ses:
+        result = await ses.execute(query)
+        record = result.scalars().first()
+        if not record:
+            raise HTTPException(
+                status_code=404, detail=INVALID_DEPARTMENT % sub_department
+            )
+
+
+async def _check_pinned_position(
+    pinned_position: Union[int, NoneType], session: AsyncSession
+) -> None:
+    query = select(Achievement).filter_by(pinned_position=pinned_position)
+    async with session as ses:
+        result = await ses.execute(query)
+        record = result.scalars().first()
+        if record:
+            raise HTTPException(
+                status_code=400, detail=GALLERY_PINNED_EXISTS % pinned_position
+            )
 
 
 async def get_all_achievements_by_filter(
@@ -69,38 +97,13 @@ async def create_achievement(
     schema: CreateAchievementSchema,
     session: AsyncSession,
 ):
-    async def check_department():
-        if schema.sub_department:
-            query = select(SubDepartment).where(
-                SubDepartment.id == schema.sub_department
-            )
-            result = await session.execute(query)
-            record = result.scalars().first()
-            if not record:
-                raise HTTPException(
-                    status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
-                )
+    if schema.sub_department:
+        await _check_department(schema.sub_department, session)
+    if schema.pinned_position:
+        await _check_pinned_position(schema.pinned_position, session)
 
-    async def check_pinned_position():
-        if schema.pinned_position:
-            query = select(Achievement).filter_by(
-                pinned_position=schema.pinned_position
-            )
-            record = await session.execute(query)
-            instance = record.scalars().first()
-            if instance:
-                raise HTTPException(
-                    status_code=400,
-                    detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
-                )
-
-    result = await asyncio.gather(
-        save_photo(schema.media, Achievement),
-        check_department(),
-        check_pinned_position(),
-    )
     schema_output = schema.model_dump()
-    schema_output["media"] = result[0]
+    schema_output["media"] = await save_photo(schema.media, Achievement)
 
     try:
         query = insert(Achievement).values(**schema_output).returning(Achievement)
@@ -123,35 +126,19 @@ async def update_achievement(
         raise HTTPException(status_code=404, detail=NO_RECORD)
 
     if schema.sub_department and schema.sub_department != record.sub_department:
-        query = select(SubDepartment).filter_by(id=schema.sub_department)
-        result = await session.execute(query)
-        sub_department = result.scalars().first()
-        if not sub_department:
-            raise HTTPException(
-                status_code=404, detail=INVALID_DEPARTMENT % schema.sub_department
-            )
-
+        await _check_department(schema.sub_department, session)
     if schema.pinned_position and schema.pinned_position != record.pinned_position:
-        query = select(Achievement).filter_by(pinned_position=schema.pinned_position)
-        result = await session.execute(query)
-        instance = result.scalars().one_or_none()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=GALLERY_PINNED_EXISTS % schema.pinned_position,
-            )
+        await _check_department(schema.pinned_position, session)
 
     schema_output = schema.model_dump()
-
     media = schema_output.get("media", None)
     if media:
-        media = await update_photo(
+        schema_output["media"] = await update_photo(
             file=media,
             record=record,
             field_name="media",
             background_tasks=background_tasks,
         )
-        schema_output["media"] = media
     else:
         del schema_output["media"]
 

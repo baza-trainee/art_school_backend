@@ -1,23 +1,33 @@
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional, Union
 
-from pydantic import BaseModel, constr, validator
+from pydantic import (
+    AnyHttpUrl,
+    Field,
+    BaseModel,
+    FilePath,
+    UrlConstraints,
+    conint,
+    constr,
+    validator,
+)
 from fastapi import Form, UploadFile
+from pydantic_core import Url
 
 from src.config import IS_PROD, settings
 from src.exceptions import SUCCESS_DELETE
 from .models import Achievement
 
-ACHI_MEDIA_LEN = Achievement.media.type.length
-ACHI_DESC_LEN = Achievement.description.type.length
+MEDIA_LEN = Achievement.media.type.length
+DESC_LEN = Achievement.description.type.length
 
 
 class GetAchievementSchema(BaseModel):
     id: int
-    media: Optional[constr(max_length=ACHI_MEDIA_LEN)]
-    pinned_position: Optional[int]
+    media: AnyHttpUrl = Field(max_length=MEDIA_LEN)
+    pinned_position: Optional[conint(ge=1, le=12)]
     sub_department: Optional[int]
-    description: Optional[constr(max_length=ACHI_DESC_LEN)]
+    description: Optional[constr(max_length=DESC_LEN)]
     created_at: datetime
 
     @validator("media", pre=True)
@@ -29,8 +39,8 @@ class GetAchievementSchema(BaseModel):
 
 
 class GetTakenPositionsSchema(BaseModel):
-    taken_positions: Optional[list[int]]
-    free_positions: Optional[list[int]]
+    taken_positions: list[Optional[int]]
+    free_positions: list[Optional[int]]
 
 
 class CreateAchievementSchema(BaseModel):
@@ -45,7 +55,7 @@ class CreateAchievementSchema(BaseModel):
         media: UploadFile,
         pinned_position: int = Form(None, ge=1, le=12),
         sub_department: int = Form(None),
-        description: str = Form(None, max_length=ACHI_DESC_LEN),
+        description: str = Form(None, max_length=DESC_LEN),
     ):
         return cls(
             media=media,
@@ -64,7 +74,7 @@ class UpdateAchievementSchema(CreateAchievementSchema):
         media: UploadFile = None,
         pinned_position: int = Form(None, ge=1, le=12),
         sub_department: int = Form(None),
-        description: str = Form(None, max_length=ACHI_DESC_LEN),
+        description: str = Form(None, max_length=DESC_LEN),
     ):
         return cls(
             media=media,
