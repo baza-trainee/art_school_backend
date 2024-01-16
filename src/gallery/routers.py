@@ -1,6 +1,7 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
+from pydantic import AnyHttpUrl
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
@@ -23,7 +24,6 @@ from .schemas import (
     GetTakenPositionsSchema,
     GetVideoSchema,
     CreatePhotoSchema,
-    CreateVideoSchema,
     UpdatePhotoSchema,
     DeleteResponseSchema,
 )
@@ -83,7 +83,7 @@ async def get_video(
 
 @gallery_router.post("/photo", response_model=GetPhotoSchema)
 async def post_photo(
-    schema: CreatePhotoSchema = Depends(CreatePhotoSchema),
+    schema: CreatePhotoSchema = Depends(CreatePhotoSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
@@ -96,25 +96,23 @@ async def post_photo(
 
 @gallery_router.post("/video", response_model=GetVideoSchema)
 async def post_video(
-    schema: CreateVideoSchema = Depends(CreateVideoSchema),
+    media: AnyHttpUrl,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await create_video(schema=schema, session=session)
+    return await create_video(media=media, session=session)
 
 
 @gallery_router.put("/photo/{id}", response_model=GetPhotoSchema)
 async def put_photo(
     id: int,
     background_tasks: BackgroundTasks,
-    media: UploadFile = None,
-    schema: UpdatePhotoSchema = Depends(UpdatePhotoSchema),
+    schema: UpdatePhotoSchema = Depends(UpdatePhotoSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     record: Gallery = await update_photo_by_id(
         id=id,
-        media=media,
         schema=schema,
         session=session,
         background_tasks=background_tasks,
@@ -127,11 +125,11 @@ async def put_photo(
 @gallery_router.put("/video/{id}", response_model=GetVideoSchema)
 async def put_video(
     id: int,
-    schema: CreateVideoSchema = Depends(CreateVideoSchema),
+    media: AnyHttpUrl,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    return await update_video_by_id(id=id, schema=schema, session=session)
+    return await update_video_by_id(id=id, media=media, session=session)
 
 
 @gallery_router.delete("/{id}", response_model=DeleteResponseSchema)
