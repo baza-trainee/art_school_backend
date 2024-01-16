@@ -13,7 +13,7 @@ from src.achievements.schemas import (
 from src.achievements.models import Achievement
 from src.departments.models import SubDepartment
 from src.utils import save_photo, update_photo, delete_photo
-from .exceptions import INVALID_DEPARTMENT, GALLERY_PINNED_EXISTS
+from .exceptions import INVALID_DEPARTMENT, ACHIEVEMENT_PINNED_EXISTS
 from src.exceptions import (
     NO_DATA_FOUND,
     NO_RECORD,
@@ -44,7 +44,7 @@ async def _check_pinned_position(
         record = result.scalars().first()
         if record:
             raise HTTPException(
-                status_code=400, detail=GALLERY_PINNED_EXISTS % pinned_position
+                status_code=400, detail=ACHIEVEMENT_PINNED_EXISTS % pinned_position
             )
 
 
