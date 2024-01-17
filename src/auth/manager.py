@@ -1,11 +1,17 @@
-import asyncio
 from re import search
 from typing import Optional, Union
 
-from fastapi import Depends, HTTPException, Request, Response, status
-from fastapi_users import BaseUserManager, IntegerIDMixin, InvalidPasswordException
+from fastapi import BackgroundTasks, Depends, HTTPException, Request, Response
+from fastapi_users import (
+    BaseUserManager,
+    IntegerIDMixin,
+    InvalidPasswordException,
+    models,
+    exceptions,
+)
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_users.jwt import generate_jwt
 
 from .models import User
 from src.config import settings
@@ -63,17 +69,37 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             content = f"notification for {email}: {message}"
             email_file.write(content)
 
+    async def forgot_password(
+        self,
+        user: models.UP,
+        background_tasks: BackgroundTasks,
+        request: Optional[Request] = None,
+    ) -> None:
+        if not user.is_active:
+            raise exceptions.UserInactive()
+
+        token_data = {
+            "sub": str(user.id),
+            "password_fgpt": self.password_helper.hash(user.hashed_password),
+            "aud": self.reset_password_token_audience,
+        }
+        token = generate_jwt(
+            token_data,
+            self.reset_password_token_secret,
+            self.reset_password_token_lifetime_seconds,
+        )
+        await self.on_after_forgot_password(user, token, background_tasks, request)
+
     async def on_after_forgot_password(
         self,
         user: User,
         token: str,
+        background_tasks: BackgroundTasks,
         request: Optional[Request] = None,
     ):
         from src.auth.utils import send_reset_email
-        await send_reset_email("art_school_qa@tutanota.com", token)
-        # raise HTTPException(
-        #     status_code=200, detail={"status": "success", "message": EMAIL_BODY % token}
-        # )
+
+        background_tasks.add_task(send_reset_email, "art_school_qa@tutanota.com", token)
 
     async def on_after_reset_password(
         self, user: User, request: Optional[Request] = None
