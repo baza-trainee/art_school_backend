@@ -10,7 +10,7 @@ TITLE_LEN = Poster.title.type.length
 
 class PosterSchema(BaseModel):
     id: int
-    title: Optional[str] = Field(..., max_length=TITLE_LEN)
+    title: Optional[str] = Field(..., min_length=2, max_length=TITLE_LEN)
     photo: Optional[str]
     created_at: datetime
 
