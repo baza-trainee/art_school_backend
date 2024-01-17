@@ -20,7 +20,6 @@ from src.auth.schemas import UserCreate
 from .exceptions import (
     AFTER_LOGIN,
     AFTER_REGISTER,
-    EMAIL_BODY,
     PASSWORD_CHANGE_SUCCESS,
     PASSWORD_LEN_ERROR,
     PASSWORD_STRENGTH_ERROR,
