@@ -12,7 +12,7 @@ from src.database.fake_data import (
     DEPARTMENTS,
     SUB_DEPARTMENTS,
     SLIDES,
-    DOCUMENT
+    DOCUMENT,
 )
 
 

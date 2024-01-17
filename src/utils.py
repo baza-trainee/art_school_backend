@@ -23,7 +23,7 @@ from src.database.fake_data import (
     SUB_DEPARTMENTS,
     SLIDES,
     ADMINISTRATIONS,
-    DOCUMENT
+    DOCUMENT,
 )
 
 if IS_PROD:

@@ -217,7 +217,7 @@ ADMINISTRATIONS = [
 ]
 
 DOCUMENT = {
-        "doc_name": "Заява на вступ",
-        "doc_path": "http://res.cloudinary.com/dmfaqrftb/raw/upload/v1705435496/static/documents/uounspkufjynv2zz5oc7.pdf",
-        "is_pinned": True,
-    }
+    "doc_name": "Заява на вступ",
+    "doc_path": "http://res.cloudinary.com/dmfaqrftb/raw/upload/v1705435496/static/documents/uounspkufjynv2zz5oc7.pdf",
+    "is_pinned": True,
+}
