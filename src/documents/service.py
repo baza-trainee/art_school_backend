@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import BackgroundTasks, HTTPException, Response
-from sqlalchemy import delete, insert, select, update, func
+from sqlalchemy import delete, insert, or_, select, update, func
 
 from src.database.database import Base
 from src.utils import save_photo, update_photo
@@ -26,7 +26,11 @@ async def get_docs_list(
     if is_pinned:
         query = select(model).where(model.is_pinned == True)
     else:
-        query = select(model).order_by("id")
+        query = (
+            select(model)
+            .where(or_(model.is_pinned == False, model.is_pinned == None))
+            .order_by("id")
+        )
     doc = await session.execute(query)
     response = doc.scalars().all()
     if not response:
