@@ -28,7 +28,7 @@ class ContactsSchema(BaseModel):
         max_length=PHONE_LEN,
         pattern=r"^(\+?38)?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^$",
     )
-    email: Annotated[EmailStr, Field(max_length=MAIL_LEN)]
+    email: Union[EmailStr, str] = Field(max_length=MAIL_LEN)
     facebook_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
     youtube_url: Union[AnyHttpUrl, str] = Field(max_length=URL_LEN)
 
