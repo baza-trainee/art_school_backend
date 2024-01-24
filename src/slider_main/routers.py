@@ -6,7 +6,7 @@ from fastapi_pagination.utils import disable_installed_extensions_check
 
 # from fastapi_cache.decorator import cache
 
-# from src.config import HALF_DAY
+# from src.config import DAY
 # from src.database.redis import invalidate_cache, my_key_builder
 from src.auth.models import User
 from src.database.database import get_async_session
@@ -25,7 +25,7 @@ slider_main_router = APIRouter(prefix="/slider_main", tags=["Slider main"])
 
 
 @slider_main_router.get("", response_model=List[SliderMainSchema])
-# @cache(expire=HALF_DAY, key_builder=my_key_builder)
+# @cache(expire=DAY, key_builder=my_key_builder)
 async def get_slider_list(
     session: AsyncSession = Depends(get_async_session),
 ):

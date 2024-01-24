@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import AnyHttpUrl, Field, BaseModel, conint, constr, validator
 from fastapi import Form, UploadFile
 
-from src.config import IS_PROD, settings
+from src.config import settings
 from src.exceptions import SUCCESS_DELETE
 from .models import Achievement
 
@@ -13,7 +13,7 @@ DESC_LEN = Achievement.description.type.length
 
 
 class GetAchievementSchema(BaseModel):
-    id: int
+    id: int = Field()
     media: AnyHttpUrl = Field(max_length=MEDIA_LEN)
     pinned_position: Optional[conint(ge=1, le=12)]
     sub_department: Optional[int]
@@ -22,10 +22,7 @@ class GetAchievementSchema(BaseModel):
 
     @validator("media", pre=True)
     def add_base_url(cls, v, values):
-        if IS_PROD:
-            return f"{settings.BASE_URL}/{v}"
-        else:
-            return v
+        return f"{settings.BASE_URL}/{v}"
 
 
 class GetTakenPositionsSchema(BaseModel):

@@ -1,65 +1,77 @@
-version: '3.7'
+version: '3.9'
 
 services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: postgres_school
     restart: always
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - $DB_PORT:5432
     env_file:
       - .env
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS
     volumes:
-      - postgres-data-school:/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend-school
+      - school
 
   redis:
-    container_name: fastapi-redis
-    image: redis:7.2.3
-    restart: always
+    container_name: redis_school
+    image: redis:latest
     env_file:
       - .env
     ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
-    expose:
-      - ${REDIS_PORT}
-    command:
-      - redis-server
-      - --port ${REDIS_PORT}
-      - --requirepass ${REDIS_PASS}
-      - --maxmemory 150mb
-    networks:
-      - backend-school
-
-  app:
-    image: art_school
-    container_name: fastapi_app
-    build: .
+      - $REDIS_PORT:6379
+    command: redis-server --port $REDIS_PORT --requirepass $REDIS_PASS --maxmemory 150mb
+    volumes:
+      - redis_data:/data
     restart: always
+    networks:
+      - school
+
+  backend:
+    image:  backend_school_image
+    container_name: backend_school
+    build: .
     command: [ "bash", "scripts/app.sh" ]
     env_file:
       - .env
     ports:
-      - 8000:8000
+      - $BACKEND_PORT:$BACKEND_PORT
+    volumes:
+      - backend_data:/data
     depends_on:
       - postgres
       - redis
-    volumes:
-      - app-data:/data
+    restart: always
     networks:
-      - backend-school
+      - school
+
+  frontend:
+    container_name: frontend_app
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - front_data:/data
+    networks:
+      - school
 
 networks:
-  backend-school:
+  school:
     driver: bridge
 
 volumes:
-  postgres-data-school:
-  app-data:
-  redis-data:
+  postgres_data:
+  backend_data:
+  redis_data:
+  front_data:

@@ -119,7 +119,7 @@ async def put_photo(
         background_tasks=background_tasks,
     )
     # if record.sub_department:
-    #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
+    # await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
     return record
 
 

@@ -4,7 +4,7 @@ from typing import Optional, Union
 from pydantic import BaseModel, AnyHttpUrl, Field, FilePath, conint, constr, validator
 from fastapi import Form, UploadFile
 
-from src.config import IS_PROD, settings
+from src.config import settings
 from src.exceptions import SUCCESS_DELETE
 from .models import Gallery
 
@@ -22,10 +22,7 @@ class GetPhotoSchema(BaseModel):
 
     @validator("media", pre=True)
     def add_base_url(cls, v, values):
-        if IS_PROD:
-            return f"{settings.BASE_URL}/{v}"
-        else:
-            return v
+        return f"{settings.BASE_URL}/{v}"
 
 
 class GetTakenPositionsSchema(BaseModel):
