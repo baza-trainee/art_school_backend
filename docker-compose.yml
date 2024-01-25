@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   postgres:
-    image: postgres:latest
+    image: postgres:16.1
     container_name: postgres_school
     restart: always
     ports:
@@ -21,12 +21,12 @@ services:
 
   redis:
     container_name: redis_school
-    image: redis:latest
+    image: redis:7.2.4
     env_file:
       - .env
     ports:
       - $REDIS_PORT:6379
-    command: redis-server --port $REDIS_PORT --requirepass $REDIS_PASS --maxmemory 150mb
+    command: redis-server --port $REDIS_PORT --requirepass $REDIS_PASS --maxmemory 250mb
     volumes:
       - redis_data:/data
     restart: always
@@ -43,7 +43,7 @@ services:
     ports:
       - $BACKEND_PORT:$BACKEND_PORT
     volumes:
-      - backend_data:/data
+      - ./static/media:/backend_app/static/media
     depends_on:
       - postgres
       - redis
@@ -51,20 +51,20 @@ services:
     networks:
       - school
 
-  frontend:
-    container_name: frontend_app
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    volumes:
-      - front_data:/data
-    networks:
-      - school
+  # frontend:
+  #   container_name: frontend_app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   restart: always
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
+  #   volumes:
+  #     - front_data:/data
+  #   networks:
+  #     - school
 
 networks:
   school:
@@ -74,4 +74,4 @@ volumes:
   postgres_data:
   backend_data:
   redis_data:
-  front_data:
+  # front_data:

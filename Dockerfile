@@ -1,14 +1,14 @@
 FROM python:3.11-slim
 
-RUN mkdir /fastapi_app
+RUN mkdir /backend_app
 
-WORKDIR /fastapi_app
+WORKDIR /backend_app
 
 COPY requirements.txt ./
 COPY scripts scripts/
 
-RUN chmod a+x scripts/*.sh && \
-    pip install -r requirements.txt
+RUN chmod a+x scripts/*.sh
+RUN pip install -r requirements.txt
 
 COPY src src/
 COPY static static/

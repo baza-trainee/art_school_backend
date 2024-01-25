@@ -30,7 +30,7 @@ open-redis:
 clean:
 	sudo find . | grep -E "(__pycache__|\.pyc|\.pyo$$)" | xargs sudo rm -rf
 
-backup:
+auto_backup:
 	@if crontab -l ; then \
 		crontab -l > mycron ; \
 	else \
@@ -41,6 +41,10 @@ backup:
 	@rm mycron
 	@echo "Backup script added to cron"
 
+backup:
+	python3 scripts/backup.py
+	@echo "Backup complete"
+	
 stop_backup:
 	crontab -l | grep -v '$(BACKUP_COMMAND)' | crontab -
 
@@ -51,11 +55,18 @@ frontend_build:
 	tar -cJvf dist.tar.xz dist
 
 frontend_export:
-	tar -xJvf dist.tar.xz -C .
+	if [ -d /var/www/school/dist ]; then \
+		sudo rm -rf /var/www/school/dist; \
+	fi
+	sudo mkdir -p /var/www/school/
+	sudo tar -xJvf dist.tar.xz -C /var/www/school/
+
 
 drop_db: down
-	docker volume rm $$(basename "$$(pwd)")_postgres_data
-	docker volume rm $$(basename "$$(pwd)")_redis_data
+	if docker volume ls -q | grep -q "$$(basename "$$(pwd)")_postgres_school"; then \
+		docker volume rm $$(basename "$$(pwd)")_postgres_school; \
+	fi
+	sudo rm -rf ./static/media
 
 prune: down
 	docker system prune -a
