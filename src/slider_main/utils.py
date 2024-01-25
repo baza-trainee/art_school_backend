@@ -1,10 +1,9 @@
 import contextlib
-import os
 from typing import List
 
-from sqlalchemy import select
-from .exceptions import SLIDE_EXISTS, SUCCESS_CREATE
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from .exceptions import SUCCESS_CREATE
 from src.slider_main.models import SliderMain
 from src.database.database import get_async_session
 
@@ -12,23 +11,11 @@ from src.database.database import get_async_session
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 
 
-async def create_slide(title: str, description: str):
-    async with get_async_session_context() as session:
-        photo_filename = "first_slide.png"
-        photo_path = os.path.join("static", "slider_main", photo_filename)
-
-        query = select(SliderMain).where(SliderMain.title == title)
-        result = await session.execute(query)
-        slide = result.scalars().first()
-        if not slide:
-            slide = SliderMain(title=title, description=description, photo=photo_path)
-            session.add(slide)
-            await session.commit()
-            print(SUCCESS_CREATE % slide.id)
-        else:
-            print(SLIDE_EXISTS % slide.title)
-
-
-async def create_slides(slides_list: List[dict]):
-    for slide_data in slides_list:
-        await create_slide(**slide_data)
+async def create_slides(slides_list: List[dict], session: AsyncSession):
+    try:
+        for data in slides_list:
+            instance = SliderMain(**data)
+            session.add(instance)
+            print(SUCCESS_CREATE)
+    except Exception as exc:
+        raise exc

@@ -63,8 +63,9 @@ frontend_export:
 
 
 drop_db: down
-	if docker volume ls -q | grep -q "$$(basename "$$(pwd)")_postgres_school"; then \
-		docker volume rm $$(basename "$$(pwd)")_postgres_school; \
+	if docker volume ls -q | grep -q $$(basename "$$(pwd)")_postgres_data; then \
+		docker volume rm $$(basename "$$(pwd)")_postgres_data; \
+		echo "successfully drop_db command";\
 	fi
 	sudo rm -rf ./static/media
 

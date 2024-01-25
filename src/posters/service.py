@@ -40,14 +40,6 @@ async def create_poster(
     model: Type[Base],
     session: AsyncSession,
 ):
-    query = select(model).where(func.lower(model.title) == poster_data.title.lower())
-    result = await session.execute(query)
-    instance = result.scalars().first()
-    if instance:
-        raise HTTPException(
-            status_code=400,
-            detail=POSTERS_EXISTS % poster_data.title,
-        )
     poster_data.photo = await save_photo(poster_data.photo, model)
     try:
         query = insert(model).values(**poster_data.model_dump()).returning(model)

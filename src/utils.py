@@ -1,4 +1,5 @@
 import os
+import shutil
 from uuid import uuid4
 from typing import Type
 
@@ -36,15 +37,18 @@ async def lifespan(app: FastAPI):
         async with s.begin():
             user_count = await s.execute(select(func.count()).select_from(User))
             if user_count.scalar() == 0:
+                # folder_path = os.path.join("static", "media", '.')
+                # if os.path.exists(folder_path):
+                #     shutil.rmtree(folder_path)
                 await create_user(
                     email=settings.ADMIN_USERNAME, password=settings.ADMIN_PASSWORD
                 )
                 await create_main_departments(DEPARTMENTS)
                 await create_sub_departments(SUB_DEPARTMENTS)
-                await create_contacts(**CONTACTS)
-                await create_docs(**DOCUMENT)
-                await create_slides(SLIDES)
-                await create_administrations(ADMINISTRATIONS)
+                await create_contacts(CONTACTS, session=s)
+                await create_docs(DOCUMENT, session=s)
+                await create_slides(SLIDES, session=s)
+                await create_administrations(ADMINISTRATIONS, session=s)
     await lock.release()
     yield
 

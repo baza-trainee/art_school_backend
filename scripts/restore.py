@@ -1,6 +1,5 @@
 from datetime import datetime
 import os
-import shutil
 
 DB_CONTAINER = "postgres_school"
 WEB_CONTAINER = "backend_school"

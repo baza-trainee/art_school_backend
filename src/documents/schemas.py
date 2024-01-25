@@ -1,8 +1,9 @@
 from typing import Optional, Union
 
 from fastapi import Form, UploadFile
-from pydantic import BaseModel, AnyHttpUrl, Field, FilePath, constr
+from pydantic import BaseModel, AnyHttpUrl, Field, FilePath, constr, validator
 
+from src.config import settings
 from .models import Documents
 
 
@@ -13,6 +14,10 @@ class DocumentSchema(BaseModel):
     id: int = Field(..., ge=1)
     doc_name: constr(max_length=DOC_NAME_LEN)
     doc_path: Optional[Union[AnyHttpUrl, FilePath]]
+
+    @validator("doc_path", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"
 
 
 class DocumentCreateSchema(BaseModel):

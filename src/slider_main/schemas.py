@@ -2,8 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, validator
 from fastapi import Body, Form, UploadFile
-from src.config import settings
 
+from src.config import settings
 from src.slider_main.exceptions import SCHEMA_DESC
 from .models import SliderMain
 

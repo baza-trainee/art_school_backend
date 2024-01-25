@@ -4,12 +4,10 @@ from fastapi import HTTPException, Response
 from pydantic_core import Url
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import NoResultFound
 
 from src.database.database import Base
-from src.exceptions import (
-    NO_RECORD,
-    SERVER_ERROR,
-)
+from src.exceptions import NO_RECORD, SERVER_ERROR
 from .schemas import ContactsUpdateSchema
 
 
@@ -19,9 +17,11 @@ async def get_record(model: Type[Base], session: AsyncSession):
         result = await session.execute(query)
         response = result.scalars().first()
         if not response:
-            raise HTTPException(status_code=404, detail=NO_RECORD)
+            raise NoResultFound
         return response
-    except:
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=NO_RECORD)
+    except Exception:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 

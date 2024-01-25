@@ -45,15 +45,6 @@ async def create_news(
     model: Type[Base],
     session: AsyncSession,
 ):
-    query = select(model).where(func.lower(model.title) == news_data.title.lower())
-    result = await session.execute(query)
-    instance = result.scalars().first()
-    if instance:
-        raise HTTPException(
-            status_code=400,
-            detail=NEWS_EXISTS % news_data.title,
-        )
-
     news_data.photo = await save_photo(news_data.photo, model)
     try:
         news_data = news_data.model_dump()
