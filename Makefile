@@ -1,4 +1,4 @@
-.PHONY: down build run prod drop_db backup restore prune frontend_build frontend_export
+.PHONY: down build run prod drop_db auto_backup backup restore prune frontend_build frontend_export
 
 BACKUP_COMMAND := * * * * * cd "$(PWD)" && python3 scripts/backup.py
 
@@ -52,6 +52,9 @@ restore:
 	python3 scripts/restore.py
 
 frontend_build:
+	if [ -d dist.tar.xz ]; then \
+		sudo rm -rf dist.tar.xz; \
+	fi
 	tar -cJvf dist.tar.xz dist
 
 frontend_export:

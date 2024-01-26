@@ -127,7 +127,7 @@ async def update_achievement(
     if schema.sub_department and schema.sub_department != record.sub_department:
         await _check_department(schema.sub_department, session)
     if schema.pinned_position and schema.pinned_position != record.pinned_position:
-        await _check_department(schema.pinned_position, session)
+        await _check_pinned_position(schema.pinned_position, session)
 
     schema_output = schema.model_dump()
     media = schema_output.get("media", None)
