@@ -39,4 +39,5 @@ def downgrade() -> None:
         type_=sa.VARCHAR(length=100),
         existing_nullable=False,
     )
+
     # ### end Alembic commands ###
