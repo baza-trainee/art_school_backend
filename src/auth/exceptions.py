@@ -6,6 +6,8 @@ PASSWORD_UNIQUE_ERROR = "Password should not contain e-mail."
 PASSWORD_STRENGTH_ERROR = "Password must contain a lowercase letter, uppercase letter, a number and a special symbol."
 PASSWORD_CHANGE_SUCCESS = "The password has been changed."
 PASSWORD_NOT_MATCH = "New passwords do not match."
+DB_ERROR = "An unknown database error occurred."
+UNIQUE_ERROR = "A user with this phone number already exists."
 OLD_PASS_INCORRECT = "Old password is incorrect."
 EMAIL_BODY = """
 <!DOCTYPE html>

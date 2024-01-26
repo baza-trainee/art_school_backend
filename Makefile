@@ -13,7 +13,7 @@ down:
 	docker compose down
 
 run: down 
-	docker compose up postgres -d
+	docker compose up postgres redis -d
 	sleep 2
 	alembic upgrade head
 	uvicorn vercel:app --reload
