@@ -1,5 +1,3 @@
-from src.config import settings
-
 USER_EXISTS = "User %s already exists."
 AFTER_REGISTER = "User %s has registered."
 AFTER_LOGIN = "You have successfully logged in."

@@ -82,7 +82,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     ):
         from src.auth.utils import send_reset_email
 
-        background_tasks.add_task(send_reset_email, "deadroll95@gmail.com", token)
+        background_tasks.add_task(send_reset_email, "art_school_qa@tutanota.com", token)
 
     async def reset_password(
         self,
