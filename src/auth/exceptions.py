@@ -1,3 +1,5 @@
+from src.config import settings
+
 USER_EXISTS = "User %s already exists."
 AFTER_REGISTER = "User %s has registered."
 AFTER_LOGIN = "You have successfully logged in."
@@ -29,15 +31,15 @@ EMAIL_BODY = """
     }
   </style>
 </head>
-<body>
+<body>"""
 
-<p>Вітаємо!</p>
+f"""<p>Вітаємо!</p>
 
 <p>Ви отримали цього листа, тому що зробили запит на відновлення паролю для вашого облікового запису в панелі керування Art School.</p>
 
 <p>Для відновлення паролю, будь ласка, натисніть на кнопку нижче:</p>
 
-<a class="recovery-button" href="https://art-school-frontend.vercel.app/login/password-recovery/%s" target="_blank">
+<a class="recovery-button" href="{settings.BASE_URL}/login/password-recovery/%s" target="_blank">
   <b>відновити пароль</b>
 </a>
 
