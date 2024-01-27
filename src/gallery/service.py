@@ -30,26 +30,22 @@ async def _check_department(
     sub_department: Optional[int], session: AsyncSession
 ) -> None:
     query = select(SubDepartment).where(SubDepartment.id == sub_department)
-    async with session as ses:
-        result = await ses.execute(query)
-        record = result.scalars().first()
-        if not record:
-            raise HTTPException(
-                status_code=404, detail=INVALID_DEPARTMENT % sub_department
-            )
+    result = await session.execute(query)
+    record = result.scalars().first()
+    if not record:
+        raise HTTPException(status_code=404, detail=INVALID_DEPARTMENT % sub_department)
 
 
 async def _check_pinned_position(
     pinned_position: Optional[int], session: AsyncSession
 ) -> None:
     query = select(Gallery).filter_by(pinned_position=pinned_position)
-    async with session as ses:
-        result = await ses.execute(query)
-        record = result.scalars().first()
-        if record:
-            raise HTTPException(
-                status_code=400, detail=GALLERY_PINNED_EXISTS % pinned_position
-            )
+    result = await session.execute(query)
+    record = result.scalars().first()
+    if record:
+        raise HTTPException(
+            status_code=400, detail=GALLERY_PINNED_EXISTS % pinned_position
+        )
 
 
 async def get_all_media_by_filter(
