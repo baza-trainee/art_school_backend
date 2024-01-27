@@ -48,12 +48,6 @@ async def new_slide(
     if slide_data.title is not None and isinstance(slide_data.title, str):
         query = select(model).where(func.lower(model.title) == slide_data.title.lower())
         result = await session.execute(query)
-        instance = result.scalars().first()
-        if instance:
-            raise HTTPException(
-                status_code=400,
-                detail=SLIDE_EXISTS % slide_data.title,
-            )
     else:
         slide_data.title = None
     slide_data.photo = await save_photo(slide_data.photo, model)

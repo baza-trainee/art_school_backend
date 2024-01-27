@@ -37,12 +37,16 @@ async def lifespan(app: FastAPI):
         async with s.begin():
             user_count = await s.execute(select(func.count()).select_from(User))
             if user_count.scalar() == 0:
-                # folder_path = os.path.join("static", "media", '.')
-                # if os.path.exists(folder_path):
-                #     shutil.rmtree(folder_path)
-                await create_user(
-                    email=settings.ADMIN_USERNAME, password=settings.ADMIN_PASSWORD
-                )
+
+                folder_path = os.path.join("static", "media")
+                for item in os.listdir(folder_path):
+                    item_path = os.path.join(folder_path, item)
+                    if os.path.isfile(item_path):
+                        os.remove(item_path)
+                    elif os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+
+                await create_user(settings.ADMIN_USERNAME, settings.ADMIN_PASSWORD)
                 await create_main_departments(DEPARTMENTS)
                 await create_sub_departments(SUB_DEPARTMENTS)
                 await create_contacts(CONTACTS, session=s)
@@ -92,7 +96,11 @@ async def update_photo(
     is_file=False,
 ) -> str:
     old_photo_path = getattr(record, field_name, None)
-    new_photo = await save_photo(file, record, is_file)
+    new_photo = await save_photo(
+        file,
+        record,
+        is_file,
+    )
     if old_photo_path and "media" in old_photo_path:
         background_tasks.add_task(delete_photo, old_photo_path)
     return new_photo
