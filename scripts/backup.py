@@ -25,7 +25,6 @@ if os.path.exists(env_file_path):
 
 DB_USER = config.get("DB_USER")
 DB_PASS = config.get("DB_PASS")
-DB_PORT = config.get("DB_PORT")
 DB_NAME = config.get("DB_NAME")
 DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@postgres:5432/{DB_NAME}"
 
