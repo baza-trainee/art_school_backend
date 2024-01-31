@@ -59,11 +59,14 @@ async def get_achievement(
 
 @achievements_router.post("", response_model=GetAchievementSchema)
 async def post_achievement(
+    background_tasks: BackgroundTasks,
     schema: CreateAchievementSchema = Depends(CreateAchievementSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record = await create_achievement(schema=schema, session=session)
+    record = await create_achievement(
+        schema=schema, session=session, background_tasks=background_tasks
+    )
     # if record.sub_department:
     #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
     return record

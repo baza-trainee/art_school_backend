@@ -114,6 +114,7 @@ async def get_positions_status(session: AsyncSession):
 async def create_photo(
     schema: CreatePhotoSchema,
     session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ):
     if schema.sub_department:
         await _check_department(schema.sub_department, session)
@@ -121,7 +122,7 @@ async def create_photo(
         await _check_pinned_position(schema.pinned_position, session)
 
     schema_output = schema.model_dump()
-    schema_output["media"] = await save_photo(schema.media, Gallery)
+    schema_output["media"] = await save_photo(schema.media, Gallery, background_tasks)
     schema_output["is_video"] = False
 
     try:
@@ -200,7 +201,7 @@ async def update_video_by_id(
     elif not record.is_video:
         raise HTTPException(status_code=404, detail=GALLERY_IS_NOT_A_VIDEO)
 
-    schema_output = {"media": media}
+    schema_output = {"media": str(media)}
     schema_output["is_video"] = True
 
     try:
@@ -219,9 +220,10 @@ async def delete_media_by_id(
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     try:
-        background_tasks.add_task(delete_photo, record.media)
         await session.delete(record)
         await session.commit()
+        if not record.is_video:
+            await delete_photo(record.media, background_tasks)
         return {"message": SUCCESS_DELETE % id}
     except:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)

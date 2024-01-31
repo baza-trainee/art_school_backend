@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.utils import disable_installed_extensions_check
 
@@ -36,31 +36,36 @@ async def get_slider_list(
 
 @slider_main_router.post("", response_model=SliderMainSchema)
 async def create_slide(
+    background_tasks: BackgroundTasks,
     slide_data: SliderCreateSchema = Depends(SliderCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_slider_list")
-    return await new_slide(slide_data, SliderMain, session)
+    return await new_slide(slide_data, SliderMain, session, background_tasks)
 
 
 @slider_main_router.put("/{slide_id}", response_model=SliderMainSchema)
 async def partial_update_slide(
     slide_id: int,
+    background_tasks: BackgroundTasks,
     photo: UploadFile = None,
     slider_data: SliderMainUpdateSchema = Depends(SliderMainUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_slider_list")
-    return await update_slide(slider_data, SliderMain, session, photo, slide_id)
+    return await update_slide(
+        slider_data, SliderMain, session, background_tasks, photo, slide_id
+    )
 
 
 @slider_main_router.delete("/{slide_id}")
 async def delete_slide(
     slide_id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_slider_list")
-    return await delete_slide_by_id(SliderMain, session, slide_id)
+    return await delete_slide_by_id(SliderMain, session, background_tasks, slide_id)

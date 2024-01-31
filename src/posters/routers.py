@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.utils import disable_installed_extensions_check
@@ -47,17 +47,19 @@ async def get_poster(
 
 @posters_router.post("", response_model=PosterSchema)
 async def post_poster(
+    background_tasks: BackgroundTasks,
     poster_data: PosterCreateSchema = Depends(PosterCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_posters_list")
-    return await create_poster(poster_data, Poster, session)
+    return await create_poster(poster_data, Poster, session, background_tasks)
 
 
 @posters_router.patch("/{poster_id}", response_model=PosterSchema)
 async def partial_update_poster(
     poster_id: int,
+    background_tasks: BackgroundTasks,
     photo: Annotated[UploadFile, File()] = None,
     posters_data: PosterUpdateSchema = Depends(PosterUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
@@ -65,15 +67,18 @@ async def partial_update_poster(
 ):
     # await invalidate_cache("get_poster", poster_id)
     # await invalidate_cache("get_posters_list")
-    return await patch_poster(posters_data, Poster, session, photo, poster_id)
+    return await patch_poster(
+        posters_data, Poster, session, background_tasks, photo, poster_id
+    )
 
 
 @posters_router.delete("/{poster_id}")
 async def delete_poster(
     poster_id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_poster", poster_id)
     # await invalidate_cache("get_posters_list")
-    return await delete_poster_by_id(poster_id, Poster, session)
+    return await delete_poster_by_id(poster_id, Poster, session, background_tasks)

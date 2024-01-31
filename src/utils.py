@@ -37,15 +37,7 @@ async def lifespan(app: FastAPI):
         async with s.begin():
             user_count = await s.execute(select(func.count()).select_from(User))
             if user_count.scalar() == 0:
-
-                folder_path = os.path.join("static", "media")
-                for item in os.listdir(folder_path):
-                    item_path = os.path.join(folder_path, item)
-                    if os.path.isfile(item_path):
-                        os.remove(item_path)
-                    elif os.path.isdir(item_path):
-                        shutil.rmtree(item_path)
-
+                clear_media_path()
                 await create_user(settings.ADMIN_USERNAME, settings.ADMIN_PASSWORD)
                 await create_main_departments(DEPARTMENTS)
                 await create_sub_departments(SUB_DEPARTMENTS)
@@ -57,12 +49,28 @@ async def lifespan(app: FastAPI):
     yield
 
 
-async def save_photo(file: UploadFile, model: Type[Base], is_file=False) -> str:
+def clear_media_path():
+    folder_path = os.path.join("static", "media")
+    if os.path.exists(folder_path):
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            if os.path.isfile(item_path):
+                os.remove(item_path)
+            elif os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+
+
+async def save_photo(
+    file: UploadFile,
+    model: Type[Base],
+    background_tasks: BackgroundTasks,
+    is_file=False,
+) -> str:
     if not is_file and not file.content_type in PHOTO_FORMATS:
         raise HTTPException(
             status_code=415, detail=INVALID_PHOTO % (file.content_type, PHOTO_FORMATS)
         )
-    if file.size > MAX_FILE_SIZE_MB**1024:
+    if file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
         raise HTTPException(status_code=413, detail=OVERSIZE_FILE)
     if is_file and not file.content_type in FILE_FORMATS:
         raise HTTPException(
@@ -72,20 +80,23 @@ async def save_photo(file: UploadFile, model: Type[Base], is_file=False) -> str:
     folder_path = os.path.join(
         "static", "media", model.__tablename__.lower().replace(" ", "_")
     )
-    os.makedirs(folder_path, exist_ok=True)
-
     file_name = f'{uuid4().hex}.{file.filename.split(".")[-1]}'
     file_path = os.path.join(folder_path, file_name)
-    async with aiofiles.open(file_path, "wb") as buffer:
-        await buffer.write(await file.read())
+
+    async def _save_photo(file_path: str):
+        os.makedirs(folder_path, exist_ok=True)
+        async with aiofiles.open(file_path, "wb") as buffer:
+            await buffer.write(await file.read())
+
+    background_tasks.add_task(_save_photo, file_path)
     return file_path
 
 
-async def delete_photo(path: str) -> bool:
-    path_exists = os.path.exists(path)
-    if path_exists:
-        os.remove(path)
-    return path_exists
+async def delete_photo(path: str, background_tasks: BackgroundTasks) -> None:
+    if "media" in path:
+        path_exists = os.path.exists(path)
+        if path_exists:
+            background_tasks.add_task(os.remove, path)
 
 
 async def update_photo(
@@ -96,11 +107,7 @@ async def update_photo(
     is_file=False,
 ) -> str:
     old_photo_path = getattr(record, field_name, None)
-    new_photo = await save_photo(
-        file,
-        record,
-        is_file,
-    )
-    if old_photo_path and "media" in old_photo_path:
-        background_tasks.add_task(delete_photo, old_photo_path)
+    new_photo = await save_photo(file, record, background_tasks, is_file)
+    if old_photo_path:
+        await delete_photo(old_photo_path, background_tasks)
     return new_photo

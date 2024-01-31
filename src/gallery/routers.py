@@ -84,11 +84,14 @@ async def get_video(
 
 @gallery_router.post("/photo", response_model=GetPhotoSchema)
 async def post_photo(
+    background_tasks: BackgroundTasks,
     schema: CreatePhotoSchema = Depends(CreatePhotoSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record = await create_photo(schema=schema, session=session)
+    record = await create_photo(
+        schema=schema, session=session, background_tasks=background_tasks
+    )
     # if record.sub_department:
     #    await invalidate_cache("get_gallery_for_sub_department", record.sub_department)
 

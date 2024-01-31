@@ -44,12 +44,13 @@ async def get_document_by_id(
 
 @docs_router.post("", response_model=DocumentSchema)
 async def post_document(
+    background_tasks: BackgroundTasks,
     document: DocumentCreateSchema = Depends(DocumentCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_documents_list")
-    return await create_document(document, Documents, session)
+    return await create_document(document, Documents, session, background_tasks)
 
 
 @docs_router.patch("/{id}", response_model=DocumentSchema)
@@ -68,9 +69,10 @@ async def partial_update_document(
 @docs_router.delete("/{id}")
 async def delete_document(
     id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
     # await invalidate_cache("get_documents_list")
     # await invalidate_cache("get_document_by_id", id)
-    return await delete_record(id, Documents, session)
+    return await delete_record(id, Documents, session, background_tasks)
