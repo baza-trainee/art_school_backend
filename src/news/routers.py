@@ -5,10 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.utils import disable_installed_extensions_check
 
-# from fastapi_cache.decorator import cache
-
-# from src.config import HALF_DAY
-# from src.database.redis import invalidate_cache, my_key_builder
 from src.auth.models import User
 from src.database.database import get_async_session
 from src.auth.auth_config import CURRENT_SUPERUSER
@@ -27,7 +23,6 @@ news_router = APIRouter(prefix="/news", tags=["News"])
 
 
 @news_router.get("", response_model=Page[NewsSchema])
-# @cache(expire=HALF_DAY, key_builder=my_key_builder)
 async def get_news_list(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -37,7 +32,6 @@ async def get_news_list(
 
 
 @news_router.get("/{id}", response_model=NewsSchema)
-# @cache(expire=HALF_DAY, key_builder=my_key_builder)
 async def get_news(
     id: int,
     session: AsyncSession = Depends(get_async_session),
@@ -52,7 +46,6 @@ async def post_news(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_news_list")
     return await create_news(news_data, News, session, background_tasks)
 
 
@@ -65,8 +58,6 @@ async def partial_update_news(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_news", news_id)
-    # await invalidate_cache("get_news_list")
     return await update_news(news_data, News, session, background_tasks, photo, news_id)
 
 
@@ -77,6 +68,4 @@ async def delete_news(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_news_list")
-    # await invalidate_cache("get_news", news_id)
     return await delete_news_by_id(news_id, News, session, background_tasks)

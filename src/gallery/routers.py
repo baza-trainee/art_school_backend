@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database.database import get_async_session
-from .models import Gallery
 from .service import (
     delete_media_by_id,
     get_all_media_by_filter,
@@ -29,7 +28,6 @@ from .schemas import (
     DeleteResponseSchema,
 )
 
-# from src.database.redis import invalidate_cache
 
 gallery_router = APIRouter(prefix="/gallery", tags=["Gallery"])
 
@@ -89,13 +87,9 @@ async def post_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record = await create_photo(
+    return await create_photo(
         schema=schema, session=session, background_tasks=background_tasks
     )
-    # if record.sub_department:
-    #    await invalidate_cache("get_gallery_for_sub_department", record.sub_department)
-
-    return record
 
 
 @gallery_router.post("/video", response_model=GetVideoSchema)
@@ -115,15 +109,12 @@ async def put_photo(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record: Gallery = await update_photo_by_id(
+    return await update_photo_by_id(
         id=id,
         schema=schema,
         session=session,
         background_tasks=background_tasks,
     )
-    # if record.sub_department:
-    # await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
-    return record
 
 
 @gallery_router.put("/video/{id}", response_model=GetVideoSchema)
@@ -143,9 +134,6 @@ async def delete_media(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # record: Gallery = await session.get(Gallery, id)
-    # if record.sub_department:
-    #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
     return await delete_media_by_id(
         id=id, background_tasks=background_tasks, session=session
     )

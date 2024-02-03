@@ -13,7 +13,6 @@ from .exceptions import (
     NO_RECORD,
     SERVER_ERROR,
     SUCCESS_DELETE,
-    SLIDE_EXISTS,
     MAXIMUM_SLIDE,
 )
 

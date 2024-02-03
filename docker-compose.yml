@@ -5,7 +5,6 @@ services:
   postgres:
     image: postgres:16.1
     container_name: postgres_school
-    restart: always
     ports:
       - $DB_PORT:5432
     env_file:
@@ -14,6 +13,7 @@ services:
       POSTGRES_DB: $DB_NAME
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASS
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -36,17 +36,16 @@ services:
   backend:
     image:  backend_school_image
     container_name: backend_school
-    build: .
-    command: [ "bash", "scripts/app.sh" ]
+    build: 
+      context: .
+    entrypoint: 
+      bash "scripts/app.sh"
     env_file:
       - .env
     ports:
       - $BACKEND_PORT:$BACKEND_PORT
     volumes:
       - ./static/media:/backend_app/static/media
-    depends_on:
-      - postgres
-      - redis
     restart: always
     networks:
       - school
@@ -59,8 +58,6 @@ services:
   #   restart: always
   #   ports:
   #     - "80:80"
-  #   depends_on:
-  #     - backend
   #   volumes:
   #     - front_data:/data
   #   networks:

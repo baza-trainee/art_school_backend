@@ -1,16 +1,16 @@
 FROM python:3.11-slim
 
-RUN mkdir /backend_app
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
+RUN mkdir /backend_app
 WORKDIR /backend_app
 
-COPY requirements.txt ./
-COPY scripts scripts/
+RUN pip install -U pip 
 
-RUN chmod a+x scripts/*.sh
+COPY requirements.txt .
+
 RUN pip install -r requirements.txt
 
-COPY src src/
-COPY static static/
-COPY migrations migrations/
-COPY gunicorn.conf.py alembic.ini ./
+COPY . .
+

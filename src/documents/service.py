@@ -1,10 +1,10 @@
 from typing import Type
 
 from pydantic import BaseModel
+from sqlalchemy import delete, insert, or_, select, update, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import BackgroundTasks, HTTPException, Response
-from sqlalchemy import delete, insert, or_, select, update, func
 
 from src.database.database import Base
 from src.utils import delete_photo, save_photo, update_photo

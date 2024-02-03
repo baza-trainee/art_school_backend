@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database.database import get_async_session
-from .models import Achievement
 from .service import (
     delete_achievement_by_id,
     get_all_achievements_by_filter,
@@ -22,8 +21,6 @@ from .schemas import (
     UpdateAchievementSchema,
     DeleteResponseSchema,
 )
-
-# from src.database.redis import invalidate_cache
 
 
 achievements_router = APIRouter(prefix="/achievements", tags=["Achievements"])
@@ -64,12 +61,9 @@ async def post_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record = await create_achievement(
+    return await create_achievement(
         schema=schema, session=session, background_tasks=background_tasks
     )
-    # if record.sub_department:
-    #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
-    return record
 
 
 @achievements_router.put("/{id}", response_model=GetAchievementSchema)
@@ -80,15 +74,12 @@ async def put_achievement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    record: Achievement = await update_achievement(
+    return await update_achievement(
         id=id,
         schema=schema,
         session=session,
         background_tasks=background_tasks,
     )
-    # if record.sub_department:
-    #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
-    return record
 
 
 @achievements_router.delete("/{id}", response_model=DeleteResponseSchema)
@@ -98,9 +89,6 @@ async def delete_achivement(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # record: Achievement = await get_achievement_by_id(Achievement, session, id)
-    # if record.sub_department:
-    #     await invalidate_cache("get_achievement_for_sub_department", record.sub_department)
     return await delete_achievement_by_id(
         id=id, background_tasks=background_tasks, session=session
     )

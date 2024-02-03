@@ -4,10 +4,6 @@ from fastapi import APIRouter, BackgroundTasks, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.utils import disable_installed_extensions_check
 
-# from fastapi_cache.decorator import cache
-
-# from src.config import DAY
-# from src.database.redis import invalidate_cache, my_key_builder
 from src.auth.models import User
 from src.database.database import get_async_session
 from src.auth.auth_config import CURRENT_SUPERUSER
@@ -25,7 +21,6 @@ slider_main_router = APIRouter(prefix="/slider_main", tags=["Slider main"])
 
 
 @slider_main_router.get("", response_model=List[SliderMainSchema])
-# @cache(expire=DAY, key_builder=my_key_builder)
 async def get_slider_list(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -41,7 +36,6 @@ async def create_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_slider_list")
     return await new_slide(slide_data, SliderMain, session, background_tasks)
 
 
@@ -54,7 +48,6 @@ async def partial_update_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_slider_list")
     return await update_slide(
         slider_data, SliderMain, session, background_tasks, photo, slide_id
     )
@@ -67,5 +60,4 @@ async def delete_slide(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_slider_list")
     return await delete_slide_by_id(SliderMain, session, background_tasks, slide_id)
