@@ -10,7 +10,7 @@ class Gallery(Base):
 
     id: int = Column(Integer, primary_key=True)
     is_video: bool = Column(Boolean, nullable=False)
-    media: str = Column(String(length=500), nullable=False)
+    media: str = Column(String(length=2048), nullable=False)
     pinned_position: int = Column(Integer, nullable=True)
     description: str = Column(String(length=150), nullable=True)
     sub_department: int = Column(

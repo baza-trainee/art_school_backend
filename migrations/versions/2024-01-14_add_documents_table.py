@@ -25,7 +25,7 @@ def upgrade() -> None:
         "documents",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("doc_name", sa.String(length=100), nullable=False),
-        sa.Column("doc_path", sa.String(), nullable=False),
+        sa.Column("doc_path", sa.String(length=500), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("doc_name"),
     )
