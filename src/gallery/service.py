@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from sqlalchemy import and_, insert, select
+from sqlalchemy import and_, func, insert, select
 from fastapi import BackgroundTasks, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,11 +20,27 @@ from src.exceptions import (
     SUCCESS_DELETE,
 )
 from .exceptions import (
+    DEPARTMENT_MAX_VIDEO,
     INVALID_DEPARTMENT,
     GALLERY_IS_NOT_A_PHOTO,
     GALLERY_IS_NOT_A_VIDEO,
     GALLERY_PINNED_EXISTS,
 )
+
+
+async def _count_from_department(sub_department: Optional[int], session: AsyncSession):
+    "<=5 video from one sub department"
+    query = (
+        select(func.count())
+        .select_from(Gallery)
+        .where(and_(Gallery.is_video == True, Gallery.sub_department == sub_department))
+    )
+    result = await session.execute(query)
+    result = result.scalar()
+    if result > 5:
+        raise HTTPException(
+            status_code=404, detail=DEPARTMENT_MAX_VIDEO % sub_department
+        )
 
 
 async def _check_department(
@@ -125,6 +141,7 @@ async def create_media(
 ):
     if schema.sub_department:
         await _check_department(schema.sub_department, session)
+        await _count_from_department(schema.sub_department, session)
     if schema.pinned_position:
         await _check_pinned_position(schema.pinned_position, session, is_video)
 
@@ -167,6 +184,7 @@ async def update_media_by_id(
 
     if schema.sub_department and schema.sub_department != record.sub_department:
         await _check_department(schema.sub_department, session)
+        await _count_from_department(schema.sub_department, session)
     if schema.pinned_position and schema.pinned_position != record.pinned_position:
         await _check_pinned_position(schema.pinned_position, session, is_video=is_video)
 
