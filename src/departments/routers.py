@@ -2,16 +2,17 @@ from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_pagination import Page, paginate
+from fastapi_pagination.utils import disable_installed_extensions_check
 
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.auth.models import User
-from src.departments.service import (
+from .service import (
     create_sub_dep,
     delete_sub_dep,
-    get_achievement_list,
     get_dep,
-    get_galery_list,
     get_main_dep,
+    get_media_for_sub_dep,
     get_one_sub_dep,
     get_sub_dep_list,
     update_sub_dep,
@@ -69,24 +70,40 @@ async def get_sub_department_by_id(
 
 @departments.get(
     "/sub_department_gallery/{id}",
-    response_model=Union[List[SubDepartmentGallerySchema], Any],
+    response_model=Page[SubDepartmentGallerySchema],
 )
 async def get_gallery_for_sub_department(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await get_galery_list(id, Gallery, session)
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Gallery, session, "photo")
+    return paginate(result)
 
 
 @departments.get(
     "/sub_department_achievement/{id}",
-    response_model=Union[List[SubDepartmentAchievementSchema], Any],
+    response_model=Page[SubDepartmentAchievementSchema],
 )
 async def get_achievement_for_sub_department(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await get_achievement_list(id, Achievement, session)
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Achievement, session, "achievement")
+    return paginate(result)
+
+
+@departments.get(
+    "/sub_department_video/{id}", response_model=Page[SubDepartmentGallerySchema]
+)
+async def get_video_for_sub_department(
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Gallery, session, "video")
+    return paginate(result)
 
 
 @departments.patch("/sub_department/{id}", response_model=SubDepartmentSchema)
