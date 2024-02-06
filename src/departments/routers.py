@@ -30,6 +30,7 @@ from .schemas import (
     SubDepartmentGallerySchema,
     SubDepartmentSchema,
     SubDepartmentUpdateSchema,
+    SubDepartmentVideoSchema,
 )
 
 
@@ -95,7 +96,7 @@ async def get_achievement_for_sub_department(
 
 
 @departments.get(
-    "/sub_department_video/{id}", response_model=Page[SubDepartmentGallerySchema]
+    "/sub_department_video/{id}", response_model=Page[SubDepartmentVideoSchema]
 )
 async def get_video_for_sub_department(
     id: int,

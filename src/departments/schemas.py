@@ -62,6 +62,14 @@ class SubDepartmentGallerySchema(BaseModel):
         return f"{settings.BASE_URL}/{v}"
 
 
+class SubDepartmentVideoSchema(BaseModel):
+    id: int
+    media: str = Field(..., max_length=ACHI_MEDIA_LEN)
+    sub_department: int = Field(..., ge=1)
+    pinned_position: Optional[int] = Field(None, ge=1, le=5)
+    created_at: datetime
+
+
 class SubDepartmentAchievementSchema(BaseModel):
     id: int
     media: str = Field(..., max_length=ACHI_MEDIA_LEN)
