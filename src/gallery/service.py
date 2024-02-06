@@ -60,7 +60,9 @@ async def get_all_media_by_filter(
     if is_pinned:
         query = (
             select(Gallery)
-            .filter(Gallery.pinned_position.isnot(None))
+            .where(
+                and_(Gallery.is_video == is_video, Gallery.pinned_position.isnot(None))
+            )
             .order_by(Gallery.pinned_position)
         )
     else:
