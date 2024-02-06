@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, Union
 
-from pydantic import BaseModel, AnyHttpUrl, Field, FilePath, conint, constr, validator
+from pydantic import BaseModel, AnyHttpUrl, Field, conint, constr, validator
 from fastapi import Form, UploadFile
 
 from src.config import settings
@@ -10,6 +10,11 @@ from .models import Gallery
 
 MEDIA_LEN = Gallery.media.type.length
 DESC_LEN = Gallery.description.type.length
+
+
+class GetTakenPositionsSchema(BaseModel):
+    taken_positions: list[Optional[int]]
+    free_positions: list[Optional[int]]
 
 
 class GetPhotoSchema(BaseModel):
@@ -25,14 +30,11 @@ class GetPhotoSchema(BaseModel):
         return f"{settings.BASE_URL}/{v}"
 
 
-class GetTakenPositionsSchema(BaseModel):
-    taken_positions: list[Optional[int]]
-    free_positions: list[Optional[int]]
-
-
 class GetVideoSchema(BaseModel):
     id: int
-    media: Union[AnyHttpUrl, FilePath]
+    media: AnyHttpUrl = Field(max_length=MEDIA_LEN)
+    pinned_position: Optional[conint(ge=1, le=5)]
+    sub_department: Optional[int]
     created_at: datetime
 
 
@@ -55,6 +57,25 @@ class CreatePhotoSchema(BaseModel):
             pinned_position=pinned_position,
             sub_department=sub_department,
             description=description,
+        )
+
+
+class CreateVideoSchema(BaseModel):
+    media: AnyHttpUrl
+    pinned_position: Optional[int]
+    sub_department: Optional[int]
+
+    @classmethod
+    def as_form(
+        cls,
+        media: AnyHttpUrl = Form(max_length=MEDIA_LEN),
+        pinned_position: int = Form(None, ge=1, le=5),
+        sub_department: int = Form(None),
+    ):
+        return cls(
+            media=media,
+            pinned_position=pinned_position,
+            sub_department=sub_department,
         )
 
 
