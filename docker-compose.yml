@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16.1
+    container_name: postgres_school
+    ports:
+      - $DB_PORT:5432
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - school
+    healthcheck:
+      test: "pg_isready -d $DB_NAME -U $DB_USER"
+      interval: 2s
+      timeout: 15s
+
+  redis:
+    image: redis:7.2.4
+    container_name: redis_school
+    ports:
+      - $REDIS_PORT:6379
+    environment:
+      - REDIS_PASSWORD=$REDIS_PASS
+    command: [ "--maxmemory", "250mb" ]
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - school
+    healthcheck:
+      test: "redis-cli --raw ping"
+      interval: 2s
+      timeout: 15s
+
+  backend:
+    image:  backend_school_image
+    container_name: backend_school
+    build: 
+      context: .
+    env_file:
+      - .env
+    entrypoint: sh "scripts/app.sh"
+    ports:
+      - $BACKEND_PORT:$BACKEND_PORT
+    volumes:
+      - ./static/media:/backend_app/static/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: always
+    networks:
+      - school
+
+  # frontend:
+  #   container_name: frontend_app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   restart: always
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - front_data:/data
+  #   networks:
+  #     - school
+
+networks:
+  school:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  backend_data:
+  redis_data:
+  # front_data:
