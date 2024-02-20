@@ -1,24 +1,19 @@
 import contextlib
 
-from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.database import get_async_session
 from .models import Documents
-from .exceptions import SUCCESS_CREATE, ALREADY_EXISTS
+from .exceptions import SUCCESS_CREATE
 
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 
 
-async def create_docs(**kwargs):
-    async with get_async_session_context() as session:
-        query = select(Documents)
-        result = await session.execute(query)
-        doc = result.scalars().first()
-        if not doc:
-            doc = Documents(**kwargs)
-            session.add(doc)
-            await session.commit()
-            print(SUCCESS_CREATE)
-        else:
-            print(ALREADY_EXISTS)
+async def create_docs(data: dict, session: AsyncSession):
+    try:
+        instance = Documents(**data)
+        session.add(instance)
+        print(SUCCESS_CREATE)
+    except Exception as exc:
+        raise exc

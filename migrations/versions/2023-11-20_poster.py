@@ -5,6 +5,7 @@ Revises: 9ab6ab802a58
 Create Date: 2023-11-20 20:05:25.699342
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -23,9 +24,9 @@ def upgrade() -> None:
     op.create_table(
         "posters",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("title", sa.String(), nullable=True),
+        sa.Column("title", sa.String(length=120), nullable=True),
         sa.Column("text", sa.String(), nullable=True),
-        sa.Column("photo", sa.String(), nullable=True),
+        sa.Column("photo", sa.String(length=500), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

@@ -5,6 +5,7 @@ Revises: 4cd1c281d770
 Create Date: 2023-11-23 19:46:50.832929
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -23,9 +24,9 @@ def upgrade() -> None:
     op.create_table(
         "achievements",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("media", sa.String(), nullable=False),
+        sa.Column("media", sa.String(length=2048), nullable=False),
         sa.Column("pinned_position", sa.Integer(), nullable=True),
-        sa.Column("description", sa.String(), nullable=True),
+        sa.Column("description", sa.String(length=150), nullable=True),
         sa.Column("sub_department", sa.Integer(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
@@ -38,9 +39,9 @@ def upgrade() -> None:
         "gallery",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("is_video", sa.Boolean(), nullable=False),
-        sa.Column("media", sa.String(), nullable=False),
+        sa.Column("media", sa.String(length=2048), nullable=False),
         sa.Column("pinned_position", sa.Integer(), nullable=True),
-        sa.Column("description", sa.String(), nullable=True),
+        sa.Column("description", sa.String(length=150), nullable=True),
         sa.Column("sub_department", sa.Integer(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(

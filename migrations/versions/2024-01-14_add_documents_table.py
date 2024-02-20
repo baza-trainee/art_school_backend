@@ -5,6 +5,7 @@ Revises: ae60bf321c97
 Create Date: 2024-01-14 10:41:04.258578
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -24,7 +25,7 @@ def upgrade() -> None:
         "documents",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("doc_name", sa.String(length=100), nullable=False),
-        sa.Column("doc_path", sa.String(), nullable=False),
+        sa.Column("doc_path", sa.String(length=500), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("doc_name"),
     )

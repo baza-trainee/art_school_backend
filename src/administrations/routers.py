@@ -1,11 +1,8 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from fastapi_cache.decorator import cache
-
-# from src.config import HOUR, MONTH
 from src.administrations.service import (
     create_administration,
     delete_administration,
@@ -16,8 +13,6 @@ from src.administrations.service import (
 from src.auth.models import User
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.database.database import get_async_session
-
-# from src.database.redis import invalidate_cache, my_key_builder
 from .models import SchoolAdministration
 from .schemas import (
     AdministratorSchema,
@@ -33,7 +28,6 @@ school_admin_router = APIRouter(
 
 
 @school_admin_router.get("", response_model=List[AdministratorSchema])
-# @cache(expire=HOUR, key_builder=my_key_builder)
 async def get_all_school_administration(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -42,12 +36,14 @@ async def get_all_school_administration(
 
 @school_admin_router.post("", response_model=AdministratorSchema)
 async def create_school_administration(
+    background_tasks: BackgroundTasks,
     person: AdministratorCreateSchema = Depends(AdministratorCreateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_all_school_administration")
-    return await create_administration(person, SchoolAdministration, session)
+    return await create_administration(
+        person, SchoolAdministration, session, background_tasks
+    )
 
 
 @school_admin_router.get("/{id}", response_model=AdministratorSchema)
@@ -60,20 +56,24 @@ async def get_school_administration(
 @school_admin_router.patch("/{id}", response_model=AdministratorSchema)
 async def update_school_administration(
     id: int,
+    background_tasks: BackgroundTasks,
     photo: Annotated[UploadFile, File()] = None,
     person: AdministratorUpdateSchema = Depends(AdministratorUpdateSchema.as_form),
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_all_school_administration")
-    return await update_administration(id, person, photo, SchoolAdministration, session)
+    return await update_administration(
+        id, person, photo, SchoolAdministration, session, background_tasks
+    )
 
 
 @school_admin_router.delete("/{id}", response_model=DeleteResponseSchema)
 async def delete_school_administration(
     id: int,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache("get_all_school_administration")
-    return await delete_administration(id, SchoolAdministration, session)
+    return await delete_administration(
+        id, SchoolAdministration, session, background_tasks
+    )

@@ -1,21 +1,18 @@
 from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_pagination import Page, paginate
+from fastapi_pagination.utils import disable_installed_extensions_check
+
 from src.auth.auth_config import CURRENT_SUPERUSER
 from src.auth.models import User
-
-# from fastapi_cache.decorator import cache
-
-# from src.config import HOUR, MONTH
-from src.departments.service import (
+from .service import (
     create_sub_dep,
     delete_sub_dep,
-    get_achievement_list,
     get_dep,
-    get_galery_list,
     get_main_dep,
+    get_media_for_sub_dep,
     get_one_sub_dep,
     get_sub_dep_list,
     update_sub_dep,
@@ -23,8 +20,6 @@ from src.departments.service import (
 from src.database.database import get_async_session
 from src.gallery.models import Gallery
 from src.achievements.models import Achievement
-
-# from src.database.redis import invalidate_cache, my_key_builder
 from .exceptions import DELETE_ERROR
 from .models import MainDepartment, SubDepartment
 from .schemas import (
@@ -35,6 +30,7 @@ from .schemas import (
     SubDepartmentGallerySchema,
     SubDepartmentSchema,
     SubDepartmentUpdateSchema,
+    SubDepartmentVideoSchema,
 )
 
 
@@ -42,7 +38,6 @@ departments = APIRouter(prefix="/departments", tags=["Departments"])
 
 
 @departments.get("", response_model=List[DepartmentSchema])
-# @cache(expire=MONTH, key_builder=my_key_builder)
 async def get_all_departments(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -50,7 +45,6 @@ async def get_all_departments(
 
 
 @departments.get("/{id}", response_model=List[SubDepartmentSchema])
-# @cache(expire=HOUR, key_builder=my_key_builder)
 async def get_sub_departments_by_department_id(
     id: DepartmentEnum,
     session: AsyncSession = Depends(get_async_session),
@@ -64,9 +58,6 @@ async def create_sub_department(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    # await invalidate_cache(
-    #     "get_sub_departments_by_department_id", data.main_department_id
-    # )
     return await create_sub_dep(data, SubDepartment, session)
 
 
@@ -80,26 +71,40 @@ async def get_sub_department_by_id(
 
 @departments.get(
     "/sub_department_gallery/{id}",
-    response_model=Union[List[SubDepartmentGallerySchema], Any],
+    response_model=Page[SubDepartmentGallerySchema],
 )
-# @cache(expire=HOUR, key_builder=my_key_builder)
 async def get_gallery_for_sub_department(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await get_galery_list(id, Gallery, session)
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Gallery, session, "photo")
+    return paginate(result)
 
 
 @departments.get(
     "/sub_department_achievement/{id}",
-    response_model=Union[List[SubDepartmentAchievementSchema], Any],
+    response_model=Page[SubDepartmentAchievementSchema],
 )
-# @cache(expire=HOUR, key_builder=my_key_builder)
 async def get_achievement_for_sub_department(
     id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await get_achievement_list(id, Achievement, session)
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Achievement, session, "achievement")
+    return paginate(result)
+
+
+@departments.get(
+    "/sub_department_video/{id}", response_model=Page[SubDepartmentVideoSchema]
+)
+async def get_video_for_sub_department(
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    disable_installed_extensions_check()
+    result = await get_media_for_sub_dep(id, Gallery, session, "video")
+    return paginate(result)
 
 
 @departments.patch("/sub_department/{id}", response_model=SubDepartmentSchema)
@@ -109,13 +114,7 @@ async def update_sub_department_by_id(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(CURRENT_SUPERUSER),
 ):
-    response: SubDepartment = await update_sub_dep(
-        id, department_data, SubDepartment, session
-    )
-    # await invalidate_cache(
-    #     "get_sub_departments_by_department_id", response.main_department_id
-    # )
-    return response
+    return await update_sub_dep(id, department_data, SubDepartment, session)
 
 
 @departments.delete("/sub_department/{id}")
@@ -131,8 +130,4 @@ async def delete_sub_department_by_id(
     if len(main_dep.sub_departments) <= 1:
         raise HTTPException(status_code=400, detail=DELETE_ERROR)
     await session.commit()
-    # await invalidate_cache(
-    #     "get_sub_departments_by_department_id",
-    #     sub_dep.main_department_id,
-    # )
     return await delete_sub_dep(id, SubDepartment, session)

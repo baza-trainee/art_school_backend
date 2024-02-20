@@ -169,8 +169,9 @@ SUB_DEPARTMENTS = [
         "main_department_id": 6,
     },
 ]
+
 CONTACTS = {
-    "map_url": "https://maps.app.goo.gl/4rCFRFuS1VcWtKU4A",
+    "map_url": "https://maps.app.goo.gl/J6iMhfRsF5EggR136",
     "address": "вул.Бульварно-Кудрявська, 2",
     "phone": "+38(097)290-79-40",
     "email": "example@gmail.com",
@@ -180,44 +181,47 @@ CONTACTS = {
 
 SLIDES = [
     {
-        "title": "Slide1",
-        "description": "Slide1 Test description",
+        "title": "Оголошено набір у класи народного співу",
+        "description": "Заповнюйте заяву на сайті або телефонуйте за номером",
+        "photo": "static/slider_main/slide1.png",
     },
     {
-        "title": " Slide2",
-        "description": "Slide2 Test description",
+        "title": " Оголошено набір у театральні класи",
+        "description": "Заповнюйте заяву на сайті або телефонуйте за номером",
+        "photo": "static/slider_main/slide2.png",
     },
 ]
+
 ADMINISTRATIONS = [
     {
         "full_name": "Ірина Коваленко",
         "position": "Заступник директора",
-        "photo": "http://res.cloudinary.com/dmfaqrftb/image/upload/v1701766157/static/SchoolAdministration/pvm8ad5krib3dzxlvsdk.jpg",
+        "photo": "static/administrations/pvm8ad5krib3dzxlvsdk.jpg",
     },
     {
         "full_name": "Микола Литвиненко",
         "position": "Консьєрж",
-        "photo": "http://res.cloudinary.com/dmfaqrftb/image/upload/v1701766221/static/SchoolAdministration/avrrwy3mke4slpqzk0ft.jpg",
+        "photo": "static/administrations/avrrwy3mke4slpqzk0ft.jpg",
     },
     {
         "full_name": "Василь Петренко",
         "position": "Головний бухгалтер",
-        "photo": "http://res.cloudinary.com/dmfaqrftb/image/upload/v1701766264/static/SchoolAdministration/zdcn16zrdv5ofmkqsp26.jpg",
+        "photo": "static/administrations/zdcn16zrdv5ofmkqsp26.jpg",
     },
     {
         "full_name": "Наталія Сидоренко",
         "position": "Секретар",
-        "photo": "http://res.cloudinary.com/dmfaqrftb/image/upload/v1701766307/static/SchoolAdministration/eeh6t0smicriaesvdqlq.jpg",
+        "photo": "static/administrations/eeh6t0smicriaesvdqlq.jpg",
     },
     {
         "full_name": "Олександр Шевченко",
         "position": "Директор",
-        "photo": "http://res.cloudinary.com/dmfaqrftb/image/upload/v1701766646/static/SchoolAdministration/y8ovyujmirsluary2pxp.jpg",
+        "photo": "static/administrations/y8ovyujmirsluary2pxp.jpg",
     },
 ]
 
 DOCUMENT = {
     "doc_name": "Заява на вступ",
-    "doc_path": "http://res.cloudinary.com/dmfaqrftb/raw/upload/v1705435496/static/documents/uounspkufjynv2zz5oc7.pdf",
+    "doc_path": "static/documents/declaration.pdf",
     "is_pinned": True,
 }

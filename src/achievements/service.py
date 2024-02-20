@@ -25,26 +25,22 @@ async def _check_department(
     sub_department: Optional[int], session: AsyncSession
 ) -> None:
     query = select(SubDepartment).where(SubDepartment.id == sub_department)
-    async with session as ses:
-        result = await ses.execute(query)
-        record = result.scalars().first()
-        if not record:
-            raise HTTPException(
-                status_code=404, detail=INVALID_DEPARTMENT % sub_department
-            )
+    result = await session.execute(query)
+    record = result.scalars().first()
+    if not record:
+        raise HTTPException(status_code=404, detail=INVALID_DEPARTMENT % sub_department)
 
 
 async def _check_pinned_position(
     pinned_position: Optional[int], session: AsyncSession
 ) -> None:
     query = select(Achievement).filter_by(pinned_position=pinned_position)
-    async with session as ses:
-        result = await ses.execute(query)
-        record = result.scalars().first()
-        if record:
-            raise HTTPException(
-                status_code=400, detail=ACHIEVEMENT_PINNED_EXISTS % pinned_position
-            )
+    result = await session.execute(query)
+    record = result.scalars().first()
+    if record:
+        raise HTTPException(
+            status_code=400, detail=ACHIEVEMENT_PINNED_EXISTS % pinned_position
+        )
 
 
 async def get_all_achievements_by_filter(
@@ -95,6 +91,7 @@ async def get_positions_status(session: AsyncSession):
 async def create_achievement(
     schema: CreateAchievementSchema,
     session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ):
     if schema.sub_department:
         await _check_department(schema.sub_department, session)
@@ -102,7 +99,9 @@ async def create_achievement(
         await _check_pinned_position(schema.pinned_position, session)
 
     schema_output = schema.model_dump()
-    schema_output["media"] = await save_photo(schema.media, Achievement)
+    schema_output["media"] = await save_photo(
+        schema.media, Achievement, background_tasks
+    )
 
     try:
         query = insert(Achievement).values(**schema_output).returning(Achievement)
@@ -127,7 +126,7 @@ async def update_achievement(
     if schema.sub_department and schema.sub_department != record.sub_department:
         await _check_department(schema.sub_department, session)
     if schema.pinned_position and schema.pinned_position != record.pinned_position:
-        await _check_department(schema.pinned_position, session)
+        await _check_pinned_position(schema.pinned_position, session)
 
     schema_output = schema.model_dump()
     media = schema_output.get("media", None)
@@ -157,9 +156,9 @@ async def delete_achievement_by_id(
     if not record:
         raise HTTPException(status_code=404, detail=NO_DATA_FOUND)
     try:
-        background_tasks.add_task(delete_photo, record.media)
         await session.delete(record)
         await session.commit()
+        await delete_photo(record.media, background_tasks)
         return {"message": SUCCESS_DELETE % id}
     except:
         raise HTTPException(status_code=500, detail=SERVER_ERROR)

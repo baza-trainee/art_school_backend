@@ -8,5 +8,5 @@ class Documents(Base):
 
     id = Column(Integer, primary_key=True)
     doc_name = Column(String(120), nullable=False, unique=True)
-    doc_path = Column(String(300), nullable=False)
+    doc_path = Column(String(500), nullable=False)
     is_pinned = Column(Boolean)

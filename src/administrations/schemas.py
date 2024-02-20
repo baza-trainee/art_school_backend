@@ -1,7 +1,8 @@
 from typing import Optional
 
 from fastapi import Form, UploadFile
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, Field, constr, validator
+from src.config import settings
 
 from src.exceptions import SUCCESS_DELETE
 from .models import SchoolAdministration
@@ -17,6 +18,10 @@ class AdministratorSchema(BaseModel):
     full_name: Optional[str] = Field(..., max_length=FULL_NAME_LEN)
     position: Optional[str] = Field(..., max_length=POSITION_LEN)
     photo: Optional[constr(max_length=PHOTO_LEN)]
+
+    @validator("photo", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"
 
 
 class AdministratorCreateSchema(BaseModel):

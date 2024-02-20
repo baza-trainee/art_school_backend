@@ -1,13 +1,13 @@
 from typing import List, Optional, Type
 
-from fastapi import HTTPException, Response, UploadFile
+from fastapi import BackgroundTasks, HTTPException, Response, UploadFile
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .exceptions import PERSON_EXISTS
 from .models import SchoolAdministration
 from .schemas import AdministratorCreateSchema, AdministratorUpdateSchema
-from src.utils import save_photo
+from src.utils import delete_photo, save_photo, update_photo
 from src.database.database import Base
 from src.exceptions import (
     NO_DATA_FOUND,
@@ -30,7 +30,10 @@ async def get_all_administration(
 
 
 async def create_administration(
-    person: AdministratorCreateSchema, model: Type[Base], session: AsyncSession
+    person: AdministratorCreateSchema,
+    model: Type[Base],
+    session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ) -> SchoolAdministration:
     query = select(SchoolAdministration).where(
         func.lower(SchoolAdministration.full_name) == person.full_name.lower()
@@ -42,7 +45,7 @@ async def create_administration(
             status_code=400,
             detail=PERSON_EXISTS % person.full_name,
         )
-    person.photo = await save_photo(person.photo, model)
+    person.photo = await save_photo(person.photo, model, background_tasks)
     query = (
         insert(SchoolAdministration)
         .values(**person.model_dump())
@@ -71,6 +74,7 @@ async def update_administration(
     photo: Optional[UploadFile],
     model: Type[Base],
     session: AsyncSession,
+    background_tasks: BackgroundTasks,
 ) -> SchoolAdministration:
     query = select(model).where(model.id == id)
     result = await session.execute(query)
@@ -79,7 +83,12 @@ async def update_administration(
         raise HTTPException(status_code=404, detail=NO_RECORD)
     update_data = person.model_dump(exclude_none=True)
     if photo:
-        update_data["photo"] = await save_photo(photo, model)
+        update_data["photo"] = await update_photo(
+            file=photo,
+            record=record,
+            field_name="photo",
+            background_tasks=background_tasks,
+        )
     if not update_data:
         return Response(status_code=204)
     try:
@@ -94,7 +103,7 @@ async def update_administration(
 
 
 async def delete_administration(
-    id: int, model: Type[Base], session: AsyncSession
+    id: int, model: Type[Base], session: AsyncSession, background_tasks: BackgroundTasks
 ) -> dict:
     query = select(model).where(model.id == id)
     result = await session.execute(query)
@@ -103,4 +112,5 @@ async def delete_administration(
     query = delete(model).where(model.id == id)
     await session.execute(query)
     await session.commit()
+    await delete_photo(result.photo, background_tasks)
     return {"message": SUCCESS_DELETE % id}

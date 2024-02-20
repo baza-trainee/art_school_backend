@@ -34,9 +34,9 @@ class ContactsSchema(BaseModel):
 
 
 class ContactsUpdateSchema(BaseModel):
-    map_url: Optional[
-        Union[AnyHttpUrl, constr(max_length=URL_LEN, pattern=r"^$")]
-    ] = None
+    map_url: Optional[Union[AnyHttpUrl, constr(max_length=URL_LEN, pattern=r"^$")]] = (
+        None
+    )
     address: constr(max_length=ADDRESS_LEN) = None
     phone: Optional[
         constr(

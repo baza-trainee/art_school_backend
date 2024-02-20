@@ -1,8 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from fastapi import Body, Form, UploadFile
 
+from src.config import settings
 from src.slider_main.exceptions import SCHEMA_DESC
 from .models import SliderMain
 
@@ -16,6 +17,10 @@ class SliderMainSchema(BaseModel):
     title: Optional[str] = Field(..., max_length=TITLE_LEN)
     description: Optional[str] = Field(..., max_length=DESCR_LEN)
     photo: str
+
+    @validator("photo", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"
 
 
 class SliderCreateSchema(BaseModel):

@@ -7,14 +7,11 @@ python-dotenv==1.0.0
 sqlalchemy==2.0.23
 aiofiles==23.2.1
 urllib3==1.26.16
-cloudinary==1.36.0
 fastapi-users[sqlalchemy]==12.1.2
 fastapi-mail==1.4.1
 fastapi-pagination==0.12.12
 faker==20.1.0
 bcrypt==4.0.1
-
-# FOR_PROD
-# gunicorn==21.2.0
-# fastapi-cache2==0.2.0
-# redis==4.4.2
+gunicorn==21.2.0
+fastapi-cache2[redis]==0.2.1
+redis==4.4.2

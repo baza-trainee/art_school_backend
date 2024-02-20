@@ -1,6 +1,6 @@
 from typing import Type
 
-from sqlalchemy import delete, desc, func, insert, select, update
+from sqlalchemy import and_, delete, desc, func, insert, select, update
 from fastapi import HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ from src.exceptions import NO_DATA_FOUND, NO_RECORD
 from src.gallery.models import Gallery
 from .exceptions import (
     EXISTS_SUB_NAME,
+    INVALID,
     NO_MEDIA,
     NO_SUB_DEPARTMENT,
     SUB_DEP_EXISTS,
@@ -70,26 +71,29 @@ async def get_main_dep(id: int, model: Type[Base], session: AsyncSession):
     return department
 
 
-async def get_galery_list(id: int, model: Type[Base], session: AsyncSession):
-    query = (
-        select(model).where(model.sub_department == id).order_by(desc(model.created_at))
-    )
-    result = await session.execute(query)
-    gallery = result.scalars().all()
-    if not gallery:
-        raise HTTPException(status_code=404, detail=NO_MEDIA)
-    return gallery
+async def get_media_for_sub_dep(
+    id: int, model: Type[Base], session: AsyncSession, list_type: str
+):
+    query = select(model).order_by(desc(model.created_at))
+    match list_type:
+        case "photo":
+            query = query.where(
+                and_(model.sub_department == id, model.is_video == False)
+            )
+        case "video":
+            query = query.where(
+                and_(model.sub_department == id, model.is_video == True)
+            )
+        case "achievement":
+            query = query.where(model.sub_department == id)
+        case _:
+            raise HTTPException(status_code=400, detail=INVALID)
 
-
-async def get_achievement_list(id: int, model: Type[Base], session: AsyncSession):
-    query = (
-        select(model).where(model.sub_department == id).order_by(desc(model.created_at))
-    )
     result = await session.execute(query)
-    gallery = result.scalars().all()
-    if not gallery:
+    list_of_media = result.scalars().all()
+    if not list_of_media:
         raise HTTPException(status_code=404, detail=NO_MEDIA)
-    return gallery
+    return list_of_media
 
 
 async def update_sub_dep(

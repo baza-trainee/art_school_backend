@@ -5,6 +5,7 @@ Revises: 8b2b64e46b91
 Create Date: 2023-11-24 10:01:02.378421
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -25,7 +26,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("title", sa.String(length=300), nullable=True),
         sa.Column("description", sa.String(length=2000), nullable=True),
-        sa.Column("photo", sa.String(), nullable=False),
+        sa.Column("photo", sa.String(length=500), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.alter_column(

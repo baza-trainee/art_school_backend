@@ -2,9 +2,10 @@ from enum import Enum
 from typing import Optional, Union
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 from src.achievements.models import Achievement
+from src.config import settings
 from .models import SubDepartment, MainDepartment
 
 
@@ -56,6 +57,18 @@ class SubDepartmentGallerySchema(BaseModel):
     pinned_position: Optional[int] = Field(None, ge=1, le=12)
     created_at: datetime
 
+    @validator("media", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"
+
+
+class SubDepartmentVideoSchema(BaseModel):
+    id: int
+    media: str = Field(..., max_length=ACHI_MEDIA_LEN)
+    sub_department: int = Field(..., ge=1)
+    pinned_position: Optional[int] = Field(None, ge=1, le=5)
+    created_at: datetime
+
 
 class SubDepartmentAchievementSchema(BaseModel):
     id: int
@@ -64,3 +77,7 @@ class SubDepartmentAchievementSchema(BaseModel):
     sub_department: int = Field(..., ge=1)
     pinned_position: Optional[int] = Field(..., ge=1, le=12)
     created_at: datetime
+
+    @validator("media", pre=True)
+    def add_base_url(cls, v, values):
+        return f"{settings.BASE_URL}/{v}"

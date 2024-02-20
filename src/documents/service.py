@@ -1,13 +1,13 @@
 from typing import Type
 
 from pydantic import BaseModel
+from sqlalchemy import delete, insert, or_, select, update, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import BackgroundTasks, HTTPException, Response
-from sqlalchemy import delete, insert, or_, select, update, func
 
 from src.database.database import Base
-from src.utils import save_photo, update_photo
+from src.utils import delete_photo, save_photo, update_photo
 from .exceptions import (
     DELETE_ERROR,
     DOCS_EXISTS,
@@ -47,7 +47,12 @@ async def get_doc_by_id(model: Type[Base], session: AsyncSession, id: int):
     return response
 
 
-async def create_document(document, model: Type[Base], session: AsyncSession):
+async def create_document(
+    document,
+    model: Type[Base],
+    session: AsyncSession,
+    background_tasks: BackgroundTasks,
+):
     query = select(model).where(func.lower(model.doc_name) == document.doc_name.lower())
     result = await session.execute(query)
     instance = result.scalars().first()
@@ -56,7 +61,9 @@ async def create_document(document, model: Type[Base], session: AsyncSession):
             status_code=400,
             detail=DOCS_EXISTS % document.doc_name,
         )
-    document.doc_path = await save_photo(document.doc_path, model, is_file=True)
+    document.doc_path = await save_photo(
+        document.doc_path, model, background_tasks, is_file=True
+    )
     query = insert(model).values(**document.model_dump()).returning(model)
     result = await session.execute(query)
     document = result.scalars().first()
@@ -106,7 +113,9 @@ async def update_document(
             raise HTTPException(status_code=500, detail=SERVER_ERROR)
 
 
-async def delete_record(id: int, model: Type[Base], session: AsyncSession) -> dict:
+async def delete_record(
+    id: int, model: Type[Base], session: AsyncSession, background_tasks: BackgroundTasks
+) -> dict:
     query = select(model).where(model.id == id)
     result = await session.execute(query)
     record = result.scalars().first()
@@ -117,4 +126,5 @@ async def delete_record(id: int, model: Type[Base], session: AsyncSession) -> di
     query = delete(model).where(model.id == id)
     await session.execute(query)
     await session.commit()
+    await delete_photo(record.doc_path, background_tasks)
     return {"message": SUCCESS_DELETE % id}

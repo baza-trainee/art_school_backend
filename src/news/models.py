@@ -11,5 +11,5 @@ class News(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(120))
     text = Column(String(2000))
-    photo = Column(String(300))
+    photo = Column(String(500))
     created_at: datetime = Column(DateTime, default=func.now())

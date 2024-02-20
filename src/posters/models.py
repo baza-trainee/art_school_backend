@@ -10,5 +10,5 @@ class Poster(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(120))
-    photo = Column(String(300))
+    photo = Column(String(500))
     created_at: datetime = Column(DateTime, default=func.now())

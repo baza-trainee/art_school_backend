@@ -1,18 +1,15 @@
 FROM python:3.11-slim
 
-RUN mkdir /fastapi_app
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-WORKDIR /fastapi_app
+RUN mkdir /backend_app
+WORKDIR /backend_app
 
-COPY requirements.txt ./
-COPY scripts scripts/
+RUN pip install -U pip 
 
-RUN chmod a+x scripts/*.sh && \
-    pip install -r requirements.txt gunicorn==21.2.0 fastapi-cache2==0.2.0 redis==4.4.2
+COPY requirements.txt .
 
-COPY src src/
-COPY static static/
-COPY migrations migrations/
-COPY gunicorn.conf.py alembic.ini ./
+RUN pip install -r requirements.txt
 
-EXPOSE 8000
+COPY . .
